@@ -1,3 +1,4 @@
+import './styles/GameCard.css';
 import { Star, Tv } from 'lucide-react';
 import type { Game } from '../data/types';
 import { gameTime, kickoff } from '../utils/gameTime';

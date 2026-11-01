@@ -1,3 +1,4 @@
+import './App.css';
 import { useState } from "react";
 import { espnSource } from "./data/espn";
 import type { Division, ScoreboardSource } from "./data/types";
@@ -130,7 +131,7 @@ const App = ({ source = espnSource }: { source?: ScoreboardSource }) => {
         {content}
         <footer>
           <span className="footer-brand">
-            SATURDAY<span> SCOREBOARD</span>
+            BALL<span>VISION</span>
           </span>
           <p>
             Data from ESPN · Refreshes every 20s · Clocks reflect the latest

@@ -1,3 +1,4 @@
+import './styles/PeriodScores.css';
 import type { Team } from '../data/types';
 
 export const PeriodScores = ({ home, away }: { home: Team; away: Team }) => {

@@ -1,0 +1,19 @@
+.empty-state {
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--color-empty-text);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+}
+.empty-state svg {
+  color: var(--color-empty-icon);
+}
+.empty-state h2 {
+  font-size: var(--font-size-21px);
+  color: var(--color-empty-heading);
+  margin: 17px 0 8px;
+  font-weight: var(--font-weight-500);
+}
+.empty-state p {
+  font-size: var(--font-size-13px);
+}

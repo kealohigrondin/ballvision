@@ -1,3 +1,4 @@
+import './styles/GameDetails.css';
 import { ChevronDown, MapPin } from 'lucide-react';
 import type { Game } from '../data/types';
 import { PeriodScores } from './PeriodScores';

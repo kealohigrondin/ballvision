@@ -1,0 +1,92 @@
+:root {
+  /* Application palette */
+  --color-text: #edf0e8;
+  --color-background: #101510;
+  --color-muted: #879282;
+  --color-border: #2c3529;
+  --color-accent: #c0ee75;
+  --color-surface: #192018;
+  --color-year: #687461;
+  --color-results-label: #85927d;
+  --color-footer-muted: #6c7b61;
+  --color-footer-brand: #a6b39b;
+  --color-empty-text: #899a7d;
+  --color-empty-icon: #abc787;
+  --color-empty-heading: #dce8d2;
+  --color-skeleton: #253020;
+  --color-warning-border: #7a5c35;
+  --color-warning-surface: #342a1d;
+  --color-warning-text: #f1ca94;
+  --color-table-text: #b0bba7;
+  --color-table-border: #2b3526;
+  --color-table-heading: #788b6b;
+  --color-icon: #8d9988;
+  --color-icon-hover-surface: #2a3525;
+  --color-icon-hover: #eff5e9;
+  --color-input-surface: #1b2319;
+  --color-input-text: #e0e6d9;
+  --color-button-text: #a8b2a1;
+  --color-button-hover-surface: #212b1c;
+  --color-division-selected-surface: #344129;
+  --color-search-icon: #83917c;
+  --color-placeholder: #788670;
+  --color-filter-text: #8e9a86;
+  --color-badge-surface: #252f20;
+  --color-badge-text: #a3ae9b;
+  --color-badge-selected-surface: #344325;
+  --color-details-surface: #151c13;
+  --color-details-border: #293324;
+  --color-details-label: #809175;
+  --color-details-text: #a7b49d;
+  --color-venue: #7e8e73;
+  --color-card-border: #2d3829;
+  --color-card-hover-border: #4d5e42;
+  --color-live-border: #91b75d;
+  --color-red-zone: #eea28d;
+  --color-game-status: #98a590;
+  --color-game-final: #b6c0af;
+  --color-favorite: #64725b;
+  --color-situation: #a5b299;
+  --color-broadcast: #7e8d74;
+  --color-rank: #8e9b85;
+  --color-record: #78876f;
+  --color-paused: #a1a791;
+  --color-sync-warning: #f1be7a;
+  --color-brand-mark: #14200e;
+  --color-transparent: transparent;
+  /* Typography */
+  --font-size-10px: 10px;
+  --font-weight-650: 650;
+  --font-size-22px: 22px;
+  --font-weight-600: 600;
+  --font-weight-400: 400;
+  --font-size-9px: 9px;
+  --font-size-11px: 11px;
+  --font-weight-750: 750;
+  --font-size-20px: 20px;
+  --font-size-21px: 21px;
+  --font-weight-500: 500;
+  --font-size-13px: 13px;
+  --font-size-12px: 12px;
+  --font-variant-numeric-tabular-nums: tabular-nums;
+  --font-size-14px: 14px;
+  --font-weight-850: 850;
+  --font-weight-450: 450;
+  --font-weight-800: 800;
+  --font-size-16px: 16px;
+  --font-weight-630: 630;
+  --font-family-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --font-size-30px: 30px;
+  --font-size-27px: 27px;
+  --font-size-17px: 17px;
+  --font-size-31px: 31px;
+  --font-size-19px: 19px;
+  --font-family-sans: Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  --font-synthesis-none: none;
+}

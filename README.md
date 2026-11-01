@@ -1,6 +1,6 @@
-# Saturday Scoreboard
+# BALLVISION
 
-A React + TypeScript college football dashboard. Runs in a Linux browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
+Your live game companion. A React + TypeScript college football dashboard. Runs in a Linux browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
 
 ## Run locally
 
@@ -35,6 +35,7 @@ npm run preview
 - `src/hooks/useFavorites.ts`: optional browser-local pin storage with versioned key.
 - `src/components/`: one component per file; cards, team presentation, game details, period scores, toolbar, refresh controls, loading and error states each have a focused responsibility.
 - `src/utils/`: shared date and game-time formatting without UI or provider dependencies.
+- Component styles live in `src/components/styles/` (`GameCard.css`, etc.) and are imported by the owning component. `App.css` owns page layout; `theme.css` beside `App.css` owns all color and font tokens; `styles.css` contains element defaults, accessibility focus defaults, and reduced-motion defaults.
 - `src/App.tsx`: composes features and owns view filters; receives a replaceable source.
 
 Polling runs 20 seconds after each completed request; requests time out after 15 seconds. Hidden tabs stop scheduled polling and refresh on return. A failed refresh retains the last successful snapshot with a warning. Changing dates/divisions clears the prior slate and cancels obsolete requests. Game clocks display the reported feed value; they are not extrapolated. All kickoff times use the browser's local timezone. FBS/FCS data availability follows ESPN; the app cannot guarantee coverage outside the selected feed.

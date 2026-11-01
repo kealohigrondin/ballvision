@@ -1,3 +1,4 @@
+import './styles/TeamLogo.css';
 import { useState } from 'react';
 import type { Team } from '../data/types';
 

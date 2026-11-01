@@ -1,3 +1,4 @@
+import './styles/SyncControls.css';
 import { CirclePause, CirclePlay, RefreshCw, WifiOff } from 'lucide-react';
 
 interface SyncControlsProps {

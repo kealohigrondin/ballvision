@@ -1,3 +1,4 @@
+import './styles/EmptyState.css';
 import { Radio } from 'lucide-react';
 
 export const EmptyState = ({ title, detail }: { title: string; detail: string }) => {

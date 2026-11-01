@@ -1,3 +1,4 @@
+import './styles/TeamRow.css';
 import type { Team } from '../data/types';
 import { TeamLogo } from './TeamLogo';
 

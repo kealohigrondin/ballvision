@@ -1,0 +1,43 @@
+.game-details {
+  background: var(--color-details-surface);
+  border-top: 1px solid var(--color-details-border);
+}
+.game-details summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-details-label);
+  font-size: var(--font-size-10px);
+  padding: 12px 20px;
+}
+.game-details summary::-webkit-details-marker {
+  display: none;
+}
+.game-details[open] summary svg {
+  transform: rotate(180deg);
+}
+.game-details p {
+  font-size: var(--font-size-11px);
+  line-height: 1.6;
+  padding: 0 20px;
+  color: var(--color-details-text);
+}
+.game-details strong {
+  display: block;
+  font-size: var(--font-size-9px);
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: var(--font-weight-500);
+  margin-bottom: 5px;
+}
+.venue {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-10px);
+  color: var(--color-venue);
+  padding: 0 20px 15px;
+}

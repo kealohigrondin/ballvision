@@ -1,3 +1,4 @@
+import './styles/Toolbar.css';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import type { Division } from '../data/types';
 import { localDate } from '../utils/date';

@@ -1,7 +1,7 @@
 import './App.css';
 import { useState } from "react";
-import { espnSource } from "./data/espn";
-import type { Division, ScoreboardSource } from "./data/types";
+import { espnSource, espnLeagueSource } from "./data/espn";
+import type { Division, LeagueSource, ScoreboardSource } from "./data/types";
 import { useScoreboard } from "./hooks/useScoreboard";
 import { useFavorites } from "./hooks/useFavorites";
 import { GameCard } from "./components/GameCard";
@@ -12,8 +12,10 @@ import { SyncControls } from "./components/SyncControls";
 import { Toolbar, type Filter } from "./components/Toolbar";
 import { localDate } from "./utils/date";
 import MastHead from "./components/MastHead";
+import { LeaguePanel } from "./components/LeaguePanel";
 
-const App = ({ source = espnSource }: { source?: ScoreboardSource }) => {
+const App = ({ source = espnSource, leagueSource = espnLeagueSource }: { source?: ScoreboardSource; leagueSource?: LeagueSource }) => {
+  const [panelOpen, setPanelOpen] = useState(true);
   const [date, setDate] = useState(localDate);
   const [division, setDivision] = useState<Division>("fbs");
   const [filter, setFilter] = useState<Filter>("all");
@@ -91,10 +93,15 @@ const App = ({ source = espnSource }: { source?: ScoreboardSource }) => {
       </section>
     );
 
+  const panel = panelOpen ? <LeaguePanel source={leagueSource} division={division} /> : null;
+  const layoutClass = panelOpen ? "dashboard-layout panel-open" : "dashboard-layout";
+
   return (
     <div className="app-shell">
-      <MastHead division={division} />
+      <MastHead division={division} panelOpen={panelOpen} onTogglePanel={() => setPanelOpen(open => !open)} />
       <main>
+        <div className={layoutClass}>
+        <div className="dashboard-main">
         <div className="section-heading">
           <div>
             <span className="eyebrow">THE SCOREBOARD</span>
@@ -129,6 +136,9 @@ const App = ({ source = espnSource }: { source?: ScoreboardSource }) => {
           <span>{resultCount}</span>
         </div>
         {content}
+        </div>
+        {panel}
+        </div>
         <footer>
           <span className="footer-brand">
             BALL<span>VISION</span>

@@ -43,3 +43,9 @@ Polling runs 20 seconds after each completed request; requests time out after 15
 Pinned game IDs stay on this browser. There is no account, tracking, database, or continuous animation. Details expand natively and logos load lazily.
 
 Tests cover upstream parsing, postponed/incomplete games, update failures, cancellation, stale response races, and paused polling. No live network requests are required for tests.
+
+## League panel
+
+Use the **League** button in the masthead to open or close the right-side panel. Choose **Conference standings** or **Top 25**, then choose a conference or poll. The panel follows the FBS/FCS selection; league records and rankings are current-season data, independent of the scoreboard date. On smaller screens it stacks above the scoreboard.
+
+`LeagueSource` is an injectable contract separate from `ScoreboardSource`; the ESPN implementation and response adapters remain in `src/data/espn.ts`. `useLeagueTables` owns cancellation, 15-second timeouts, retries, and five-minute refreshes while visible. Closing the panel stops its requests. `LeaguePanel` and `LeagueTable` each have a dedicated stylesheet under `src/components/styles/`, using `theme.css` tokens.

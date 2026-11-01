@@ -16,3 +16,22 @@ export interface ScoreboardQuery { date: string; division: Division }
 export interface ScoreboardSource {
   load(query: ScoreboardQuery, signal: AbortSignal): Promise<Game[]>;
 }
+
+export interface LeagueRow {
+  id: string;
+  name: string;
+  rank?: number;
+  record: string;
+  conferenceRecord?: string;
+  points?: string;
+}
+export interface LeagueTable {
+  id: string;
+  title: string;
+  subtitle: string;
+  rows: LeagueRow[];
+}
+export interface LeagueSource {
+  loadStandings(division: Division, signal: AbortSignal): Promise<LeagueTable[]>;
+  loadRankings(division: Division, signal: AbortSignal): Promise<LeagueTable[]>;
+}

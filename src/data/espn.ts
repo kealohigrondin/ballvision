@@ -1,4 +1,4 @@
-import type { Game, GameState, ScoreboardSource, Team } from './types';
+import type { Division, LeagueRow, LeagueTable, LeagueSource, Game, GameState, ScoreboardSource, Team } from './types';
 
 type Json = Record<string, unknown>;
 const obj = (value: unknown): Json => value && typeof value === 'object' && !Array.isArray(value) ? value as Json : {};
@@ -61,4 +61,62 @@ export const espnSource: ScoreboardSource = {
     if (!response.ok) throw new Error(`ESPN returned HTTP ${response.status}.`);
     return parseScoreboard(await response.json());
   },
+};
+
+// League context stays separate from the high-frequency scoreboard feed.
+export const parseStandings = (payload: unknown): LeagueTable[] => {
+  const root = obj(payload);
+  if (!Array.isArray(root.children)) throw new Error('Unexpected ESPN standings response.');
+  const collect = (raw: unknown): LeagueTable[] => {
+    const group = obj(raw), standings = obj(group.standings);
+    const entries = list(standings.entries);
+    const rows: LeagueRow[] = entries.map(rawEntry => {
+      const entry = obj(rawEntry), t = obj(entry.team), stats = list(entry.stats).map(obj);
+      const record = (type: string) => {
+        const stat = stats.find(s => s.type === type);
+        return str(stat?.summary, str(stat?.displayValue, '—'));
+      };
+      return { id: str(t.id), name: str(t.shortDisplayName, str(t.displayName, str(t.location))),
+        record: record('total'), conferenceRecord: record('vsconf') };
+    }).filter(row => row.id && row.name);
+    const nested = list(group.children).flatMap(collect);
+    if (!rows.length) return nested;
+    return [{ id: str(group.id), title: str(group.name, 'Conference'),
+      subtitle: str(standings.seasonDisplayName, str(standings.season)), rows }, ...nested];
+  };
+  return root.children.flatMap(collect);
+};
+
+export const parseRankings = (payload: unknown, division: Division): LeagueTable[] => {
+  const root = obj(payload);
+  if (!Array.isArray(root.rankings)) throw new Error('Unexpected ESPN rankings response.');
+  return root.rankings.map(obj).filter(poll => {
+    const name = str(poll.name).toLowerCase();
+    return division === 'fcs' ? name.includes('fcs') : /ap top 25|coaches poll|playoff/.test(name) && !/fcs|division ii|division iii/.test(name);
+  }).map(poll => ({
+    id: str(poll.id, str(poll.name)), title: str(poll.name),
+    subtitle: [str(obj(poll.season).displayName), str(obj(poll.occurrence).displayValue)].filter(Boolean).join(' · '),
+    rows: list(poll.ranks).map(rawRank => {
+      const r = obj(rawRank), t = obj(r.team);
+      return { id: str(t.id), name: str(t.shortDisplayName, str(t.nickname, str(t.location, str(t.displayName)))),
+        rank: number(r.current), record: str(r.recordSummary, '—'), points: str(r.points, '—') };
+    }).filter(row => row.id && row.rank !== undefined && row.rank <= 25)
+      .sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0)),
+  }));
+};
+
+const loadLeagueJson = async (url: string, signal: AbortSignal): Promise<unknown> => {
+  const response = await fetch(url, { signal, headers: { Accept: 'application/json' } });
+  if (!response.ok) throw new Error(`ESPN returned HTTP ${response.status}.`);
+  return response.json();
+};
+
+export const espnLeagueSource: LeagueSource = {
+  loadStandings: async (division, signal) => {
+    const url = new URL('https://site.web.api.espn.com/apis/v2/sports/football/college-football/standings');
+    url.search = new URLSearchParams({ group: division === 'fbs' ? '80' : '81', level: '2', type: '0' }).toString();
+    return parseStandings(await loadLeagueJson(url.toString(), signal));
+  },
+  loadRankings: async (division, signal) => parseRankings(await loadLeagueJson(
+    'https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings', signal), division),
 };

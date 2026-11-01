@@ -8,7 +8,7 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  /* gap: 8px; */
   font-size: var(--font-size-14px);
   font-weight: var(--font-weight-850);
   letter-spacing: 1.2px;
@@ -58,5 +58,33 @@
 @media (max-width: 510px) {
   .brand-light {
     letter-spacing: 0.6px;
+  }
+}
+
+.masthead-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.league-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-input-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-12px);
+}
+.league-toggle[aria-expanded="true"] {
+  color: var(--color-accent);
+}
+.league-toggle:hover {
+  background: var(--color-button-hover-surface);
+}
+@media (max-width: 510px) {
+  .league-toggle span {
+    display: none;
   }
 }

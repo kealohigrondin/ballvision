@@ -1,10 +1,10 @@
 # BALLVISION
 
-Your live game companion. A React + TypeScript college football dashboard. Runs in a Linux browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
+Your live game companion. A React + TypeScript college football dashboard. Runs in browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
 
 ## Run locally
 
-This project is intended for local use. No hosting account or sign-in is needed. The server binds only to this computer. Internet access is needed to fetch ESPN scores.
+This project is intended for local use. Internet access is needed to fetch ESPN scores.
 
 Run `./start.sh` and open http://127.0.0.1:5173. Press Ctrl+C in the terminal to stop. The launcher uses your installed Node.js or the workspace runtime downloaded during setup.
 

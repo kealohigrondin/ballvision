@@ -5,6 +5,8 @@
 - Keep JSX conditional rendering to one layer; do not nest render conditions.
 - For render-or-nothing cases, write the `&&` check directly where the element is rendered in JSX. Do not assign conditional JSX to a `const` and then render that variable. Use boolean conditions (for example, `items.length > 0`) to avoid rendering `0`.
 - Establish two-way or multi-branch render choices before returning JSX. Keep conditional class names directly in `className` using `clsx` and `&&`.
+- Style components with MUI `sx`. Keep one-off styles inline and extract shared patterns into reusable components or shared `sx` objects. Do not add standalone CSS stylesheets.
+- Store shared design tokens in the MUI app theme. Use `MuiCssBaseline` for font registration and browser-wide defaults.
 - Build reusable components with a single clear responsibility.
 - for functional components, define a props type with the name ComponentNameProps. destructure props in declaration
 - each component file should have one responsibility

@@ -1,4 +1,3 @@
-import "./App.css";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
@@ -66,11 +65,7 @@ const App = ({
     : "minmax(0, 1fr)";
 
   return (
-    <Container
-      maxWidth={false}
-      className="app-shell"
-      sx={{ px: { xs: 2, sm: 3, lg: 5 } }}
-    >
+    <Container maxWidth={false} className="app-shell">
       <MastHead
         onTogglePause={() => setPaused((current) => !current)}
         loading={loading}

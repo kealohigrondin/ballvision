@@ -1,7 +1,8 @@
+import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import clsx from "clsx";
+import type { SxProps, Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
-import "./styles/SegmentedControl.css";
+import { controlHeightSx, segmentedButtonSx } from "../styles/shared";
 
 type SegmentedControlProps<Value extends string> = {
   label: string;
@@ -9,6 +10,7 @@ type SegmentedControlProps<Value extends string> = {
   options: readonly { value: Value; label: ReactNode }[];
   onChange: (value: Value) => void;
   className?: string;
+  sx?: SxProps<Theme>;
 };
 
 export const SegmentedControl = <Value extends string>({
@@ -17,17 +19,19 @@ export const SegmentedControl = <Value extends string>({
   options,
   onChange,
   className,
+  sx = [],
 }: SegmentedControlProps<Value>) => {
   const buttons = options.map((option) => (
-    <button
+    <Box
+      component="button"
       key={option.value}
       type="button"
-      className={clsx(value === option.value && "active")}
       aria-pressed={value === option.value}
       onClick={() => onChange(option.value)}
+      sx={[segmentedButtonSx, { flex: 1 }]}
     >
       {option.label}
-    </button>
+    </Box>
   ));
 
   return (
@@ -35,7 +39,17 @@ export const SegmentedControl = <Value extends string>({
       direction="row"
       role="group"
       aria-label={label}
-      className={clsx("filter-bar", className)}
+      className={className}
+      sx={[
+        controlHeightSx,
+        {
+          gap: "5px",
+          borderRadius: "28px",
+          background: "var(--mui-app-colors-inputSurface)",
+          overflowX: "auto",
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     >
       {buttons}
     </Stack>

@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 import { getGameGridSize } from "../utils/gameGridLayout";
-import "./styles/GameGrid.css";
+
 import type { Game } from "../data/types";
 import { GameCard } from "./GameCard";
 import { EmptyState } from "./EmptyState";
@@ -70,6 +70,7 @@ export const GameGrid = ({
       spacing={1.5}
       className="game-grid"
       aria-label="Football games"
+      sx={{ container: "game-grid / inline-size", alignItems: "flex-start" }}
     >
       {cards}
     </Grid>

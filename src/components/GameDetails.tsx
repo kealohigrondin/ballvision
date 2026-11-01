@@ -1,5 +1,6 @@
+import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import "./styles/GameDetails.css";
+
 import { ChevronDown, MapPin } from "lucide-react";
 import type { Game } from "../data/types";
 import { PeriodScores } from "./PeriodScores";
@@ -19,7 +20,35 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
     hasTimeouts;
 
   return (
-    <details className="game-details">
+    <Box
+      component="details"
+      className="game-details"
+      sx={{
+        background: "var(--mui-app-colors-detailsSurface)",
+        borderTop: "1px solid var(--mui-app-colors-detailsBorder)",
+        "& summary": {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "10px",
+          padding: "11px 19px",
+          listStyle: "none",
+          cursor: "pointer",
+          color: "var(--mui-app-colors-detailsLabel)",
+        },
+        "& summary::-webkit-details-marker": { display: "none" },
+        "&[open] summary svg": { transform: "rotate(180deg)" },
+        "& p": {
+          padding: "0 19px",
+          color: "var(--mui-app-colors-detailsText)",
+        },
+        "& strong": {
+          display: "block",
+          color: "var(--mui-palette-text-primary)",
+          marginBottom: "6px",
+        },
+      }}
+    >
       <summary>
         Game details <ChevronDown size={14} />
       </summary>
@@ -37,12 +66,22 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
         </p>
       )}
       {game.venue && (
-        <Stack direction="row" className="venue">
+        <Stack
+          direction="row"
+          className="venue"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            padding: "0 19px 16px",
+            color: "var(--mui-app-colors-venue)",
+          }}
+        >
           <MapPin size={13} />
           {game.venue}
         </Stack>
       )}
       {!hasDetails && <p>Additional details are not available yet.</p>}
-    </details>
+    </Box>
   );
 };

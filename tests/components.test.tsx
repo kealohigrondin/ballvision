@@ -65,7 +65,7 @@ describe("scoreboard presentation", () => {
       name: "Away at Home scores by period",
     });
     const headings = within(scoreboard)
-      .getAllByRole("columnheader")
+      .getAllByRole("columnheader", { hidden: true })
       .map((cell) => cell.textContent);
     expect(headings).toEqual(["OVERTIME", "1", "2", "3", "4", "1OT", "T"]);
     const rows = within(scoreboard).getAllByRole("row");

@@ -65,16 +65,6 @@
   margin: 0;
   flex: 1;
 }
-.footer-brand {
-  font-size: var(--font-size-10px);
-  letter-spacing: 1px;
-  font-weight: var(--font-weight-750);
-  color: var(--color-footer-brand);
-}
-.footer-brand span {
-  font-weight: var(--font-weight-400);
-  color: var(--color-footer-muted);
-}
 @media (min-width: 1450px) {
   .game-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -131,20 +121,49 @@
   }
 }
 
-.dashboard-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
-.dashboard-layout.panel-open { grid-template-columns: minmax(0, 1fr) 320px; }
-.dashboard-main { min-width: 0; }
-.panel-open .game-grid, .panel-open .loading-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.panel-open .toolbar { flex-wrap: wrap; }
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.dashboard-layout.panel-open {
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+.dashboard-main {
+  min-width: 0;
+}
+.panel-open .game-grid,
+.panel-open .loading-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.panel-open .toolbar {
+  flex-wrap: wrap;
+}
 @media (max-width: 1200px) {
-  .dashboard-layout.panel-open { grid-template-columns: minmax(0, 1fr) 290px; }
-  .panel-open .game-grid, .panel-open .loading-grid { grid-template-columns: minmax(0, 1fr); }
+  .dashboard-layout.panel-open {
+    grid-template-columns: minmax(0, 1fr) 290px;
+  }
+  .panel-open .game-grid,
+  .panel-open .loading-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 @media (max-width: 900px) {
-  .dashboard-layout.panel-open { grid-template-columns: minmax(0, 1fr); }
-  .panel-open .league-panel { grid-row: 1; }
-  .panel-open .game-grid, .panel-open .loading-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-layout.panel-open {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .panel-open .league-panel {
+    grid-row: 1;
+  }
+  .panel-open .game-grid,
+  .panel-open .loading-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 @media (max-width: 510px) {
-  .panel-open .game-grid, .panel-open .loading-grid { grid-template-columns: minmax(0, 1fr); }
+  .panel-open .game-grid,
+  .panel-open .loading-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

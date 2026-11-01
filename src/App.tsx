@@ -1,4 +1,4 @@
-import './App.css';
+import "./App.css";
 import { useState } from "react";
 import { espnSource, espnLeagueSource } from "./data/espn";
 import type { Division, LeagueSource, ScoreboardSource } from "./data/types";
@@ -13,8 +13,15 @@ import { Toolbar, type Filter } from "./components/Toolbar";
 import { localDate } from "./utils/date";
 import MastHead from "./components/MastHead";
 import { LeaguePanel } from "./components/LeaguePanel";
+import { Footer } from "./components/Footer";
 
-const App = ({ source = espnSource, leagueSource = espnLeagueSource }: { source?: ScoreboardSource; leagueSource?: LeagueSource }) => {
+const App = ({
+  source = espnSource,
+  leagueSource = espnLeagueSource,
+}: {
+  source?: ScoreboardSource;
+  leagueSource?: LeagueSource;
+}) => {
   const [panelOpen, setPanelOpen] = useState(true);
   const [date, setDate] = useState(localDate);
   const [division, setDivision] = useState<Division>("fbs");
@@ -51,9 +58,7 @@ const App = ({ source = espnSource, leagueSource = espnLeagueSource }: { source?
     month: "long",
     day: "numeric",
   }).format(day);
-  const errorBanner = error ? (
-    <ErrorBanner message={error} loading={loading} onRetry={refresh} />
-  ) : null;
+
   const resultsLabel =
     filter === "pinned"
       ? "YOUR WATCHLIST"
@@ -63,18 +68,21 @@ const App = ({ source = espnSource, leagueSource = espnLeagueSource }: { source?
   const resultUnit = visible.length === 1 ? "game" : "games";
   const searchLabel = search ? ` matching “${search}”` : "";
   const resultCount = `${visible.length} ${resultUnit}${searchLabel}`;
+
   const emptyTitle =
     error && !updatedAt
       ? "The feed is taking a timeout."
       : filter === "pinned"
         ? "Your watchlist starts here."
         : "No games on this field.";
+
   const emptyDetail =
     error && !updatedAt
       ? "Try refreshing to reconnect to ESPN."
       : filter === "pinned"
         ? "Use the star on a game to pin it to the top of your scoreboard."
         : "Try another date, division, or filter.";
+
   const cards = visible.map((game) => (
     <GameCard
       key={game.id}
@@ -83,6 +91,7 @@ const App = ({ source = espnSource, leagueSource = espnLeagueSource }: { source?
       onFavorite={() => favorites.toggle(game.id)}
     />
   ));
+
   let content = <EmptyState title={emptyTitle} detail={emptyDetail} />;
 
   if (loading && !updatedAt) content = <LoadingGrid />;
@@ -93,62 +102,66 @@ const App = ({ source = espnSource, leagueSource = espnLeagueSource }: { source?
       </section>
     );
 
-  const panel = panelOpen ? <LeaguePanel source={leagueSource} division={division} /> : null;
-  const layoutClass = panelOpen ? "dashboard-layout panel-open" : "dashboard-layout";
+  const layoutClass = panelOpen
+    ? "dashboard-layout panel-open"
+    : "dashboard-layout";
 
   return (
     <div className="app-shell">
-      <MastHead division={division} panelOpen={panelOpen} onTogglePanel={() => setPanelOpen(open => !open)} />
+      <MastHead
+        division={division}
+        panelOpen={panelOpen}
+        onTogglePanel={() => setPanelOpen((open) => !open)}
+      />
       <main>
         <div className={layoutClass}>
-        <div className="dashboard-main">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">THE SCOREBOARD</span>
-            <h2>
-              {dayLabel}
-              <span className="year"> {day.getFullYear()}</span>
-            </h2>
+          <div className="dashboard-main">
+            <div className="section-heading">
+              <div>
+                <span className="eyebrow">THE SCOREBOARD</span>
+                <h2>
+                  {dayLabel}
+                  <span className="year"> {day.getFullYear()}</span>
+                </h2>
+              </div>
+              <SyncControls
+                loading={loading}
+                paused={paused}
+                error={error}
+                updatedAt={updatedAt}
+                onTogglePause={() => setPaused((p) => !p)}
+                onRefresh={refresh}
+              />
+            </div>
+            <Toolbar
+              date={date}
+              onDate={setDate}
+              division={division}
+              onDivision={setDivision}
+              search={search}
+              onSearch={setSearch}
+              filter={filter}
+              onFilter={setFilter}
+              counts={counts}
+            />
+            {error && (
+              <ErrorBanner
+                message={error}
+                loading={loading}
+                onRetry={refresh}
+              />
+            )}
+            <div className="results-heading">
+              <span>{resultsLabel}</span>
+              <span>{resultCount}</span>
+            </div>
+            {content}
           </div>
-          <SyncControls
-            loading={loading}
-            paused={paused}
-            error={error}
-            updatedAt={updatedAt}
-            onTogglePause={() => setPaused((p) => !p)}
-            onRefresh={refresh}
-          />
+          {panelOpen && (
+            <LeaguePanel source={leagueSource} division={division} />
+          )}
         </div>
-        <Toolbar
-          date={date}
-          onDate={setDate}
-          division={division}
-          onDivision={setDivision}
-          search={search}
-          onSearch={setSearch}
-          filter={filter}
-          onFilter={setFilter}
-          counts={counts}
-        />
-        {errorBanner}
-        <div className="results-heading">
-          <span>{resultsLabel}</span>
-          <span>{resultCount}</span>
-        </div>
-        {content}
-        </div>
-        {panel}
-        </div>
-        <footer>
-          <span className="footer-brand">
-            BALL<span>VISION</span>
-          </span>
-          <p>
-            Data from ESPN · Refreshes every 20s · Clocks reflect the latest
-            feed update
-          </p>
-          <span>Independent project. Not affiliated with ESPN.</span>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

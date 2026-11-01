@@ -124,10 +124,12 @@ export const parseScoreboard = (payload: unknown): Game[] => {
 export const espnSource: ScoreboardSource = {
   load: async (query, signal) => {
     const url = new URL(
-      "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
+      `https://site.api.espn.com/apis/site/v2/sports/football/${query.division === "nfl" ? "nfl" : "college-football"}/scoreboard`,
     );
     url.search = new URLSearchParams({
-      groups: query.division === "fbs" ? "80" : "81",
+      ...(query.division !== "nfl" && {
+        groups: query.division === "fbs" ? "80" : "81",
+      }),
       // Larger limits fall back to ESPN's default 25-game response.
       limit: "100",
       dates: query.date.replaceAll("-", ""),
@@ -254,21 +256,23 @@ const loadLeagueJson = async (
 export const espnLeagueSource: LeagueSource = {
   loadStandings: async (division, signal) => {
     const url = new URL(
-      "https://site.web.api.espn.com/apis/v2/sports/football/college-football/standings",
+      `https://site.web.api.espn.com/apis/v2/sports/football/${division === "nfl" ? "nfl" : "college-football"}/standings`,
     );
     url.search = new URLSearchParams({
-      group: division === "fbs" ? "80" : "81",
-      level: "2",
+      ...(division !== "nfl" && { group: division === "fbs" ? "80" : "81" }),
+      level: division === "nfl" ? "3" : "2",
       type: "0",
     }).toString();
     return parseStandings(await loadLeagueJson(url.toString(), signal));
   },
-  loadRankings: async (division, signal) =>
-    parseRankings(
+  loadRankings: async (division, signal) => {
+    if (division === "nfl") return [];
+    return parseRankings(
       await loadLeagueJson(
         "https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings",
         signal,
       ),
       division,
-    ),
+    );
+  },
 };

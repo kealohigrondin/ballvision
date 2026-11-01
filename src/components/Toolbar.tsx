@@ -35,7 +35,7 @@ export const Toolbar = ({
     next.setDate(next.getDate() + days);
     onDate(localDate(next));
   };
-  const divisionButtons = (["fbs", "fcs"] as const).map((d) => {
+  const divisionButtons = (["fbs", "fcs", "nfl"] as const).map((d) => {
     return (
       <button
         key={d}

@@ -4,6 +4,7 @@
 .league-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 .league-table caption {
   text-align: left;
@@ -47,4 +48,20 @@
 .league-team .league-rank {
   flex-shrink: 0;
   min-width: 18px;
+}
+
+.league-table th:nth-child(2),
+.league-table td:nth-child(2) {
+  width: 60px;
+}
+.league-table th:nth-child(3),
+.league-table td:nth-child(3) {
+  width: 76px;
+}
+.league-team {
+  min-width: 0;
+}
+.league-team > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }

@@ -80,8 +80,8 @@ const App = ({
   const columns = panelOpen
     ? {
         xs: "minmax(0, 1fr)",
-        md: "minmax(0, 1fr) 285px",
-        lg: "minmax(0, 1fr) 310px",
+        md: "minmax(0, 1fr) 360px",
+        lg: "minmax(0, 1fr) 380px",
       }
     : "minmax(0, 1fr)";
 

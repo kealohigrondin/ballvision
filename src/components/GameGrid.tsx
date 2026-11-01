@@ -69,7 +69,7 @@ export const GameGrid = ({
       component="section"
       spacing={1.5}
       className="game-grid"
-      aria-label="College football games"
+      aria-label="Football games"
     >
       {cards}
     </Grid>

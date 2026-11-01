@@ -1,6 +1,6 @@
 # BALLVISION
 
-Your live game companion. A React + TypeScript college football dashboard. Runs in browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
+Your live game companion. A React + TypeScript football dashboard for FBS, FCS, and the NFL. Runs in browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
 
 ## Run locally
 
@@ -38,7 +38,7 @@ npm run preview
 - Component styles live in `src/components/styles/` (`GameCard.css`, etc.) and are imported by the owning component. `App.css` owns page layout; `theme.ts` customizes only the MUI palette and Montserrat font family. Components use standard MUI typography variants, shape settings, and breakpoints. `theme.css` beside `App.css` holds app-specific colors and aliases to MUI palette variables; `styles.css` contains element defaults, accessibility focus defaults, and reduced-motion defaults.
 - `src/App.tsx`: composes features and owns view filters; receives a replaceable source.
 
-Polling runs 20 seconds after each completed request; requests time out after 15 seconds. Hidden tabs stop scheduled polling and refresh on return. A failed refresh retains the last successful snapshot with a warning. Changing dates/divisions clears the prior slate and cancels obsolete requests. Game clocks display the reported feed value; they are not extrapolated. All kickoff times use the browser's local timezone. FBS/FCS data availability follows ESPN; the app cannot guarantee coverage outside the selected feed.
+Polling runs 20 seconds after each completed request; requests time out after 15 seconds. Hidden tabs stop scheduled polling and refresh on return. A failed refresh retains the last successful snapshot with a warning. Changing dates/divisions clears the prior slate and cancels obsolete requests. Game clocks display the reported feed value; they are not extrapolated. All kickoff times use the browser's local timezone. FBS/FCS/NFL data availability follows ESPN; the app cannot guarantee coverage outside the selected feed.
 
 Pinned game IDs stay on this browser. There is no account, tracking, database, or continuous animation. Details expand natively and logos load lazily.
 
@@ -46,7 +46,7 @@ Tests cover upstream parsing, postponed/incomplete games, update failures, cance
 
 ## League panel
 
-Use the **League** button in the masthead to open or close the right-side panel. Choose **Conference standings** or **Top 25**, then choose a conference or poll. The panel follows the FBS/FCS selection; league records and rankings are current-season data, independent of the scoreboard date. On smaller screens it stacks above the scoreboard.
+Use the panel button in the scores header to open or close the right-side panel. Choose **Conference standings** or **Top 25**, then choose a conference or poll. The panel follows the FBS/FCS/NFL selection. NFL shows division standings without college polls; league records and rankings are current-season data, independent of the scoreboard date. On smaller screens it stacks above the scoreboard.
 
 `LeagueSource` is an injectable contract separate from `ScoreboardSource`; the ESPN implementation and response adapters remain in `src/data/espn.ts`. `useLeagueTables` owns cancellation, 15-second timeouts, retries, and five-minute refreshes while visible. Closing the panel stops its requests. `LeaguePanel` and `LeagueTable` each have a dedicated stylesheet under `src/components/styles/`, using `theme.css` tokens.
 

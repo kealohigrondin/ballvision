@@ -1,4 +1,4 @@
-export type Division = "fbs" | "fcs";
+export type Division = "fbs" | "fcs" | "nfl";
 export type GameState = "live" | "upcoming" | "final" | "other";
 export interface Team {
   id: string;

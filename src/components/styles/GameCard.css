@@ -14,7 +14,7 @@
 }
 .card-scoreboard {
   table-layout: fixed;
-  min-width: 300px;
+  min-width: 0;
 }
 .card-scoreboard .MuiTableCell-root {
   border-bottom: 0;
@@ -90,4 +90,25 @@
 }
 .game-card .favorite.selected {
   color: var(--color-text);
+}
+
+/* Quarter columns depend on the grid's usable width, including the side panel. */
+.card-scoreboard .period-heading,
+.card-scoreboard .team-period {
+  display: none;
+}
+
+.card-scoreboard .total-heading {
+  visibility: hidden;
+}
+
+/* MUI's default lg breakpoint. */
+@container game-grid (min-width: 1200px) {
+  .card-scoreboard .period-heading,
+  .card-scoreboard .team-period {
+    display: table-cell;
+  }
+  .card-scoreboard .total-heading {
+    visibility: visible;
+  }
 }

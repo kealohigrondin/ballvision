@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { espnSource, parseScoreboard } from "../src/data/espn";
+import {
+  espnSource,
+  espnLeagueSource,
+  parseScoreboard,
+} from "../src/data/espn";
 const competitor = (id: string, homeAway: string) => ({
   id,
   homeAway,
@@ -29,6 +33,36 @@ const event = (id: string, state: string, extra = {}) => ({
 });
 describe("ESPN adapter", () => {
   afterEach(() => vi.unstubAllGlobals());
+
+  it("uses NFL feeds without college group filters or polls", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ events: [event("nfl", "pre")] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ children: [] }),
+      });
+    vi.stubGlobal("fetch", fetchMock);
+    const signal = new AbortController().signal;
+    const games = await espnSource.load(
+      { date: "2026-11-01", division: "nfl" },
+      signal,
+    );
+    const scoreUrl = fetchMock.mock.calls[0][0] as URL;
+    expect(scoreUrl.pathname).toContain("/nfl/scoreboard");
+    expect(scoreUrl.searchParams.has("groups")).toBe(false);
+    expect(games[0].state).toBe("upcoming");
+    await espnLeagueSource.loadStandings("nfl", signal);
+    const standingsUrl = new URL(fetchMock.mock.calls[1][0]);
+    expect(standingsUrl.pathname).toContain("/nfl/standings");
+    expect(standingsUrl.searchParams.get("level")).toBe("3");
+    expect(standingsUrl.searchParams.has("group")).toBe(false);
+    expect(await espnLeagueSource.loadRankings("nfl", signal)).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
 
   it("requests the full daily slate using ESPN's working 100-game limit", async () => {
     const fetchMock = vi.fn().mockResolvedValue({

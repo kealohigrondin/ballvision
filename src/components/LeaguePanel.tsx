@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import "./styles/LeaguePanel.css";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Division, LeagueSource } from "../data/types";
 import { useLeagueTables, type LeagueView } from "../hooks/useLeagueTables";
 import { LeagueTable } from "./LeagueTable";
@@ -11,7 +11,8 @@ import { LeagueTable } from "./LeagueTable";
 type LeaguePanelProps = { source: LeagueSource; division: Division };
 
 export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
-  const [view, setView] = useState<LeagueView>("standings");
+  const [selectedView, setView] = useState<LeagueView>("standings");
+  const view = division === "nfl" ? "standings" : selectedView;
   const [selectedId, setSelectedId] = useState("");
   const { tables, loading, error, refresh } = useLeagueTables(
     source,
@@ -24,7 +25,10 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
       {table.title}
     </option>
   ));
-  const secondaryLabel = view === "standings" ? "Conference" : "Poll";
+  const secondaryLabel = useMemo(() => {
+    if (division === "nfl") return "Division";
+    return view === "standings" ? "Conference" : "Poll";
+  }, [division, view]);
   const secondary = tables.length ? (
     <label className="league-select-label">
       {secondaryLabel}
@@ -65,7 +69,10 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
     );
   else if (selected?.rows.length)
     content = <LeagueTable table={selected} view={view} />;
-  const label = view === "rankings" ? "Top 25" : "Conference standings";
+  const label = useMemo(() => {
+    if (division === "nfl") return "NFL standings";
+    return view === "rankings" ? "Top 25" : "Conference standings";
+  }, [division, view]);
 
   return (
     <Paper
@@ -76,19 +83,21 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
       id="league-panel"
       aria-label="League information"
     >
-      <SegmentedControl<LeagueView>
-        label="League view"
-        className="league-view-switch"
-        value={view}
-        options={[
-          { value: "standings", label: "Standings" },
-          { value: "rankings", label: "Top 25" },
-        ]}
-        onChange={(nextView) => {
-          setView(nextView);
-          setSelectedId("");
-        }}
-      />
+      {division !== "nfl" && (
+        <SegmentedControl<LeagueView>
+          label="League view"
+          className="league-view-switch"
+          value={view}
+          options={[
+            { value: "standings", label: "Standings" },
+            { value: "rankings", label: "Top 25" },
+          ]}
+          onChange={(nextView) => {
+            setView(nextView);
+            setSelectedId("");
+          }}
+        />
+      )}
       {secondary}
       {warning}
       {content}

@@ -122,6 +122,22 @@ describe("league data adapters", () => {
 });
 
 describe("league panel", () => {
+  it("uses NFL standings when switching from a college poll", async () => {
+    const provider = source();
+    const { rerender } = render(
+      <LeaguePanel source={provider} division="fbs" />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Top 25" }));
+    await screen.findByRole("table", { name: /AP Top 25/ });
+    rerender(<LeaguePanel source={provider} division="nfl" />);
+    await screen.findByRole("table", { name: /SEC/ });
+    expect(screen.queryByRole("button", { name: "Top 25" })).toBeNull();
+    expect(screen.getByLabelText("Division")).toBeTruthy();
+    expect(provider.loadStandings).toHaveBeenCalledWith(
+      "nfl",
+      expect.any(AbortSignal),
+    );
+  });
   it("opens and closes using the masthead button", async () => {
     const scores: ScoreboardSource = { load: vi.fn().mockResolvedValue([]) };
     render(

@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import clsx from "clsx";
 import "./styles/SyncControls.css";
@@ -52,10 +53,15 @@ export const SyncControls = ({
 
   return (
     <Stack direction="row" className="sync-controls">
-      <span className={clsx("sync-status", error && "has-error")} role="status">
+      <Typography
+        variant="caption"
+        component="span"
+        className={clsx("sync-status", error && "has-error")}
+        role="status"
+      >
         {indicator}
         {status}
-      </span>
+      </Typography>
       <button
         className="icon-button"
         title={pauseLabel}

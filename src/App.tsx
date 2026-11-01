@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
@@ -116,11 +117,17 @@ const App = ({
           <Stack className="dashboard-main" sx={{ minWidth: 0 }}>
             <Stack direction="row" className="section-heading">
               <div>
-                <span className="eyebrow">College Football</span>
-                <h2>
+                <Typography
+                  variant="overline"
+                  component="span"
+                  className="eyebrow"
+                >
+                  College Football
+                </Typography>
+                <Typography variant="h4" component="h2">
                   {dayLabel}
                   <span className="year"> {day.getFullYear()}</span>
-                </h2>
+                </Typography>
               </div>
               <SyncControls
                 loading={loading}

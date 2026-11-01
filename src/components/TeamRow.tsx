@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import "./styles/TeamRow.css";
 import type { Team } from "../data/types";
@@ -9,11 +10,21 @@ type TeamRowProps = {
   scheduled: boolean;
 };
 export const TeamRow = ({ team, possession, scheduled }: TeamRowProps) => {
-  const rank = team.rank ? <span className="rank">{team.rank}</span> : null;
+  const rank = team.rank ? (
+    <Typography variant="caption" component="span" className="rank">
+      {team.rank}
+    </Typography>
+  ) : null;
   const possessionIndicator = possession ? (
-    <span className="possession" title="Possession" aria-label="Possession">
+    <Typography
+      variant="caption"
+      component="span"
+      className="possession"
+      title="Possession"
+      aria-label="Possession"
+    >
       ◆
-    </span>
+    </Typography>
   ) : null;
   const score = scheduled ? "—" : team.score;
   const record = team.record || team.abbreviation;
@@ -22,14 +33,18 @@ export const TeamRow = ({ team, possession, scheduled }: TeamRowProps) => {
     <Box className="team-row">
       <TeamLogo team={team} />
       <Box className="team-info">
-        <Box className="team-name">
+        <Typography variant="body2" component="div" className="team-name">
           {rank}
           {team.name}
           {possessionIndicator}
-        </Box>
-        <span className="record">{record}</span>
+        </Typography>
+        <Typography variant="caption" component="span" className="record">
+          {record}
+        </Typography>
       </Box>
-      <span className="score">{score}</span>
+      <Typography variant="h3" component="span" className="score">
+        {score}
+      </Typography>
     </Box>
   );
 };

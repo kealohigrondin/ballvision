@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import "./styles/MastHead.css";
@@ -18,16 +19,25 @@ const MastHead = ({ division, panelOpen, onTogglePanel }: MastHeadProps) => {
   const panelLabel = panelOpen ? "Close league panel" : "Open league panel";
   return (
     <Stack component="header" direction="row" className="masthead">
-      <a className="brand" href="./" aria-label="BALLVISION home">
+      <Typography
+        variant="h5"
+        component="a"
+        className="brand"
+        href="./"
+        aria-label="BALLVISION home"
+      >
         <Box component="span" className="brand-mark">
           <Radio size={22} />
         </Box>
-        BALL<span className="brand-light">VISION</span>
-      </a>
+        BALL
+        <Typography variant="inherit" component="span" className="brand-light">
+          VISION
+        </Typography>
+      </Typography>
       <Stack direction="row" className="masthead-actions">
-        <span className="edition">
+        <Typography variant="overline" component="span" className="edition">
           COLLEGE FOOTBALL / {division.toUpperCase()}
-        </span>
+        </Typography>
         <button
           className="league-toggle"
           type="button"

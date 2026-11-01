@@ -10,7 +10,6 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  letter-spacing: -1.5px;
 }
 .brand-mark {
   display: grid;
@@ -34,7 +33,6 @@
 }
 .edition {
   color: var(--color-muted);
-  letter-spacing: 1px;
 }
 .league-toggle {
   display: flex;
@@ -52,17 +50,14 @@
 .league-toggle[aria-expanded="true"] {
   background: var(--color-division-selected-surface);
 }
-@media (max-width: 1100px) {
+@media (max-width: 1199.95px) {
   .edition {
     display: none;
   }
 }
-@media (max-width: 640px) {
+@media (max-width: 599.95px) {
   .masthead {
     min-height: 90px;
-  }
-  .brand {
-    letter-spacing: -1px;
   }
   .brand-mark {
     width: 25px;

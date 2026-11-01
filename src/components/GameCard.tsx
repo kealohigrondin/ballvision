@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
@@ -31,7 +32,9 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   const indicator = isLive ? <span className="live-dot" /> : null;
   const time = isScheduled ? kickoff(game.start) : gameTime(game);
   const redZoneLabel = isInRedZone ? (
-    <span className="red-zone-label">RED ZONE · </span>
+    <Typography variant="caption" component="span" className="red-zone-label">
+      RED ZONE ·{" "}
+    </Typography>
   ) : null;
   const getSituation = () => {
     if (isLive) {
@@ -44,10 +47,10 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   };
   const situation = getSituation();
   const broadcast = game.broadcast ? (
-    <span className="broadcast">
+    <Typography variant="caption" component="span" className="broadcast">
       <Tv size={12} />
       {game.broadcast}
-    </span>
+    </Typography>
   ) : null;
 
   return (
@@ -67,10 +70,14 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       style={teamColors}
     >
       <Stack direction="row" className="card-header">
-        <span className={clsx("game-state", game.state)}>
+        <Typography
+          variant="caption"
+          component="span"
+          className={clsx("game-state", game.state)}
+        >
           {indicator}
           {time}
-        </span>
+        </Typography>
         <button
           className={clsx("icon-button", "favorite", favorite && "selected")}
           onClick={onFavorite}

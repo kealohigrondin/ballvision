@@ -12,8 +12,4 @@
 .empty-state h2 {
   color: var(--color-empty-heading);
   margin: 18px 0 8px;
-  letter-spacing: -0.5px;
-}
-.empty-state p {
-  line-height: 1.6;
 }

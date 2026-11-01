@@ -3,7 +3,6 @@
 }
 .eyebrow {
   color: var(--color-muted);
-  letter-spacing: 0.2px;
 }
 .section-heading {
   display: flex;
@@ -13,8 +12,6 @@
   padding: 32px 0 24px;
 }
 .section-heading h2 {
-  letter-spacing: -1.2px;
-  line-height: 1.15;
   margin: 6px 0 0;
 }
 .year {
@@ -27,10 +24,6 @@
   gap: 12px;
   padding: 26px 3px 12px;
   color: var(--color-muted);
-  letter-spacing: 0.7px;
-}
-.results-heading span:last-child {
-  letter-spacing: 0;
 }
 .panel-open .toolbar {
   flex-wrap: wrap;
@@ -48,26 +41,21 @@
 .app-shell footer p {
   flex: 1;
   margin: 0;
-  line-height: 1.6;
 }
 .footer-brand {
   color: var(--color-footer-brand);
-  letter-spacing: -0.3px;
 }
-@media (max-width: 900px) {
+@media (max-width: 899.95px) {
   .panel-open .league-panel {
     grid-row: 1;
   }
 }
-@media (max-width: 640px) {
+@media (max-width: 599.95px) {
   .section-heading {
     align-items: start;
     flex-direction: column;
     padding: 24px 0 20px;
     gap: 14px;
-  }
-  .section-heading h2 {
-    letter-spacing: -0.8px;
   }
   .year {
     display: none;

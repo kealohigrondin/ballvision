@@ -18,7 +18,6 @@
   width: 100%;
 }
 .team-name {
-  letter-spacing: -0.15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -40,8 +39,6 @@
   grid-column: 2;
   grid-row: 1;
   justify-self: center;
-  line-height: 1;
-  letter-spacing: -2.5px;
 }
 .matchup > .team-row:last-child .team-logo {
   grid-column: 2;

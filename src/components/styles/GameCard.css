@@ -69,7 +69,6 @@
   gap: 6px 12px;
   padding: 0 16px 14px;
   color: var(--color-situation);
-  line-height: 1.5;
   text-align: center;
 }
 .broadcast {
@@ -81,7 +80,7 @@
 .red-zone-label {
   color: var(--color-red-zone);
 }
-@media (max-width: 640px) {
+@media (max-width: 599.95px) {
   .matchup {
     padding: 12px 20px 16px;
     gap: 24px;

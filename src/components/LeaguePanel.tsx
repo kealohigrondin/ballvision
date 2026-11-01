@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import "./styles/LeaguePanel.css";
@@ -43,15 +44,20 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
     </Box>
   ) : null;
   let content = (
-    <p className="league-message">
+    <Typography variant="body2" component="p" className="league-message">
       No league data is available for this division.
-    </p>
+    </Typography>
   );
   if (loading && !selected)
     content = (
-      <p className="league-message" role="status">
+      <Typography
+        variant="body2"
+        component="p"
+        className="league-message"
+        role="status"
+      >
         Loading league data…
-      </p>
+      </Typography>
     );
   else if (selected?.rows.length)
     content = <LeagueTable table={selected} view={view} />;
@@ -66,7 +72,9 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
       id="league-panel"
       aria-label="League information"
     >
-      <h2>Around the League</h2>
+      <Typography variant="h6" component="h2">
+        Around the League
+      </Typography>
       <label className="league-select-label">
         View
         <select
@@ -83,10 +91,10 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
       {secondary}
       {warning}
       {content}
-      <p className="league-note">
+      <Typography variant="caption" component="p" className="league-note">
         {label} · {division.toUpperCase()} · Current season. Updates every 5
         minutes; records may lag live games.
-      </p>
+      </Typography>
     </Paper>
   );
 };

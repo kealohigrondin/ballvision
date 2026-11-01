@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import clsx from "clsx";
 import "./styles/Toolbar.css";
@@ -70,7 +71,9 @@ export const Toolbar = ({
       >
         {indicator}
         {label}
-        <span className="count">{counts[f]}</span>
+        <Typography variant="caption" component="span" className="count">
+          {counts[f]}
+        </Typography>
       </button>
     );
   });

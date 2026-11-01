@@ -21,7 +21,6 @@
 .game-details p {
   padding: 0 19px;
   color: var(--color-details-text);
-  line-height: 1.65;
 }
 .game-details strong {
   display: block;
@@ -34,5 +33,4 @@
   gap: 6px;
   padding: 0 19px 16px;
   color: var(--color-venue);
-  line-height: 1.5;
 }

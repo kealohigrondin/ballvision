@@ -13,7 +13,6 @@
 }
 .league-panel h2 {
   color: var(--color-text);
-  letter-spacing: -0.4px;
   margin: 0 0 22px;
 }
 .league-select-label {
@@ -43,7 +42,6 @@
 .league-message,
 .league-note {
   color: var(--color-muted);
-  line-height: 1.65;
 }
 .league-note {
   margin: 18px 0 0;
@@ -55,7 +53,6 @@
   border-radius: 12px;
   background: var(--color-warning-surface);
   color: var(--color-warning-text);
-  line-height: 1.5;
   margin-bottom: 12px;
 }
 .league-warning button {
@@ -67,7 +64,7 @@
   background: var(--color-transparent);
   color: inherit;
 }
-@media (max-width: 900px) {
+@media (max-width: 899.95px) {
   .league-panel {
     position: static;
     max-height: 440px;

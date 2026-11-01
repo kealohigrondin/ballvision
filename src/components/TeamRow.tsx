@@ -51,7 +51,7 @@ export const TeamRow = ({
           <TeamLogo team={team} />
           <Box className="team-info">
             <Typography variant="body2" component="div" className="team-name">
-              {rank}
+              {rank}&nbsp;
               {team.name}
               {possessionIndicator}
             </Typography>

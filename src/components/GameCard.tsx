@@ -10,7 +10,7 @@ import TableContainer from "@mui/material/TableContainer";
 import clsx from "clsx";
 import "./styles/GameCard.css";
 import { useMemo, type CSSProperties } from "react";
-import { Pin, PinOff, Star, Tv } from "lucide-react";
+import { Star, StarOff, Tv } from "lucide-react";
 import type { Game } from "../data/types";
 import { gameTime, kickoff } from "../utils/gameTime";
 import { GameDetails } from "./GameDetails";
@@ -21,24 +21,21 @@ type GameCardProps = {
   favorite: boolean;
   onFavorite: () => void;
 };
+
 export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   const teamColors = {
     "--team-away": game.away.color,
     "--team-home": game.home.color,
   } as CSSProperties;
+
   const isLive = game.state === "live";
   const awayHasPossession = isLive && game.possession === game.away.id;
   const homeHasPossession = isLive && game.possession === game.home.id;
   const isScheduled = game.state === "upcoming";
   const isInRedZone = game.redZone && isLive;
-  const favoriteLabel = `${favorite ? "Unpin" : "Pin"} ${game.away.name} at ${game.home.name}`;
+  const favoriteLabel = `${favorite ? "Unfavorite" : "Favorite"} ${game.away.name} at ${game.home.name}`;
   const indicator = isLive ? <span className="live-dot" /> : null;
   const time = isScheduled ? kickoff(game.start) : gameTime(game);
-  const redZoneLabel = isInRedZone ? (
-    <Typography variant="caption" component="span" className="red-zone-label">
-      RED ZONE ·{" "}
-    </Typography>
-  ) : null;
 
   const situation = useMemo(() => {
     if (isLive) {
@@ -148,7 +145,15 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
             </Typography>
           )}
           <Typography variant="caption" component="span">
-            {redZoneLabel}
+            {isInRedZone && (
+              <Typography
+                variant="caption"
+                component="span"
+                className="red-zone-label"
+              >
+                RED ZONE ·&nbsp;
+              </Typography>
+            )}
             {situation}
           </Typography>
         </Stack>
@@ -160,9 +165,9 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
           aria-pressed={favorite}
         >
           {favorite ? (
-            <Pin size={16} fill="currentColor" />
+            <Star size={16} fill="currentColor" />
           ) : (
-            <PinOff size={16} fill="currentColor" />
+            <StarOff size={16} fill="currentColor" />
           )}
         </button>
       </Stack>

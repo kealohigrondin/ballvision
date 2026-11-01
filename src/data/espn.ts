@@ -45,6 +45,22 @@ const team = (raw: Json): Team => {
     ),
   };
 };
+const gameSituation = (situation: Json, competitors: Json[]): string => {
+  const downDistance =
+    str(situation.downDistanceText) || str(situation.shortDownDistanceText);
+  if (downDistance) return downDistance;
+
+  const lastPlay = obj(situation.lastPlay);
+  const playType = str(obj(lastPlay.type).text);
+  if (!playType) return "";
+
+  const scoringTeam = competitors.find(
+    (competitor) => str(competitor.id) === str(obj(lastPlay.team).id),
+  );
+  const abbreviation = str(obj(scoringTeam?.team).abbreviation);
+  return abbreviation ? `${abbreviation} - ${playType}` : playType;
+};
+
 export const parseScoreboard = (payload: unknown): Game[] => {
   const root = obj(payload);
   if (!Array.isArray(root.events)) throw new Error("Unexpected ESPN response.");
@@ -90,7 +106,7 @@ export const parseScoreboard = (payload: unknown): Game[] => {
         .join(" / "),
       venue: str(obj(c.venue).fullName),
       possession: str(s.possession),
-      situation: str(s.downDistanceText, str(s.shortDownDistanceText)),
+      situation: gameSituation(s, teams),
       lastPlay: str(obj(s.lastPlay).text),
       redZone: s.isRedZone === true,
       homeTimeouts: number(s.homeTimeouts),

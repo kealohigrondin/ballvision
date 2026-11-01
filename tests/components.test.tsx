@@ -91,7 +91,9 @@ describe("scoreboard presentation", () => {
     expect(
       screen.getByRole("table", { name: "Score by period", hidden: true }),
     ).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Pin Away at Home" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Favorite Away at Home" }),
+    );
     expect(onFavorite).toHaveBeenCalledOnce();
   });
   it("omits unavailable optional details and live indicators for scheduled games", () => {

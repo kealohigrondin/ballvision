@@ -63,6 +63,29 @@ describe("ESPN adapter", () => {
     expect(g.home.rank).toBeUndefined();
     expect(g.home.quarters).toEqual(["7"]);
   });
+  it.each(["Extra Point Good", "Field Goal Good"])(
+    "shows the team and %s when down-and-distance is unavailable",
+    (playType) => {
+      const scoringEvent = event("scoring", "in");
+      const competition = {
+        ...scoringEvent.competitions[0],
+        situation: {
+          downDistanceText: "",
+          lastPlay: {
+            type: { text: playType },
+            team: { id: "HOME" },
+            text: "Kick is good.",
+          },
+        },
+      };
+      const [game] = parseScoreboard({
+        events: [{ ...scoringEvent, competitions: [competition] }],
+      });
+      expect(game.situation).toBe(`HOME - ${playType}`);
+      expect(game.lastPlay).toBe("Kick is good.");
+    },
+  );
+
   it("sorts live before scheduled and completed games", () => {
     expect(
       parseScoreboard({

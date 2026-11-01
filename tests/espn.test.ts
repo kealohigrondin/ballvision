@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { parseScoreboard } from "../src/data/espn";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { espnSource, parseScoreboard } from "../src/data/espn";
 const competitor = (id: string, homeAway: string) => ({
   id,
   homeAway,
@@ -28,6 +28,26 @@ const event = (id: string, state: string, extra = {}) => ({
   ],
 });
 describe("ESPN adapter", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("requests the full daily slate using ESPN's working 100-game limit", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [event("scheduled", "pre")] }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const signal = new AbortController().signal;
+    const games = await espnSource.load(
+      { date: "2026-10-31", division: "fbs" },
+      signal,
+    );
+    const [url, options] = fetchMock.mock.calls[0];
+    expect(url.searchParams.get("limit")).toBe("100");
+    expect(url.searchParams.get("dates")).toBe("20261031");
+    expect(url.searchParams.get("groups")).toBe("80");
+    expect(options.signal).toBe(signal);
+    expect(games[0].state).toBe("upcoming");
+  });
   it("normalizes game situation, team orientation, and score by period", () => {
     const [g] = parseScoreboard({ events: [event("1", "in")] });
     expect(g).toMatchObject({

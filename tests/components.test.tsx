@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GameCard } from "../src/components/GameCard";
 import { TeamLogo } from "../src/components/TeamLogo";
@@ -42,6 +48,39 @@ const game: Game = {
 afterEach(cleanup);
 
 describe("scoreboard presentation", () => {
+  it("aligns both teams under shared period and total columns, including overtime", () => {
+    render(
+      <GameCard
+        game={{
+          ...game,
+          period: 5,
+          away: { ...away, quarters: ["0", "7", "0", "0", "3"] },
+          home: { ...home, quarters: ["7", "7", "0", "0", "0"] },
+        }}
+        favorite={false}
+        onFavorite={() => {}}
+      />,
+    );
+    const scoreboard = screen.getByRole("table", {
+      name: "Away at Home scores by period",
+    });
+    const headings = within(scoreboard)
+      .getAllByRole("columnheader")
+      .map((cell) => cell.textContent);
+    expect(headings).toEqual(["OVERTIME", "1", "2", "3", "4", "1OT", "T"]);
+    const rows = within(scoreboard).getAllByRole("row");
+    expect(
+      within(rows[1])
+        .getAllByRole("cell")
+        .map((cell) => cell.textContent),
+    ).toEqual(["0", "7", "0", "0", "3", "7"]);
+    expect(
+      within(rows[2])
+        .getAllByRole("cell")
+        .map((cell) => cell.textContent),
+    ).toEqual(["7", "7", "0", "0", "0", "14"]);
+  });
+
   it("renders live game context, period scores, and pin action", () => {
     const onFavorite = vi.fn();
     render(<GameCard game={game} favorite={false} onFavorite={onFavorite} />);

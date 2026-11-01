@@ -1,11 +1,16 @@
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
 import clsx from "clsx";
 import "./styles/GameCard.css";
-import type { CSSProperties } from "react";
-import { Star, Tv } from "lucide-react";
+import { useMemo, type CSSProperties } from "react";
+import { Pin, PinOff, Star, Tv } from "lucide-react";
 import type { Game } from "../data/types";
 import { gameTime, kickoff } from "../utils/gameTime";
 import { GameDetails } from "./GameDetails";
@@ -26,9 +31,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   const homeHasPossession = isLive && game.possession === game.home.id;
   const isScheduled = game.state === "upcoming";
   const isInRedZone = game.redZone && isLive;
-  const favoriteTitle = favorite ? "Unpin game" : "Pin game";
   const favoriteLabel = `${favorite ? "Unpin" : "Pin"} ${game.away.name} at ${game.home.name}`;
-  const starFill = favorite ? "currentColor" : "none";
   const indicator = isLive ? <span className="live-dot" /> : null;
   const time = isScheduled ? kickoff(game.start) : gameTime(game);
   const redZoneLabel = isInRedZone ? (
@@ -36,7 +39,8 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       RED ZONE ·{" "}
     </Typography>
   ) : null;
-  const getSituation = () => {
+
+  const situation = useMemo(() => {
     if (isLive) {
       return game.situation || "Game in progress";
     }
@@ -44,14 +48,32 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       return "Final score";
     }
     return "Kickoff";
-  };
-  const situation = getSituation();
-  const broadcast = game.broadcast ? (
-    <Typography variant="caption" component="span" className="broadcast">
-      <Tv size={12} />
-      {game.broadcast}
-    </Typography>
-  ) : null;
+  }, [isLive, game.situation, game.state]);
+
+  const periods = Array.from(
+    {
+      length: Math.max(
+        4,
+        game.period,
+        game.home.quarters.length,
+        game.away.quarters.length,
+      ),
+    },
+    (_, index) => index,
+  );
+  const periodHeaders = periods.map((period) => {
+    const label = period < 4 ? period + 1 : `${period - 3}OT`;
+    return (
+      <TableCell
+        component="th"
+        scope="col"
+        className="period-heading"
+        key={period}
+      >
+        {label}
+      </TableCell>
+    );
+  });
 
   return (
     <Paper
@@ -69,43 +91,80 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       )}
       style={teamColors}
     >
-      <Stack direction="row" className="card-header">
-        <Typography
-          variant="caption"
-          component="span"
-          className={clsx("game-state", game.state)}
+      <TableContainer className="card-scoreboard-scroll">
+        <Table
+          className="card-scoreboard"
+          size="small"
+          aria-label={`${game.away.name} at ${game.home.name} scores by period`}
         >
-          {indicator}
-          {time}
-        </Typography>
+          <TableHead>
+            <TableRow>
+              <TableCell
+                component="th"
+                scope="col"
+                className="card-status-cell"
+              >
+                <Typography
+                  variant="caption"
+                  component="span"
+                  className={clsx("game-state", game.state)}
+                >
+                  {indicator}
+                  {time}
+                </Typography>
+              </TableCell>
+              {periodHeaders}
+              <TableCell component="th" scope="col" className="total-heading">
+                T
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TeamRow
+              team={game.away}
+              possession={awayHasPossession}
+              scheduled={isScheduled}
+              periods={periods}
+            />
+            <TeamRow
+              team={game.home}
+              possession={homeHasPossession}
+              scheduled={isScheduled}
+              periods={periods}
+            />
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Stack direction="row" className="card-situation">
+        <Stack className="card-broadcast-info">
+          {game.broadcast && (
+            <Typography
+              variant="caption"
+              component="span"
+              className="broadcast"
+            >
+              <Tv size={12} />
+              {game.broadcast}
+            </Typography>
+          )}
+          <Typography variant="caption" component="span">
+            {redZoneLabel}
+            {situation}
+          </Typography>
+        </Stack>
         <button
           className={clsx("icon-button", "favorite", favorite && "selected")}
           onClick={onFavorite}
-          title={favoriteTitle}
+          title={favorite ? "Unpin game" : "Pin game"}
           aria-label={favoriteLabel}
           aria-pressed={favorite}
         >
-          <Star size={16} fill={starFill} />
+          {favorite ? (
+            <Pin size={16} fill="currentColor" />
+          ) : (
+            <PinOff size={16} fill="currentColor" />
+          )}
         </button>
-      </Stack>
-      <Box className="matchup">
-        <TeamRow
-          team={game.away}
-          possession={awayHasPossession}
-          scheduled={isScheduled}
-        />
-        <TeamRow
-          team={game.home}
-          possession={homeHasPossession}
-          scheduled={isScheduled}
-        />
-      </Box>
-      <Stack direction="row" className="card-situation">
-        <span>
-          {redZoneLabel}
-          {situation}
-        </span>
-        {broadcast}
       </Stack>
       <GameDetails game={game} />
     </Paper>

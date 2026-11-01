@@ -112,7 +112,8 @@ export const espnSource: ScoreboardSource = {
     );
     url.search = new URLSearchParams({
       groups: query.division === "fbs" ? "80" : "81",
-      limit: "1000",
+      // Larger limits fall back to ESPN's default 25-game response.
+      limit: "100",
       dates: query.date.replaceAll("-", ""),
     }).toString();
     const response = await fetch(url, {

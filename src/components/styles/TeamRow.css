@@ -1,21 +1,19 @@
-.team-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.card-scoreboard .team-row > .team-identity-cell {
+  padding: 8px 8px 8px 0;
+  text-align: left;
+}
+.team-identity {
   align-items: center;
-  justify-items: center;
-  gap: 10px 12px;
+  gap: 10px;
   min-width: 0;
 }
 .team-row .team-logo {
-  grid-column: 1;
-  grid-row: 1;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
 }
 .team-info {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  text-align: center;
   min-width: 0;
-  width: 100%;
 }
 .team-name {
   white-space: nowrap;
@@ -28,21 +26,23 @@
 }
 .record {
   color: var(--color-record);
-  margin-top: 3px;
   display: block;
+  margin-top: 2px;
 }
 .possession {
-  color: var(--color-text);
+  color: var(--color-accent);
   margin-left: 5px;
 }
+.card-scoreboard .team-row > .team-period {
+  text-align: center;
+  padding: 8px 2px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+.card-scoreboard .team-row > .team-total {
+  text-align: right;
+  padding: 8px 0 8px 4px;
+}
 .score {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: center;
-}
-.matchup > .team-row:last-child .team-logo {
-  grid-column: 2;
-}
-.matchup > .team-row:last-child .score {
-  grid-column: 1;
+  font-variant-numeric: tabular-nums;
 }

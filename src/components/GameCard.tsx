@@ -34,7 +34,12 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   const isScheduled = game.state === "upcoming";
   const isInRedZone = game.redZone && isLive;
   const favoriteLabel = `${favorite ? "Unfavorite" : "Favorite"} ${game.away.name} at ${game.home.name}`;
-  const indicator = isLive ? <span className="live-dot" /> : null;
+
+  const favoriteIcon = favorite ? (
+    <Star size={16} fill="currentColor" />
+  ) : (
+    <StarOff size={16} fill="currentColor" />
+  );
   const time = isScheduled ? kickoff(game.start) : gameTime(game);
 
   const situation = useMemo(() => {
@@ -106,7 +111,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
                   component="span"
                   className={clsx("game-state", game.state)}
                 >
-                  {indicator}
+                  {isLive && <span className="live-dot" />}
                   {time}
                 </Typography>
               </TableCell>
@@ -164,11 +169,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
           aria-label={favoriteLabel}
           aria-pressed={favorite}
         >
-          {favorite ? (
-            <Star size={16} fill="currentColor" />
-          ) : (
-            <StarOff size={16} fill="currentColor" />
-          )}
+          {favoriteIcon}
         </button>
       </Stack>
       <GameDetails game={game} />

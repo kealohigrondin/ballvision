@@ -56,26 +56,6 @@ const App = ({
           .includes(search.toLowerCase()),
     )
     .sort((a, b) => Number(pinned(b.id)) - Number(pinned(a.id)));
-  const getResultsLabel = () => {
-    if (filter === "pinned") {
-      return "YOUR WATCHLIST";
-    }
-    if (filter === "live") {
-      return "ON THE FIELD";
-    }
-    return "AROUND THE LEAGUE";
-  };
-  const resultsLabel = getResultsLabel();
-  const resultUnit = visible.length === 1 ? "game" : "games";
-  const searchLabel = search ? ` matching “${search}”` : "";
-  const resultCount = `${visible.length} ${resultUnit}${searchLabel}`;
-
-  const errorBanner = error ? (
-    <ErrorBanner message={error} loading={loading} onRetry={refresh} />
-  ) : null;
-  const leaguePanel = panelOpen ? (
-    <LeaguePanel source={leagueSource} division={division} />
-  ) : null;
 
   const columns = panelOpen
     ? {
@@ -123,11 +103,13 @@ const App = ({
               panelOpen={panelOpen}
               onTogglePanel={() => setPanelOpen((open) => !open)}
             />
-            {errorBanner}
-            <Stack direction="row" className="results-heading">
-              <span>{resultsLabel}</span>
-              <span>{resultCount}</span>
-            </Stack>
+            {error && (
+              <ErrorBanner
+                message={error}
+                loading={loading}
+                onRetry={refresh}
+              />
+            )}
             <GameGrid
               games={visible}
               compact={panelOpen}
@@ -139,7 +121,9 @@ const App = ({
               onToggleFavorite={favorites.toggle}
             />
           </Stack>
-          {leaguePanel}
+          {panelOpen && (
+            <LeaguePanel source={leagueSource} division={division} />
+          )}
         </Box>
         <Footer />
       </Box>

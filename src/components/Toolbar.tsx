@@ -51,7 +51,6 @@ export const Toolbar = ({
   const filterOptions = (
     ["all", "live", "upcoming", "final", "pinned"] as const
   ).map((f) => {
-    const indicator = f === "live" ? <span className="live-dot" /> : null;
     const label = {
       all: "All games",
       live: "Live now",
@@ -63,7 +62,7 @@ export const Toolbar = ({
       value: f,
       label: (
         <>
-          {indicator}
+          {f === "live" && <span className="live-dot" />}
           {label}
           <Typography variant="caption" component="span" className="count">
             {counts[f]}

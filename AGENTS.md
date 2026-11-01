@@ -2,7 +2,9 @@
 
 - Use React with strict TypeScript; avoid `any`.
 - prefer const arrow functions over function declarations
-- avoid using conditional rendering beyond one layer (no nested conditions) in the jsx. establish what is going to be rendered prior to returning jsx. classNames and instances where one case isn't rendering anything should be conditionally rendered with `&&`
+- Keep JSX conditional rendering to one layer; do not nest render conditions.
+- For render-or-nothing cases, write the `&&` check directly where the element is rendered in JSX. Do not assign conditional JSX to a `const` and then render that variable. Use boolean conditions (for example, `items.length > 0`) to avoid rendering `0`.
+- Establish two-way or multi-branch render choices before returning JSX. Keep conditional class names directly in `className` using `clsx` and `&&`.
 - Build reusable components with a single clear responsibility.
 - for functional components, define a props type with the name ComponentNameProps. destructure props in declaration
 - each component file should have one responsibility
@@ -16,4 +18,4 @@
 - Run npm test and npm run build before completing changes.
 - Run locally only. Do not publish or deploy.
 - use prettier formatting in all files
-- for variables that need more than one inline if statement to determine its value, use usememoto determine value
+- for variables that need more than one inline if statement to determine its value, use usememo to determine value

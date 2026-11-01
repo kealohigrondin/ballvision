@@ -16,15 +16,12 @@ export const LeagueTable = ({ table, view }: LeagueTableProps) => {
   const ranked = view === "rankings";
   const column = ranked ? "PTS" : "CONF";
   const rows = table.rows.map((row) => {
-    const rank = ranked ? (
-      <span className="league-rank">{row.rank}</span>
-    ) : null;
     const value = ranked ? row.points : row.conferenceRecord;
     return (
       <TableRow key={row.id}>
         <TableCell component="th" scope="row">
           <Stack direction="row" className="league-team">
-            {rank}
+            {ranked && <span className="league-rank">{row.rank}</span>}
             <TeamLogo
               team={{ ...row, abbreviation: row.abbreviation || row.name }}
             />

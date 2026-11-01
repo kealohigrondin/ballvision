@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import clsx from "clsx";
@@ -37,7 +38,7 @@ export const SyncControls = ({
     minute: "2-digit",
     second: "2-digit",
   });
-  const getStatus = () => {
+  const status = useMemo(() => {
     if (loading) {
       return "Updating…";
     }
@@ -48,8 +49,7 @@ export const SyncControls = ({
       return `Updated ${time}`;
     }
     return "Connecting…";
-  };
-  const status = getStatus();
+  }, [loading, paused, time]);
 
   return (
     <Stack direction="row" className="sync-controls">

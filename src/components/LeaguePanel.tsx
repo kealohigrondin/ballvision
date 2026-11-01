@@ -29,46 +29,30 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
     if (division === "nfl") return "Division";
     return view === "standings" ? "Conference" : "Poll";
   }, [division, view]);
-  const secondary = tables.length ? (
-    <label className="league-select-label">
-      {secondaryLabel}
-      <select
-        value={selected?.id ?? ""}
-        onChange={(e) => setSelectedId(e.target.value)}
-      >
-        {options}
-      </select>
-    </label>
-  ) : null;
 
-  const warning = error ? (
-    <Box className="league-warning" role="alert">
-      Unable to update league data. Any displayed records may be out of date.
-      <button onClick={refresh} disabled={loading}>
-        Retry
-      </button>
-    </Box>
-  ) : null;
-
-  let content = (
-    <Typography variant="body2" component="p" className="league-message">
-      No league data is available for this division.
-    </Typography>
-  );
-
-  if (loading && !selected)
-    content = (
-      <Typography
-        variant="body2"
-        component="p"
-        className="league-message"
-        role="status"
-      >
-        Loading league data…
+  const content = useMemo(() => {
+    if (loading && !selected) {
+      return (
+        <Typography
+          variant="body2"
+          component="p"
+          className="league-message"
+          role="status"
+        >
+          Loading league data…
+        </Typography>
+      );
+    }
+    if (selected?.rows.length) {
+      return <LeagueTable table={selected} view={view} />;
+    }
+    return (
+      <Typography variant="body2" component="p" className="league-message">
+        No league data is available for this division.
       </Typography>
     );
-  else if (selected?.rows.length)
-    content = <LeagueTable table={selected} view={view} />;
+  }, [loading, selected, view]);
+
   const label = useMemo(() => {
     if (division === "nfl") return "NFL standings";
     return view === "rankings" ? "Top 25" : "Conference standings";
@@ -98,8 +82,26 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
           }}
         />
       )}
-      {secondary}
-      {warning}
+      {tables.length > 0 && (
+        <label className="league-select-label">
+          {secondaryLabel}
+          <select
+            value={selected?.id ?? ""}
+            onChange={(e) => setSelectedId(e.target.value)}
+          >
+            {options}
+          </select>
+        </label>
+      )}
+      {error && (
+        <Box className="league-warning" role="alert">
+          Unable to update league data. Any displayed records may be out of
+          date.
+          <button onClick={refresh} disabled={loading}>
+            Retry
+          </button>
+        </Box>
+      )}
       {content}
       <Typography variant="caption" component="p" className="league-note">
         {label} · {division.toUpperCase()} · Current season. Updates every 5

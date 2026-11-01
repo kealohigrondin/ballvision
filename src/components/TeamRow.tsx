@@ -20,22 +20,6 @@ export const TeamRow = ({
   scheduled,
   periods,
 }: TeamRowProps) => {
-  const rank = team.rank && (
-    <Typography variant="caption" component="span" className="rank">
-      {team.rank}
-    </Typography>
-  );
-  const possessionIndicator = possession && (
-    <Typography
-      variant="caption"
-      component="span"
-      className="possession"
-      title="Possession"
-      aria-label="Possession"
-    >
-      ◆
-    </Typography>
-  );
   const score = scheduled ? "—" : team.score;
   const record = team.record || team.abbreviation;
   const periodCells = periods.map((period) => (
@@ -51,9 +35,24 @@ export const TeamRow = ({
           <TeamLogo team={team} />
           <Box className="team-info">
             <Typography variant="body2" component="div" className="team-name">
-              {rank}&nbsp;
+              {Boolean(team.rank) && (
+                <Typography variant="caption" component="span" className="rank">
+                  {team.rank}
+                </Typography>
+              )}
+              &nbsp;
               {team.name}&nbsp;
-              {possessionIndicator}
+              {possession && (
+                <Typography
+                  variant="caption"
+                  component="span"
+                  className="possession"
+                  title="Possession"
+                  aria-label="Possession"
+                >
+                  ◆
+                </Typography>
+              )}
             </Typography>
             <Typography variant="caption" component="span" className="record">
               {record}

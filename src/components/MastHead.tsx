@@ -1,3 +1,4 @@
+import { ThemeToggle } from "./ThemeToggle";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
@@ -35,9 +36,7 @@ const MastHead = ({ division, panelOpen, onTogglePanel }: MastHeadProps) => {
         </Typography>
       </Typography>
       <Stack direction="row" className="masthead-actions">
-        <Typography variant="overline" component="span" className="edition">
-          COLLEGE FOOTBALL / {division.toUpperCase()}
-        </Typography>
+        <ThemeToggle />
         <button
           className="league-toggle"
           type="button"
@@ -48,7 +47,6 @@ const MastHead = ({ division, panelOpen, onTogglePanel }: MastHeadProps) => {
           aria-controls="league-panel"
         >
           {panelIcon}
-          <span>League</span>
         </button>
       </Stack>
     </Stack>

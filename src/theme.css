@@ -69,3 +69,58 @@
   --team-color-fallback: #72727c;
   --team-color-tint: 28%;
 }
+
+:root[data-theme="light"] {
+  --color-year: #73737d;
+  --color-results-label: #62626c;
+  --color-footer-muted: #62626c;
+  --color-footer-brand: #393942;
+  --color-empty-text: #62626c;
+  --color-empty-icon: #16783a;
+  --color-empty-heading: #19191d;
+  --color-skeleton: #e0e1e6;
+  --color-warning-border: #89541040;
+  --color-warning-surface: #fff3df;
+  --color-warning-text: #895410;
+  --color-table-text: #393942;
+  --color-table-border: #00000012;
+  --color-table-heading: #62626c;
+  --color-icon: #62626c;
+  --color-icon-hover-surface: #0000000a;
+  --color-icon-hover: #19191d;
+  --color-input-surface: #00000006;
+  --color-input-text: #19191d;
+  --color-button-text: #393942;
+  --color-button-hover-surface: #0000000d;
+  --color-division-selected-surface: #00000012;
+  --color-search-icon: #62626c;
+  --color-placeholder: #62626c;
+  --color-filter-text: #62626c;
+  --color-badge-surface: #00000006;
+  --color-badge-text: #62626c;
+  --color-badge-selected-surface: #0000000d;
+  --color-details-surface: #ffffff66;
+  --color-details-border: #0000000d;
+  --color-details-label: #393942;
+  --color-details-text: #393942;
+  --color-venue: #62626c;
+  --color-card-border: #0000000d;
+  --color-card-hover-border: #00000026;
+  --color-live-border: #16783a;
+  --color-red-zone: #b53630;
+  --color-game-status: #62626c;
+  --color-game-final: #62626c;
+  --color-favorite: #62626c;
+  --color-situation: #393942;
+  --color-broadcast: #62626c;
+  --color-rank: #62626c;
+  --color-record: #62626c;
+  --color-paused: #62626c;
+  --color-sync-warning: #895410;
+  --color-brand-mark: #19191d;
+  --color-header-glow: #b9e4c78c;
+  --color-header-glow-edge: #dcefe330;
+  --color-card-shade: #ffffff;
+  --color-shadow: #0000000d;
+  --team-color-tint: 50%;
+}

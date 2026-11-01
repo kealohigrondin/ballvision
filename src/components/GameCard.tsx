@@ -79,7 +79,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       sx={{
         borderRadius: "22px",
         background:
-          "linear-gradient(110deg, color-mix(in srgb, var(--team-away) var(--team-color-tint), var(--color-card-shade)), var(--color-card-shade) 48%, color-mix(in srgb, var(--team-home) var(--team-color-tint), var(--color-card-shade)))",
+          "linear-gradient(110deg, color-mix(in srgb, var(--team-away) var(--team-color-tint), var(--color-card-shade)), var(--color-card-shade) 50%, color-mix(in srgb, var(--team-home) var(--team-color-tint), var(--color-card-shade)))",
       }}
       className={clsx(
         "game-card",

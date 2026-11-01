@@ -1,11 +1,20 @@
-import { useEffect, useState } from 'react';
-import type { Division, LeagueSource, LeagueTable } from '../data/types';
-export type LeagueView = 'standings' | 'rankings';
+import { useEffect, useState } from "react";
+import type { Division, LeagueSource, LeagueTable } from "../data/types";
+export type LeagueView = "standings" | "rankings";
 
-export const useLeagueTables = (source: LeagueSource, division: Division, view: LeagueView) => {
+export const useLeagueTables = (
+  source: LeagueSource,
+  division: Division,
+  view: LeagueView,
+) => {
   const key = `${division}:${view}`;
   const [revision, setRevision] = useState(0);
-  const [state, setState] = useState<{ key: string; tables: LeagueTable[]; loading: boolean; error: boolean }>({ key, tables: [], loading: true, error: false });
+  const [state, setState] = useState<{
+    key: string;
+    tables: LeagueTable[];
+    loading: boolean;
+    error: boolean;
+  }>({ key, tables: [], loading: true, error: false });
   useEffect(() => {
     let disposed = false;
     let active: AbortController | undefined;
@@ -14,22 +23,41 @@ export const useLeagueTables = (source: LeagueSource, division: Division, view: 
       const controller = new AbortController();
       active = controller;
       const timeout = setTimeout(() => controller.abort(), 15_000);
-      setState(previous => ({ key, tables: previous.key === key ? previous.tables : [], loading: true, error: false }));
+      setState((previous) => ({
+        key,
+        tables: previous.key === key ? previous.tables : [],
+        loading: true,
+        error: false,
+      }));
       try {
-        const tables = view === 'standings' ? await source.loadStandings(division, controller.signal)
-          : await source.loadRankings(division, controller.signal);
+        const tables =
+          view === "standings"
+            ? await source.loadStandings(division, controller.signal)
+            : await source.loadRankings(division, controller.signal);
         if (!disposed) setState({ key, tables, loading: false, error: false });
       } catch {
-        if (!disposed) setState(previous => ({ ...previous, loading: false, error: true }));
+        if (!disposed)
+          setState((previous) => ({
+            ...previous,
+            loading: false,
+            error: true,
+          }));
       } finally {
         clearTimeout(timeout);
         active = undefined;
       }
     };
     void load();
-    const timer = setInterval(() => { if (!document.hidden) void load(); }, 300_000);
-    return () => { disposed = true; clearInterval(timer); active?.abort(); };
+    const timer = setInterval(() => {
+      if (!document.hidden) void load();
+    }, 300_000);
+    return () => {
+      disposed = true;
+      clearInterval(timer);
+      active?.abort();
+    };
   }, [source, division, view, revision]);
-  const current = state.key === key ? state : { tables: [], loading: true, error: false };
-  return { ...current, refresh: () => setRevision(r => r + 1) };
+  const current =
+    state.key === key ? state : { tables: [], loading: true, error: false };
+  return { ...current, refresh: () => setRevision((r) => r + 1) };
 };

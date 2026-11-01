@@ -1,19 +1,19 @@
 .empty-state {
-  padding: 80px 20px;
+  padding: 65px 24px;
+  background: var(--color-input-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
   text-align: center;
   color: var(--color-empty-text);
-  border: 1px dashed var(--color-border);
-  border-radius: 8px;
 }
 .empty-state svg {
   color: var(--color-empty-icon);
 }
 .empty-state h2 {
-  font-size: var(--font-size-21px);
   color: var(--color-empty-heading);
-  margin: 17px 0 8px;
-  font-weight: var(--font-weight-500);
+  margin: 18px 0 8px;
+  letter-spacing: -0.5px;
 }
 .empty-state p {
-  font-size: var(--font-size-13px);
+  line-height: 1.6;
 }

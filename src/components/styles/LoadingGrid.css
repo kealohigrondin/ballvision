@@ -1,46 +1,8 @@
 .loading-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  align-items: start;
+  align-items: flex-start;
 }
 .skeleton {
-  background: var(--color-surface);
-  height: 264px;
-  border: 1px solid var(--color-border);
-  border-radius: 9px;
-  padding: 22px;
-}
-.skeleton div {
-  background: var(--color-skeleton);
-  height: 34px;
-  margin-bottom: 22px;
-  border-radius: 4px;
-}
-.skeleton div:first-child {
-  height: 12px;
-  width: 40%;
-}
-.skeleton div:last-child {
-  width: 70%;
-}
-@media (min-width: 1450px) {
-  .loading-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-@media (max-width: 1100px) {
-  .loading-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 720px) {
-  .loading-grid {
-    gap: 12px;
-  }
-}
-@media (max-width: 510px) {
-  .loading-grid {
-    grid-template-columns: 1fr;
-  }
+  height: 227px;
+  padding: 24px;
+  border: 1px solid var(--color-card-border);
 }

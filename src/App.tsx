@@ -1,13 +1,15 @@
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import clsx from "clsx";
 import "./App.css";
 import { useState } from "react";
 import { espnSource, espnLeagueSource } from "./data/espn";
 import type { Division, LeagueSource, ScoreboardSource } from "./data/types";
 import { useScoreboard } from "./hooks/useScoreboard";
 import { useFavorites } from "./hooks/useFavorites";
-import { GameCard } from "./components/GameCard";
-import { EmptyState } from "./components/EmptyState";
+import { GameGrid } from "./components/GameGrid";
 import { ErrorBanner } from "./components/ErrorBanner";
-import { LoadingGrid } from "./components/LoadingGrid";
 import { SyncControls } from "./components/SyncControls";
 import { Toolbar, type Filter } from "./components/Toolbar";
 import { localDate } from "./utils/date";
@@ -15,13 +17,15 @@ import MastHead from "./components/MastHead";
 import { LeaguePanel } from "./components/LeaguePanel";
 import { Footer } from "./components/Footer";
 
+type AppProps = {
+  source?: ScoreboardSource;
+  leagueSource?: LeagueSource;
+};
+
 const App = ({
   source = espnSource,
   leagueSource = espnLeagueSource,
-}: {
-  source?: ScoreboardSource;
-  leagueSource?: LeagueSource;
-}) => {
+}: AppProps) => {
   const [panelOpen, setPanelOpen] = useState(true);
   const [date, setDate] = useState(localDate);
   const [division, setDivision] = useState<Division>("fbs");
@@ -59,66 +63,60 @@ const App = ({
     day: "numeric",
   }).format(day);
 
-  const resultsLabel =
-    filter === "pinned"
-      ? "YOUR WATCHLIST"
-      : filter === "live"
-        ? "ON THE FIELD"
-        : "AROUND THE LEAGUE";
+  const getResultsLabel = () => {
+    if (filter === "pinned") {
+      return "YOUR WATCHLIST";
+    }
+    if (filter === "live") {
+      return "ON THE FIELD";
+    }
+    return "AROUND THE LEAGUE";
+  };
+  const resultsLabel = getResultsLabel();
   const resultUnit = visible.length === 1 ? "game" : "games";
   const searchLabel = search ? ` matching “${search}”` : "";
   const resultCount = `${visible.length} ${resultUnit}${searchLabel}`;
 
-  const emptyTitle =
-    error && !updatedAt
-      ? "The feed is taking a timeout."
-      : filter === "pinned"
-        ? "Your watchlist starts here."
-        : "No games on this field.";
+  const errorBanner = error ? (
+    <ErrorBanner message={error} loading={loading} onRetry={refresh} />
+  ) : null;
+  const leaguePanel = panelOpen ? (
+    <LeaguePanel source={leagueSource} division={division} />
+  ) : null;
 
-  const emptyDetail =
-    error && !updatedAt
-      ? "Try refreshing to reconnect to ESPN."
-      : filter === "pinned"
-        ? "Use the star on a game to pin it to the top of your scoreboard."
-        : "Try another date, division, or filter.";
-
-  const cards = visible.map((game) => (
-    <GameCard
-      key={game.id}
-      game={game}
-      favorite={pinned(game.id)}
-      onFavorite={() => favorites.toggle(game.id)}
-    />
-  ));
-
-  let content = <EmptyState title={emptyTitle} detail={emptyDetail} />;
-
-  if (loading && !updatedAt) content = <LoadingGrid />;
-  else if (visible.length)
-    content = (
-      <section className="game-grid" aria-label="College football games">
-        {cards}
-      </section>
-    );
-
-  const layoutClass = panelOpen
-    ? "dashboard-layout panel-open"
-    : "dashboard-layout";
+  const columns = panelOpen
+    ? {
+        xs: "minmax(0, 1fr)",
+        md: "minmax(0, 1fr) 285px",
+        lg: "minmax(0, 1fr) 310px",
+      }
+    : "minmax(0, 1fr)";
 
   return (
-    <div className="app-shell">
+    <Container
+      maxWidth={false}
+      className="app-shell"
+      sx={{ maxWidth: 1460, px: { xs: 2, sm: 3, lg: 5 } }}
+    >
       <MastHead
         division={division}
         panelOpen={panelOpen}
         onTogglePanel={() => setPanelOpen((open) => !open)}
       />
-      <main>
-        <div className={layoutClass}>
-          <div className="dashboard-main">
-            <div className="section-heading">
+      <Box component="main">
+        <Box
+          className={clsx("dashboard-layout", panelOpen && "panel-open")}
+          sx={{
+            display: "grid",
+            gridTemplateColumns: columns,
+            gap: { xs: 2.5, lg: 3.5 },
+            alignItems: "start",
+          }}
+        >
+          <Stack className="dashboard-main" sx={{ minWidth: 0 }}>
+            <Stack direction="row" className="section-heading">
               <div>
-                <span className="eyebrow">THE SCOREBOARD</span>
+                <span className="eyebrow">College Football</span>
                 <h2>
                   {dayLabel}
                   <span className="year"> {day.getFullYear()}</span>
@@ -132,7 +130,7 @@ const App = ({
                 onTogglePause={() => setPaused((p) => !p)}
                 onRefresh={refresh}
               />
-            </div>
+            </Stack>
             <Toolbar
               date={date}
               onDate={setDate}
@@ -144,26 +142,27 @@ const App = ({
               onFilter={setFilter}
               counts={counts}
             />
-            {error && (
-              <ErrorBanner
-                message={error}
-                loading={loading}
-                onRetry={refresh}
-              />
-            )}
-            <div className="results-heading">
+            {errorBanner}
+            <Stack direction="row" className="results-heading">
               <span>{resultsLabel}</span>
               <span>{resultCount}</span>
-            </div>
-            {content}
-          </div>
-          {panelOpen && (
-            <LeaguePanel source={leagueSource} division={division} />
-          )}
-        </div>
+            </Stack>
+            <GameGrid
+              games={visible}
+              compact={panelOpen}
+              loading={loading}
+              hasLoaded={updatedAt !== null}
+              hasError={Boolean(error)}
+              pinnedOnly={filter === "pinned"}
+              favoriteIds={favorites.ids}
+              onToggleFavorite={favorites.toggle}
+            />
+          </Stack>
+          {leaguePanel}
+        </Box>
         <Footer />
-      </main>
-    </div>
+      </Box>
+    </Container>
   );
 };
 

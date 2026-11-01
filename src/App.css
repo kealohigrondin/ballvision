@@ -1,169 +1,79 @@
-.app-shell {
-  max-width: 1504px;
-  margin: 0 auto;
-  padding: 0 54px;
+.dashboard-main {
+  min-width: 0;
 }
 .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--font-size-10px);
-  font-weight: var(--font-weight-650);
-  letter-spacing: 1.8px;
   color: var(--color-muted);
+  letter-spacing: 0.2px;
 }
 .section-heading {
   display: flex;
   justify-content: space-between;
-  gap: 15px;
-  align-items: flex-end;
-  border-top: 1px solid var(--color-border);
-  padding-top: 28px;
-  margin-bottom: 23px;
+  align-items: end;
+  gap: 16px;
+  padding: 32px 0 24px;
 }
 .section-heading h2 {
-  font-size: var(--font-size-22px);
-  letter-spacing: -0.5px;
-  margin: 8px 0 0;
-  font-weight: var(--font-weight-600);
+  letter-spacing: -1.2px;
+  line-height: 1.15;
+  margin: 6px 0 0;
 }
 .year {
   color: var(--color-year);
-  font-weight: var(--font-weight-400);
 }
 .results-heading {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 24px 0 16px;
-  font-size: var(--font-size-9px);
-  letter-spacing: 1.7px;
-  color: var(--color-results-label);
+  justify-content: space-between;
+  gap: 12px;
+  padding: 26px 3px 12px;
+  color: var(--color-muted);
+  letter-spacing: 0.7px;
 }
 .results-heading span:last-child {
-  font-size: var(--font-size-11px);
   letter-spacing: 0;
-}
-.game-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  align-items: start;
-}
-.app-shell footer {
-  margin-top: 45px;
-  padding: 24px 0 28px;
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 22px;
-  align-items: center;
-  font-size: var(--font-size-9px);
-  color: var(--color-footer-muted);
-}
-.app-shell footer p {
-  margin: 0;
-  flex: 1;
-}
-@media (min-width: 1450px) {
-  .game-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-@media (max-width: 1100px) {
-  .app-shell {
-    padding: 0 30px;
-  }
-}
-@media (max-width: 1100px) {
-  .game-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 720px) {
-  .app-shell {
-    padding: 0 18px;
-  }
-}
-@media (max-width: 720px) {
-  .section-heading {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-}
-@media (max-width: 720px) {
-  .section-heading h2 {
-    font-size: var(--font-size-20px);
-  }
-}
-@media (max-width: 720px) {
-  .game-grid {
-    gap: 12px;
-  }
-}
-@media (max-width: 720px) {
-  .app-shell footer {
-    margin-top: 30px;
-    flex-direction: column;
-    align-items: flex-start;
-    line-height: 1.6;
-  }
-}
-@media (max-width: 510px) {
-  .game-grid {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 510px) {
-  .year {
-    display: none;
-  }
-}
-
-.dashboard-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
-  align-items: start;
-}
-.dashboard-layout.panel-open {
-  grid-template-columns: minmax(0, 1fr) 320px;
-}
-.dashboard-main {
-  min-width: 0;
-}
-.panel-open .game-grid,
-.panel-open .loading-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .panel-open .toolbar {
   flex-wrap: wrap;
 }
-@media (max-width: 1200px) {
-  .dashboard-layout.panel-open {
-    grid-template-columns: minmax(0, 1fr) 290px;
-  }
-  .panel-open .game-grid,
-  .panel-open .loading-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.app-shell footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: 40px;
+  padding: 24px 0 32px;
+  color: var(--color-footer-muted);
+  border-top: 1px solid var(--color-border);
+}
+.app-shell footer p {
+  flex: 1;
+  margin: 0;
+  line-height: 1.6;
+}
+.footer-brand {
+  color: var(--color-footer-brand);
+  letter-spacing: -0.3px;
 }
 @media (max-width: 900px) {
-  .dashboard-layout.panel-open {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .panel-open .league-panel {
     grid-row: 1;
   }
-  .panel-open .game-grid,
-  .panel-open .loading-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
-@media (max-width: 510px) {
-  .panel-open .game-grid,
-  .panel-open .loading-grid {
-    grid-template-columns: minmax(0, 1fr);
+@media (max-width: 640px) {
+  .section-heading {
+    align-items: start;
+    flex-direction: column;
+    padding: 24px 0 20px;
+    gap: 14px;
+  }
+  .section-heading h2 {
+    letter-spacing: -0.8px;
+  }
+  .year {
+    display: none;
+  }
+  .app-shell footer {
+    flex-direction: column;
+    align-items: start;
   }
 }

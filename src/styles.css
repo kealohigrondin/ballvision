@@ -1,11 +1,7 @@
 :root {
-  font-family:
-    var(--font-family-sans);
   color: var(--color-text);
   background: var(--color-background);
-  font-synthesis: var(--font-synthesis-none);
   text-rendering: optimizeLegibility;
-  font-weight: var(--font-weight-400);
   color-scheme: dark;
 }
 * {
@@ -13,9 +9,20 @@
 }
 body {
   margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      ellipse 100% 400px at 40% 0,
+      var(--color-header-glow),
+      var(--color-header-glow-edge) 55%,
+      var(--color-transparent)
+    ),
+    var(--color-background);
+  -webkit-font-smoothing: antialiased;
 }
 button,
-input {
+input,
+select {
   font: inherit;
 }
 button,
@@ -33,7 +40,8 @@ button:disabled {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-summary:focus-visible {
+summary:focus-visible,
+select:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
 }

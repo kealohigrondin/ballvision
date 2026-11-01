@@ -1,39 +1,13 @@
 .team-logo {
-  width: 42px;
-  height: 42px;
-  flex-shrink: 0;
+  width: min(50px, 100%);
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border-radius: 8px;
-  font-size: var(--font-size-10px);
-  font-weight: var(--font-weight-800);
+  flex-shrink: 0;
+  border-radius: 50%;
 }
 .team-logo img {
-  width: 33px;
-  height: 33px;
+  width: 85%;
+  height: 85%;
   object-fit: contain;
-}
-@media (max-width: 720px) {
-  .team-logo {
-    width: 34px;
-    height: 34px;
-  }
-}
-@media (max-width: 720px) {
-  .team-logo img {
-    width: 28px;
-    height: 28px;
-  }
-}
-@media (max-width: 510px) {
-  .team-logo {
-    height: 42px;
-    width: 42px;
-  }
-}
-@media (max-width: 510px) {
-  .team-logo img {
-    height: 34px;
-    width: 34px;
-  }
 }

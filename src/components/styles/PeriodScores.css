@@ -1,25 +1,22 @@
 .table-scroll {
   overflow: auto;
-  padding: 0 20px 12px;
+  padding: 0 19px 14px;
 }
 .table-scroll table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--font-size-10px);
-  font-variant-numeric: var(--font-variant-numeric-tabular-nums);
   color: var(--color-table-text);
 }
 .table-scroll th,
 .table-scroll td {
-  text-align: right;
-  padding: 7px 5px;
+  padding: 8px 5px;
   border-bottom: 1px solid var(--color-table-border);
+  text-align: right;
 }
 .table-scroll th:first-child {
   text-align: left;
 }
 .table-scroll thead th {
-  font-weight: var(--font-weight-400);
   color: var(--color-table-heading);
 }
 .table-scroll .sr-only {

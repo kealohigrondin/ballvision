@@ -1,22 +1,30 @@
 .error-banner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  border: 1px solid var(--color-warning-border);
+  gap: 12px;
+  padding: 15px 18px;
+  margin-top: 18px;
   background: var(--color-warning-surface);
   color: var(--color-warning-text);
-  border-radius: 6px;
-  padding: 12px 15px;
-  margin-top: 18px;
-  font-size: var(--font-size-12px);
+  border: 1px solid var(--color-warning-border);
+  border-radius: 16px;
+  line-height: 1.5;
+}
+.error-banner > svg {
+  flex-shrink: 0;
 }
 .error-banner button {
-  margin-left: auto;
-  border: 0;
-  background: none;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  margin-left: auto;
   white-space: nowrap;
-  color: var(--color-warning-text);
+  border: 0;
+  background: var(--color-transparent);
+  color: inherit;
+}
+@media (max-width: 640px) {
+  .error-banner {
+    flex-wrap: wrap;
+  }
 }

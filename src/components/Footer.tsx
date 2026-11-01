@@ -1,8 +1,9 @@
+import Stack from "@mui/material/Stack";
 import "./styles/Footer.css";
 
 export const Footer = () => {
   return (
-    <footer>
+    <Stack component="footer" direction={{ xs: "column", sm: "row" }}>
       <span className="footer-brand">
         BALL<span>VISION</span>
       </span>
@@ -11,6 +12,6 @@ export const Footer = () => {
         update
       </p>
       <span>Independent project. Not affiliated with ESPN.</span>
-    </footer>
+    </Stack>
   );
 };

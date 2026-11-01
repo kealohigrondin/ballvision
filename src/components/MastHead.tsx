@@ -1,3 +1,5 @@
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import "./styles/MastHead.css";
 import { PanelRightClose, PanelRightOpen, Radio } from "lucide-react";
 
@@ -15,14 +17,14 @@ const MastHead = ({ division, panelOpen, onTogglePanel }: MastHeadProps) => {
   );
   const panelLabel = panelOpen ? "Close league panel" : "Open league panel";
   return (
-    <header className="masthead">
+    <Stack component="header" direction="row" className="masthead">
       <a className="brand" href="./" aria-label="BALLVISION home">
-        <span className="brand-mark">
+        <Box component="span" className="brand-mark">
           <Radio size={22} />
-        </span>
+        </Box>
         BALL<span className="brand-light">VISION</span>
       </a>
-      <div className="masthead-actions">
+      <Stack direction="row" className="masthead-actions">
         <span className="edition">
           COLLEGE FOOTBALL / {division.toUpperCase()}
         </span>
@@ -38,8 +40,8 @@ const MastHead = ({ division, panelOpen, onTogglePanel }: MastHeadProps) => {
           {panelIcon}
           <span>League</span>
         </button>
-      </div>
-    </header>
+      </Stack>
+    </Stack>
   );
 };
 export default MastHead;

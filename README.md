@@ -2,6 +2,12 @@
 
 A React + TypeScript college football dashboard. Runs in a Linux browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
 
+## Run locally
+
+This project is intended for local use. No hosting account or sign-in is needed. The server binds only to this computer. Internet access is needed to fetch ESPN scores.
+
+Run `./start.sh` and open http://127.0.0.1:5173. Press Ctrl+C in the terminal to stop. The launcher uses your installed Node.js or the workspace runtime downloaded during setup.
+
 ## Develop
 
 Install Node.js 22 or newer, then run from this directory:
@@ -27,7 +33,8 @@ npm run preview
 - `src/data/espn.ts`: HTTP access and defensive transformation of ESPN payloads.
 - `src/hooks/useScoreboard.ts`: refresh lifecycle, aborts/timeouts, errors, tab visibility, and query changes. The source is injected for substitution and testing.
 - `src/hooks/useFavorites.ts`: optional browser-local pin storage with versioned key.
-- `src/components/`: reusable game cards, team rows, filter/date toolbar, empty state.
+- `src/components/`: one component per file; cards, team presentation, game details, period scores, toolbar, refresh controls, loading and error states each have a focused responsibility.
+- `src/utils/`: shared date and game-time formatting without UI or provider dependencies.
 - `src/App.tsx`: composes features and owns view filters; receives a replaceable source.
 
 Polling runs 20 seconds after each completed request; requests time out after 15 seconds. Hidden tabs stop scheduled polling and refresh on return. A failed refresh retains the last successful snapshot with a warning. Changing dates/divisions clears the prior slate and cancels obsolete requests. Game clocks display the reported feed value; they are not extrapolated. All kickoff times use the browser's local timezone. FBS/FCS data availability follows ESPN; the app cannot guarantee coverage outside the selected feed.

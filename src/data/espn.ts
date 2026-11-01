@@ -9,7 +9,7 @@ const image = (value: unknown) => {
   const url = str(value);
   return /^https:\/\/(?:a|a[0-9])\.espncdn\.com\//.test(url) ? url : undefined;
 };
-function team(raw: Json): Team {
+const team = (raw: Json): Team => {
   const t = obj(raw.team);
   const rank = number(obj(raw.curatedRank).current);
   return {
@@ -22,7 +22,7 @@ function team(raw: Json): Team {
     quarters: list(raw.linescores).map(q => str(obj(q).displayValue, str(obj(q).value, '—'))),
   };
 }
-export function parseScoreboard(payload: unknown): Game[] {
+export const parseScoreboard = (payload: unknown): Game[] => {
   const root = obj(payload);
   if (!Array.isArray(root.events)) throw new Error('Unexpected ESPN response.');
   const games: Game[] = [];
@@ -53,7 +53,7 @@ export function parseScoreboard(payload: unknown): Game[] {
   });
 }
 export const espnSource: ScoreboardSource = {
-  async load(query, signal) {
+  load: async (query, signal) => {
     const url = new URL('https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard');
     url.search = new URLSearchParams({ groups: query.division === 'fbs' ? '80' : '81',
       limit: '1000', dates: query.date.replaceAll('-', '') }).toString();

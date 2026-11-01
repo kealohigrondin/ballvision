@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Game, ScoreboardQuery, ScoreboardSource } from '../data/types';
 
 const INTERVAL = 20_000;
-export function useScoreboard(source: ScoreboardSource, query: ScoreboardQuery, paused: boolean) {
+export const useScoreboard = (source: ScoreboardSource, query: ScoreboardQuery, paused: boolean) => {
   const queryKey = `${query.division}:${query.date}`;
   const [state, setState] = useState<{ key: string; games: Game[]; loading: boolean; error: string | null; updatedAt: Date | null }>({
     key: queryKey, games: [], loading: true, error: null, updatedAt: null,
@@ -46,4 +46,4 @@ export function useScoreboard(source: ScoreboardSource, query: ScoreboardQuery, 
   // Clear the previous query immediately: a different day's scores must never
   // appear under a new date while its request is in flight.
   return { ...(state.key === queryKey ? state : { games: [], loading: true, error: null, updatedAt: null }), refresh };
-}
+};

@@ -34,22 +34,6 @@
 .edition {
   color: var(--color-muted);
 }
-.league-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 24px;
-  background: var(--color-input-surface);
-  padding: 11px 18px;
-  color: var(--color-text);
-}
-.league-toggle:hover {
-  background: var(--color-button-hover-surface);
-}
-.league-toggle[aria-expanded="true"] {
-  background: var(--color-division-selected-surface);
-}
 @media (max-width: 1199.95px) {
   .edition {
     display: none;
@@ -66,8 +50,5 @@
   .brand-mark svg {
     width: 24px;
     height: 24px;
-  }
-  .league-toggle {
-    padding: 10px 12px;
   }
 }

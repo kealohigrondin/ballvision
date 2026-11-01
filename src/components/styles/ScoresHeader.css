@@ -1,0 +1,61 @@
+.scores-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  isolation: isolate;
+  padding-bottom: 8px;
+}
+.scores-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--app-background);
+  background-attachment: fixed;
+}
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  padding: 16px 0 8px;
+}
+.section-heading h2 {
+  margin: 6px 0 0;
+}
+.year {
+  color: var(--color-year);
+}
+.league-toggle {
+  height: var(--control-height);
+  min-height: var(--control-height);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-input-surface);
+  padding: 0 18px;
+  color: var(--color-text);
+}
+.league-toggle:hover {
+  background: var(--color-button-hover-surface);
+}
+.league-toggle[aria-expanded="true"] {
+  background: var(--color-division-selected-surface);
+}
+@media (max-width: 599.95px) {
+  .section-heading {
+    align-items: start;
+    flex-direction: column;
+    padding: 24px 0 20px;
+    gap: 14px;
+  }
+  .year {
+    display: none;
+  }
+  .league-toggle {
+    padding: 0 12px;
+  }
+}

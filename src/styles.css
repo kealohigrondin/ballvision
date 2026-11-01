@@ -13,14 +13,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(
-      ellipse 100% 400px at 40% 0,
-      var(--color-header-glow),
-      var(--color-header-glow-edge) 55%,
-      var(--color-transparent)
-    ),
-    var(--color-background);
+  background: var(--app-background);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
 }
 button,

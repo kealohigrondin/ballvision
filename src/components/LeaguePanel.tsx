@@ -1,3 +1,4 @@
+import { SegmentedControl } from "./SegmentedControl";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -35,6 +36,7 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
       </select>
     </label>
   ) : null;
+
   const warning = error ? (
     <Box className="league-warning" role="alert">
       Unable to update league data. Any displayed records may be out of date.
@@ -43,11 +45,13 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
       </button>
     </Box>
   ) : null;
+
   let content = (
     <Typography variant="body2" component="p" className="league-message">
       No league data is available for this division.
     </Typography>
   );
+
   if (loading && !selected)
     content = (
       <Typography
@@ -72,22 +76,19 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
       id="league-panel"
       aria-label="League information"
     >
-      <Typography variant="h6" component="h2">
-        Around the League
-      </Typography>
-      <label className="league-select-label">
-        View
-        <select
-          value={view}
-          onChange={(e) => {
-            setView(e.target.value as LeagueView);
-            setSelectedId("");
-          }}
-        >
-          <option value="standings">Conference standings</option>
-          <option value="rankings">Top 25</option>
-        </select>
-      </label>
+      <SegmentedControl<LeagueView>
+        label="League view"
+        className="league-view-switch"
+        value={view}
+        options={[
+          { value: "standings", label: "Standings" },
+          { value: "rankings", label: "Top 25" },
+        ]}
+        onChange={(nextView) => {
+          setView(nextView);
+          setSelectedId("");
+        }}
+      />
       {secondary}
       {warning}
       {content}

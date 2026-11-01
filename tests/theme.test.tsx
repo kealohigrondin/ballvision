@@ -12,7 +12,14 @@ afterEach(() => {
 it("switches themes from the masthead and remembers the preference on remount", () => {
   const app = (
     <AppTheme>
-      <MastHead division="fbs" panelOpen={false} onTogglePanel={() => {}} />
+      <MastHead
+        loading={false}
+        paused={false}
+        error={null}
+        updatedAt={null}
+        refresh={() => {}}
+        onTogglePause={() => {}}
+      />
     </AppTheme>
   );
   const { unmount } = render(app);

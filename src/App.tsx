@@ -1,9 +1,8 @@
-import Typography from "@mui/material/Typography";
+import "./App.css";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import clsx from "clsx";
-import "./App.css";
 import { useState } from "react";
 import { espnSource, espnLeagueSource } from "./data/espn";
 import type { Division, LeagueSource, ScoreboardSource } from "./data/types";
@@ -11,12 +10,12 @@ import { useScoreboard } from "./hooks/useScoreboard";
 import { useFavorites } from "./hooks/useFavorites";
 import { GameGrid } from "./components/GameGrid";
 import { ErrorBanner } from "./components/ErrorBanner";
-import { SyncControls } from "./components/SyncControls";
-import { Toolbar, type Filter } from "./components/Toolbar";
+import { type Filter } from "./components/Toolbar";
 import { localDate } from "./utils/date";
 import MastHead from "./components/MastHead";
 import { LeaguePanel } from "./components/LeaguePanel";
 import { Footer } from "./components/Footer";
+import { ScoresHeader } from "./components/ScoresHeader";
 
 type AppProps = {
   source?: ScoreboardSource;
@@ -57,13 +56,6 @@ const App = ({
           .includes(search.toLowerCase()),
     )
     .sort((a, b) => Number(pinned(b.id)) - Number(pinned(a.id)));
-  const day = new Date(`${date}T12:00:00`);
-  const dayLabel = new Intl.DateTimeFormat(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  }).format(day);
-
   const getResultsLabel = () => {
     if (filter === "pinned") {
       return "YOUR WATCHLIST";
@@ -97,12 +89,15 @@ const App = ({
     <Container
       maxWidth={false}
       className="app-shell"
-      sx={{ maxWidth: 1460, px: { xs: 2, sm: 3, lg: 5 } }}
+      sx={{ px: { xs: 2, sm: 3, lg: 5 } }}
     >
       <MastHead
-        division={division}
-        panelOpen={panelOpen}
-        onTogglePanel={() => setPanelOpen((open) => !open)}
+        onTogglePause={() => setPaused((current) => !current)}
+        loading={loading}
+        paused={paused}
+        error={error}
+        updatedAt={updatedAt}
+        refresh={refresh}
       />
       <Box component="main">
         <Box
@@ -115,30 +110,7 @@ const App = ({
           }}
         >
           <Stack className="dashboard-main" sx={{ minWidth: 0 }}>
-            <Stack direction="row" className="section-heading">
-              <div>
-                <Typography
-                  variant="overline"
-                  component="span"
-                  className="eyebrow"
-                >
-                  College Football
-                </Typography>
-                <Typography variant="h4" component="h2">
-                  {dayLabel}
-                  <span className="year"> {day.getFullYear()}</span>
-                </Typography>
-              </div>
-              <SyncControls
-                loading={loading}
-                paused={paused}
-                error={error}
-                updatedAt={updatedAt}
-                onTogglePause={() => setPaused((p) => !p)}
-                onRefresh={refresh}
-              />
-            </Stack>
-            <Toolbar
+            <ScoresHeader
               date={date}
               onDate={setDate}
               division={division}
@@ -148,6 +120,8 @@ const App = ({
               filter={filter}
               onFilter={setFilter}
               counts={counts}
+              panelOpen={panelOpen}
+              onTogglePanel={() => setPanelOpen((open) => !open)}
             />
             {errorBanner}
             <Stack direction="row" className="results-heading">

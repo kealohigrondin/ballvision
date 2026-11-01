@@ -1,3 +1,13 @@
+.date-control,
+.today-button,
+.division-switch,
+.division-switch button,
+.search {
+  height: var(--control-height);
+  min-height: var(--control-height);
+  box-sizing: border-box;
+}
+
 .toolbar {
   display: flex;
   align-items: center;
@@ -10,7 +20,7 @@
   align-items: center;
   justify-content: center;
   min-width: 30px;
-  min-height: 34px;
+  min-height: 24px;
   border: 0;
   border-radius: 50%;
   background: var(--color-transparent);
@@ -23,7 +33,6 @@
   display: flex;
   align-items: center;
   padding: 3px 6px;
-  height: 42px;
   border: 1px solid var(--color-border);
   border-radius: 24px;
   background: var(--color-input-surface);
@@ -39,7 +48,7 @@
 }
 .today-button {
   border: 0;
-  padding: 11px 16px;
+  padding: 6px 16px;
   border-radius: 24px;
   background: var(--color-input-surface);
   color: var(--color-text);
@@ -50,12 +59,12 @@
 .division-switch {
   display: flex;
   align-items: center;
-  padding: 4px;
+  padding: 0;
   border-radius: 24px;
   background: var(--color-input-surface);
 }
 .division-switch button {
-  padding: 9px 14px;
+  padding: 0 14px;
   border: 0;
   border-radius: 20px;
   background: var(--color-transparent);
@@ -70,7 +79,6 @@
   align-items: center;
   gap: 8px;
   margin-left: auto;
-  min-height: 42px;
   max-width: 230px;
   padding: 0 14px;
   border-radius: 14px;
@@ -96,43 +104,6 @@
   border: 0;
   color: var(--color-muted);
 }
-.filter-bar {
-  display: flex;
-  gap: 5px;
-  padding: 5px;
-  border-radius: 28px;
-  background: var(--color-input-surface);
-  overflow-x: auto;
-}
-.filter-bar button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  white-space: nowrap;
-  gap: 6px;
-  padding: 10px 13px;
-  border: 0;
-  border-radius: 22px;
-  background: var(--color-transparent);
-  color: var(--color-filter-text);
-}
-.filter-bar button.active {
-  color: var(--color-text);
-  background: var(--color-division-selected-surface);
-}
-.filter-bar .live-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-accent);
-}
-.count {
-  color: var(--color-badge-text);
-}
-.filter-bar .active .count {
-  color: var(--color-text);
-}
 .toolbar .sr-only {
   position: absolute;
   width: 1px;
@@ -153,12 +124,9 @@
 }
 @media (max-width: 599.95px) {
   .today-button {
-    padding: 11px;
+    padding: 4px;
   }
   .division-switch button {
-    padding: 9px 11px;
-  }
-  .filter-bar button {
-    padding: 10px;
+    padding: 4px;
   }
 }

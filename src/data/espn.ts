@@ -142,6 +142,16 @@ export const espnSource: ScoreboardSource = {
 };
 
 // League context stays separate from the high-frequency scoreboard feed.
+const leagueTeamIdentity = (team: Json) => ({
+  logo:
+    image(team.logo) ??
+    list(team.logos)
+      .map((logo) => image(obj(logo).href))
+      .find(Boolean),
+  abbreviation: str(team.abbreviation),
+  color: /^[0-9a-f]{6}$/i.test(str(team.color)) ? `#${team.color}` : undefined,
+});
+
 export const parseStandings = (payload: unknown): LeagueTable[] => {
   const root = obj(payload);
   if (!Array.isArray(root.children))
@@ -160,6 +170,7 @@ export const parseStandings = (payload: unknown): LeagueTable[] => {
           return str(stat?.summary, str(stat?.displayValue, "—"));
         };
         return {
+          ...leagueTeamIdentity(t),
           id: str(t.id),
           name: str(t.shortDisplayName, str(t.displayName, str(t.location))),
           record: record("total"),
@@ -212,6 +223,7 @@ export const parseRankings = (
           const r = obj(rawRank),
             t = obj(r.team);
           return {
+            ...leagueTeamIdentity(t),
             id: str(t.id),
             name: str(
               t.shortDisplayName,

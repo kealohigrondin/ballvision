@@ -1,3 +1,4 @@
+import { SegmentedControl } from "./SegmentedControl";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import clsx from "clsx";
@@ -46,12 +47,8 @@ export const Toolbar = ({
       </button>
     );
   });
-  const clearSearch = search ? (
-    <button aria-label="Clear search" onClick={() => onSearch("")}>
-      ×
-    </button>
-  ) : null;
-  const filterButtons = (
+
+  const filterOptions = (
     ["all", "live", "upcoming", "final", "pinned"] as const
   ).map((f) => {
     const indicator = f === "live" ? <span className="live-dot" /> : null;
@@ -62,20 +59,18 @@ export const Toolbar = ({
       final: "Final",
       pinned: "Pinned",
     }[f];
-    return (
-      <button
-        key={f}
-        className={clsx(filter === f && "active")}
-        aria-pressed={filter === f}
-        onClick={() => onFilter(f)}
-      >
-        {indicator}
-        {label}
-        <Typography variant="caption" component="span" className="count">
-          {counts[f]}
-        </Typography>
-      </button>
-    );
+    return {
+      value: f,
+      label: (
+        <>
+          {indicator}
+          {label}
+          <Typography variant="caption" component="span" className="count">
+            {counts[f]}
+          </Typography>
+        </>
+      ),
+    };
   });
   return (
     <>
@@ -129,17 +124,19 @@ export const Toolbar = ({
             value={search}
             onChange={(e) => onSearch(e.target.value)}
           />
-          {clearSearch}
+          {search && (
+            <button aria-label="Clear search" onClick={() => onSearch("")}>
+              ×
+            </button>
+          )}
         </label>
       </Stack>
-      <Stack
-        component="nav"
-        direction="row"
-        className="filter-bar"
-        aria-label="Filter games"
-      >
-        {filterButtons}
-      </Stack>
+      <SegmentedControl
+        label="Filter games"
+        value={filter}
+        options={filterOptions}
+        onChange={onFilter}
+      />
     </>
   );
 };

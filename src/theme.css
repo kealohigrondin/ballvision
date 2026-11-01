@@ -7,6 +7,15 @@
 }
 
 :root {
+  --control-height: 36px;
+  --app-background:
+    radial-gradient(
+      ellipse 100% 400px at 40% 0,
+      var(--color-header-glow),
+      var(--color-header-glow-edge) 55%,
+      var(--color-transparent)
+    ),
+    var(--color-background);
   /* Application palette */
   --color-text: var(--mui-palette-text-primary);
   --color-background: var(--mui-palette-background-default);

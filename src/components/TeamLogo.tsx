@@ -2,9 +2,12 @@ import "./styles/TeamLogo.css";
 import { useState } from "react";
 import type { Team } from "../data/types";
 
-type TeamLogoProps = { team: Team };
+type TeamLogoProps = {
+  team: Pick<Team, "logo"> & Partial<Pick<Team, "color" | "abbreviation">>;
+};
 
 export const TeamLogo = ({ team }: TeamLogoProps) => {
+  const color = team.color ?? "var(--team-color-fallback)";
   const [failed, setFailed] = useState(false);
   const logo =
     team.logo && !failed ? (
@@ -15,11 +18,16 @@ export const TeamLogo = ({ team }: TeamLogoProps) => {
         onError={() => setFailed(true)}
       />
     ) : (
-      <span style={{ color: team.color }}>{team.abbreviation.slice(0, 3)}</span>
+      <span style={{ color }}>{(team.abbreviation ?? "?").slice(0, 3)}</span>
     );
 
   return (
-    <span className="team-logo" style={{ backgroundColor: `${team.color}20` }}>
+    <span
+      className="team-logo"
+      style={{
+        backgroundColor: `color-mix(in srgb, ${color} 12%, transparent)`,
+      }}
+    >
       {logo}
     </span>
   );

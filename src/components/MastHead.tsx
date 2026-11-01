@@ -1,23 +1,28 @@
-import { ThemeToggle } from "./ThemeToggle";
+import "./styles/MastHead.css";
+import { Radio } from "lucide-react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import "./styles/MastHead.css";
-import { PanelRightClose, PanelRightOpen, Radio } from "lucide-react";
+import { SyncControls } from "./SyncControls";
+import { ThemeToggle } from "./ThemeToggle";
 
 type MastHeadProps = {
-  division: string;
-  panelOpen: boolean;
-  onTogglePanel: () => void;
+  loading: boolean;
+  paused: boolean;
+  error: string | null;
+  updatedAt: Date | null;
+  refresh: () => void;
+  onTogglePause: () => void;
 };
 
-const MastHead = ({ division, panelOpen, onTogglePanel }: MastHeadProps) => {
-  const panelIcon = panelOpen ? (
-    <PanelRightClose size={18} />
-  ) : (
-    <PanelRightOpen size={18} />
-  );
-  const panelLabel = panelOpen ? "Close league panel" : "Open league panel";
+const MastHead = ({
+  loading,
+  paused,
+  error,
+  updatedAt,
+  refresh,
+  onTogglePause,
+}: MastHeadProps) => {
   return (
     <Stack component="header" direction="row" className="masthead">
       <Typography
@@ -36,18 +41,15 @@ const MastHead = ({ division, panelOpen, onTogglePanel }: MastHeadProps) => {
         </Typography>
       </Typography>
       <Stack direction="row" className="masthead-actions">
+        <SyncControls
+          loading={loading}
+          paused={paused}
+          error={error}
+          updatedAt={updatedAt}
+          onTogglePause={onTogglePause}
+          onRefresh={refresh}
+        />
         <ThemeToggle />
-        <button
-          className="league-toggle"
-          type="button"
-          onClick={onTogglePanel}
-          aria-label={panelLabel}
-          title={panelLabel}
-          aria-expanded={panelOpen}
-          aria-controls="league-panel"
-        >
-          {panelIcon}
-        </button>
       </Stack>
     </Stack>
   );

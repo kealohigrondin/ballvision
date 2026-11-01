@@ -52,7 +52,7 @@ export const TeamRow = ({
           <Box className="team-info">
             <Typography variant="body2" component="div" className="team-name">
               {rank}&nbsp;
-              {team.name}
+              {team.name}&nbsp;
               {possessionIndicator}
             </Typography>
             <Typography variant="caption" component="span" className="record">

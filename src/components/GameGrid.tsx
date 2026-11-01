@@ -5,6 +5,7 @@ import type { Game } from "../data/types";
 import { GameCard } from "./GameCard";
 import { EmptyState } from "./EmptyState";
 import { LoadingGrid } from "./LoadingGrid";
+import { useMemo } from "react";
 
 type GameGridProps = {
   games: readonly Game[];
@@ -27,7 +28,7 @@ export const GameGrid = ({
   favoriteIds,
   onToggleFavorite,
 }: GameGridProps) => {
-  const getEmptyTitle = () => {
+  const emptyTitle = useMemo(() => {
     if (hasError && !hasLoaded) {
       return "The feed is taking a timeout.";
     }
@@ -35,9 +36,9 @@ export const GameGrid = ({
       return "Your watchlist starts here.";
     }
     return "No games on this field.";
-  };
-  const emptyTitle = getEmptyTitle();
-  const getEmptyDetail = () => {
+  }, [hasError, hasLoaded, pinnedOnly]);
+
+  const emptyDetail = useMemo(() => {
     if (hasError && !hasLoaded) {
       return "Try refreshing to reconnect to ESPN.";
     }
@@ -45,8 +46,7 @@ export const GameGrid = ({
       return "Use the star on a game to pin it to the top of your scoreboard.";
     }
     return "Try another date, division, or filter.";
-  };
-  const emptyDetail = getEmptyDetail();
+  }, [hasError, hasLoaded, pinnedOnly]);
 
   if (loading && !hasLoaded) return <LoadingGrid compact={compact} />;
   if (!games.length)

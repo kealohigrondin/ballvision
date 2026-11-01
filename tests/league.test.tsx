@@ -45,7 +45,15 @@ describe("league data adapters", () => {
             season: 2026,
             entries: [
               {
-                team: { id: "1", shortDisplayName: "Georgia" },
+                team: {
+                  id: "1",
+                  shortDisplayName: "Georgia",
+                  logos: [
+                    {
+                      href: "https://a.espncdn.com/i/teamlogos/ncaa/500/61.png",
+                    },
+                  ],
+                },
                 stats: [
                   { type: "total", summary: "7-1" },
                   { type: "vsconf", summary: "5-1" },
@@ -56,7 +64,10 @@ describe("league data adapters", () => {
         },
       ],
     });
-    expect(tables[0].rows).toEqual(conference.rows);
+    expect(tables[0].rows[0]).toMatchObject(conference.rows[0]);
+    expect(tables[0].rows[0].logo).toBe(
+      "https://a.espncdn.com/i/teamlogos/ncaa/500/61.png",
+    );
     expect(tables[0].subtitle).toBe("2026");
   });
   it("supports nested divisions and missing optional stats", () => {
@@ -85,7 +96,11 @@ describe("league data adapters", () => {
   it("separates FBS/FCS polls and filters and sorts the Top 25", () => {
     const rank = (current: number) => ({
       current,
-      team: { id: String(current), nickname: `Team ${current}` },
+      team: {
+        id: String(current),
+        nickname: `Team ${current}`,
+        logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png",
+      },
       recordSummary: "6-0",
     });
     const data = {
@@ -99,6 +114,9 @@ describe("league data adapters", () => {
     expect(parseRankings(data, "fbs")[0].rows.map((r) => r.rank)).toEqual([
       1, 2,
     ]);
+    expect(parseRankings(data, "fbs")[0].rows[0].logo).toBe(
+      "https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png",
+    );
     expect(parseRankings(data, "fcs").map((p) => p.id)).toEqual(["fcs"]);
   });
 });
@@ -135,9 +153,12 @@ describe("league panel", () => {
       target: { value: "acc" },
     });
     expect(screen.getByRole("table", { name: /ACC/ })).toBeTruthy();
-    fireEvent.change(screen.getByLabelText("View"), {
-      target: { value: "rankings" },
-    });
+    fireEvent.click(screen.getByRole("button", { name: "Top 25" }));
+    expect(
+      screen
+        .getByRole("button", { name: "Top 25" })
+        .getAttribute("aria-pressed"),
+    ).toBe("true");
     await screen.findByRole("table", { name: /AP Top 25/ });
     expect(screen.getByText("Miami")).toBeTruthy();
     expect(provider.loadRankings).toHaveBeenCalledWith(

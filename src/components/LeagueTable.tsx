@@ -1,3 +1,5 @@
+import Stack from "@mui/material/Stack";
+import { TeamLogo } from "./TeamLogo";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -21,8 +23,13 @@ export const LeagueTable = ({ table, view }: LeagueTableProps) => {
     return (
       <TableRow key={row.id}>
         <TableCell component="th" scope="row">
-          {rank}
-          {row.name}
+          <Stack direction="row" className="league-team">
+            {rank}
+            <TeamLogo
+              team={{ ...row, abbreviation: row.abbreviation || row.name }}
+            />
+            <span>{row.name}</span>
+          </Stack>
         </TableCell>
         <TableCell>{value ?? "—"}</TableCell>
         <TableCell>{row.record}</TableCell>

@@ -39,6 +39,9 @@ export interface ScoreboardSource {
 }
 
 export interface LeagueRow {
+  logo?: string;
+  abbreviation?: string;
+  color?: string;
   id: string;
   name: string;
   rank?: number;

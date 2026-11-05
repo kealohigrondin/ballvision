@@ -35,7 +35,7 @@ const source = (): LeagueSource => ({
 afterEach(cleanup);
 
 describe("league data adapters", () => {
-  it("reads overall and conference records and preserves provider ordering", () => {
+  it("reads overall and conference records", () => {
     const tables = parseStandings({
       children: [
         {
@@ -69,6 +69,33 @@ describe("league data adapters", () => {
       "https://a.espncdn.com/i/teamlogos/ncaa/500/61.png",
     );
     expect(tables[0].subtitle).toBe("2026");
+  });
+  it("sorts college standings by conference winning percentage and preserves tied ordering", () => {
+    const records = ["3-2", "4-0", "2-1", "4-1", "2-1", "0-0", undefined];
+    const payload = {
+      children: [
+        {
+          id: "conference",
+          standings: {
+            entries: records.map((record, index) => ({
+              team: { id: String(index), displayName: `Team ${index}` },
+              stats: [
+                { type: "total", summary: "8-0" },
+                { type: "vsconf", summary: record },
+              ],
+            })),
+          },
+        },
+      ],
+    };
+    for (const division of ["fbs", "fcs"] as const) {
+      expect(
+        parseStandings(payload, division)[0].rows.map((row) => row.id),
+      ).toEqual(["1", "3", "2", "4", "0", "5", "6"]);
+    }
+    expect(parseStandings(payload, "nfl")[0].rows.map((row) => row.id)).toEqual(
+      ["0", "1", "2", "3", "4", "5", "6"],
+    );
   });
   it("supports nested divisions and missing optional stats", () => {
     const tables = parseStandings({

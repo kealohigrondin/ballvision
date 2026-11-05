@@ -110,7 +110,7 @@ export const LeagueTable = ({ table, view }: LeagueTableProps) => {
               {column}
             </TableCell>
             <TableCell component="th" scope="col">
-              OVERALL
+              OVR
             </TableCell>
           </TableRow>
         </TableHead>

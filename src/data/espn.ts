@@ -154,7 +154,20 @@ const leagueTeamIdentity = (team: Json) => ({
   color: /^[0-9a-f]{6}$/i.test(str(team.color)) ? `#${team.color}` : undefined,
 });
 
-export const parseStandings = (payload: unknown): LeagueTable[] => {
+const conferenceWinPercentage = (record?: string): number => {
+  const match = record?.match(/^(\d+)-(\d+)(?:-(\d+))?$/);
+  if (!match) return -1;
+  const wins = Number(match[1]);
+  const losses = Number(match[2]);
+  const ties = Number(match[3] ?? 0);
+  const games = wins + losses + ties;
+  return games > 0 ? (wins + ties / 2) / games : 0;
+};
+
+export const parseStandings = (
+  payload: unknown,
+  division: Division = "fbs",
+): LeagueTable[] => {
   const root = obj(payload);
   if (!Array.isArray(root.children))
     throw new Error("Unexpected ESPN standings response.");
@@ -180,6 +193,13 @@ export const parseStandings = (payload: unknown): LeagueTable[] => {
         };
       })
       .filter((row) => row.id && row.name);
+    if (division !== "nfl") {
+      rows.sort(
+        (a, b) =>
+          conferenceWinPercentage(b.conferenceRecord) -
+          conferenceWinPercentage(a.conferenceRecord),
+      );
+    }
     const nested = list(group.children).flatMap(collect);
     if (!rows.length) return nested;
     return [
@@ -263,7 +283,10 @@ export const espnLeagueSource: LeagueSource = {
       level: division === "nfl" ? "3" : "2",
       type: "0",
     }).toString();
-    return parseStandings(await loadLeagueJson(url.toString(), signal));
+    return parseStandings(
+      await loadLeagueJson(url.toString(), signal),
+      division,
+    );
   },
   loadRankings: async (division, signal) => {
     if (division === "nfl") return [];

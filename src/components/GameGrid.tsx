@@ -1,33 +1,28 @@
 import Grid from "@mui/material/Grid";
 import { getGameGridSize } from "../utils/gameGridLayout";
 
-import type { Game } from "../data/types";
+import { useAppData } from "../context/appDataContext";
 import { GameCard } from "./GameCard";
 import { EmptyState } from "./EmptyState";
 import { LoadingGrid } from "./LoadingGrid";
 import { useMemo } from "react";
 
-type GameGridProps = {
-  games: readonly Game[];
-  compact?: boolean;
-  loading: boolean;
-  hasLoaded: boolean;
-  hasError: boolean;
-  pinnedOnly: boolean;
-  favoriteIds: readonly string[];
-  onToggleFavorite: (gameId: string) => void;
-};
+type GameGridProps = Record<string, never>;
 
-export const GameGrid = ({
-  games,
-  compact = false,
-  loading,
-  hasLoaded,
-  hasError,
-  pinnedOnly,
-  favoriteIds,
-  onToggleFavorite,
-}: GameGridProps) => {
+export const GameGrid = ({}: GameGridProps) => {
+  const {
+    visibleGames: games,
+    panelOpen: compact,
+    loading,
+    updatedAt,
+    error,
+    filter,
+    favoriteIds,
+    toggleFavorite: onToggleFavorite,
+  } = useAppData();
+  const hasLoaded = updatedAt !== null;
+  const hasError = Boolean(error);
+  const pinnedOnly = filter === "pinned";
   const emptyTitle = useMemo(() => {
     if (hasError && !hasLoaded) {
       return "The feed is taking a timeout.";

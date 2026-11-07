@@ -1,36 +1,31 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GameGrid } from "../src/components/GameGrid";
-import type { Game } from "../src/data/types";
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
+import type { AppData } from "../src/context/appDataContext";
 
-const props = {
-  games: [] as Game[],
-  loading: false,
-  hasLoaded: true,
-  hasError: false,
-  pinnedOnly: false,
-  favoriteIds: [],
-  onToggleFavorite: () => {},
-};
+const grid = (overrides: Partial<AppData> = {}) => (
+  <AppDataTestProvider value={createAppData(overrides)}>
+    <GameGrid />
+  </AppDataTestProvider>
+);
 afterEach(cleanup);
 
 describe("GameGrid states", () => {
   it("shows loading placeholders only before the first successful load", () => {
-    const { rerender } = render(
-      <GameGrid {...props} loading hasLoaded={false} />,
-    );
+    const { rerender } = render(grid({ loading: true, updatedAt: null }));
     expect(screen.getByLabelText("Loading scores")).toBeTruthy();
     expect(screen.queryByText("No games on this field.")).toBeNull();
-    rerender(<GameGrid {...props} loading />);
+    rerender(grid({ loading: true }));
     expect(screen.queryByLabelText("Loading scores")).toBeNull();
     expect(screen.getByText("No games on this field.")).toBeTruthy();
   });
   it("owns the pinned and failed-request empty messages", () => {
-    const { rerender } = render(<GameGrid {...props} pinnedOnly />);
+    const { rerender } = render(grid({ filter: "pinned" }));
     expect(screen.getByText("Your watchlist starts here.")).toBeTruthy();
-    rerender(<GameGrid {...props} pinnedOnly hasError hasLoaded={false} />);
+    rerender(grid({ filter: "pinned", error: "offline", updatedAt: null }));
     expect(screen.getByText("The feed is taking a timeout.")).toBeTruthy();
-    rerender(<GameGrid {...props} hasError />);
+    rerender(grid({ error: "offline" }));
     expect(screen.getByText("No games on this field.")).toBeTruthy();
   });
 });

@@ -36,7 +36,9 @@ npm run preview
 - `src/components/`: one component per file; cards, team presentation, game details, period scores, toolbar, refresh controls, loading and error states each have a focused responsibility.
 - `src/utils/`: shared date and game-time formatting without UI or provider dependencies.
 - Components use MUI's default appearance. The primary green, light/dark mode, and shared 40px control height are configured in `src/theme.ts`. Minimal `sx` handles layout and responsive score columns; no standalone CSS files are loaded.
-- `src/App.tsx`: composes features and owns view filters; receives a replaceable source.
+- `src/context/appDataContext.ts`: typed shared app state, accessed with `useAppData` inside `AppDataProvider`.
+- `src/hooks/useAppDataState.ts`: owns view controls, scoreboard subscription, favorites, filter counts, and visible games.
+- `src/App.tsx`: installs `AppDataProvider` with replaceable data sources. `Dashboard` composes the layout; headers, grid, refresh controls, and league panel consume context directly.
 
 Polling runs 20 seconds after each completed request; requests time out after 15 seconds. Hidden tabs stop scheduled polling and refresh on return. A failed refresh retains the last successful snapshot with a warning. Changing dates/divisions clears the prior slate and cancels obsolete requests. Game clocks display the reported feed value; they are not extrapolated. All kickoff times use the browser's local timezone. FBS/FCS/NFL data availability follows ESPN; the app cannot guarantee coverage outside the selected feed.
 
@@ -52,4 +54,4 @@ Use the panel button in the scores header to open or close the right-side panel.
 
 ## MUI layout and theme
 
-`AppTheme` installs the MUI `ThemeProvider` and `CssBaseline`. Colors, typography, and breakpoints use MUI defaults, with the existing green as the primary color in each mode. `theme.app.controlHeight` sets outlined inputs and segmented buttons to 40px; text fields use MUI’s small size for matching label and input spacing. `Grid` powers game cards and loading placeholders using shared responsive sizing. Layout-only `sx` preserves the sticky header, league panel, and responsive score columns.
+`AppTheme` installs the MUI `ThemeProvider` and `CssBaseline`. Gumbolt Regular is bundled locally and registered through `MuiCssBaseline`, with `sans-serif` as the fallback. Colors, typography sizes, and breakpoints use MUI defaults, with the existing green as the primary color in each mode. `theme.app.controlHeight` sets outlined inputs and segmented buttons to 40px; text fields use MUI’s small size for matching label and input spacing. `Grid` powers game cards and loading placeholders using shared responsive sizing. Layout-only `sx` preserves the sticky header, league panel, and responsive score columns.

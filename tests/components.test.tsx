@@ -1,3 +1,4 @@
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -131,28 +132,30 @@ describe("scoreboard presentation", () => {
   it("reflects pause and loading state through accessible controls", () => {
     const onTogglePause = vi.fn();
     const { rerender } = render(
-      <SyncControls
-        loading={false}
-        paused
-        error={null}
-        updatedAt={null}
-        onTogglePause={onTogglePause}
-        onRefresh={() => {}}
-      />,
+      <AppDataTestProvider
+        value={createAppData({
+          paused: true,
+          updatedAt: null,
+          setPaused: onTogglePause,
+        })}
+      >
+        <SyncControls />
+      </AppDataTestProvider>,
     );
     fireEvent.click(
       screen.getByRole("button", { name: "Resume auto-refresh" }),
     );
     expect(onTogglePause).toHaveBeenCalledOnce();
     rerender(
-      <SyncControls
-        loading
-        paused={false}
-        error={null}
-        updatedAt={null}
-        onTogglePause={onTogglePause}
-        onRefresh={() => {}}
-      />,
+      <AppDataTestProvider
+        value={createAppData({
+          loading: true,
+          updatedAt: null,
+          setPaused: onTogglePause,
+        })}
+      >
+        <SyncControls />
+      </AppDataTestProvider>,
     );
     expect(
       (

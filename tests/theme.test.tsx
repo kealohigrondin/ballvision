@@ -1,3 +1,4 @@
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 import { AppTheme } from "../src/components/AppTheme";
@@ -12,14 +13,9 @@ afterEach(() => {
 it("switches themes from the masthead and remembers the preference on remount", () => {
   const app = (
     <AppTheme>
-      <MastHead
-        loading={false}
-        paused={false}
-        error={null}
-        updatedAt={null}
-        refresh={() => {}}
-        onTogglePause={() => {}}
-      />
+      <AppDataTestProvider value={createAppData()}>
+        <MastHead />
+      </AppDataTestProvider>
     </AppTheme>
   );
   const { unmount } = render(app);

@@ -1,25 +1,70 @@
 import { createTheme } from "@mui/material/styles";
+import gumboltUrl from "./assets/fonts/Gumbolt-Regular.otf";
 
 declare module "@mui/material/styles" {
   interface Theme {
-    app: { controlHeight: string };
+    app: {
+      controlHeight: string;
+      controlBorderRadius: string;
+      paperBorderRadius: string;
+    };
   }
   interface ThemeOptions {
-    app?: { controlHeight: string };
+    app?: {
+      controlHeight: string;
+      controlBorderRadius: string;
+      paperBorderRadius: string;
+    };
   }
 }
 
 export const createAppTheme = (mode: "light" | "dark") =>
   createTheme({
     cssVariables: true,
-    app: { controlHeight: "40px" },
+    app: {
+      controlHeight: "40px",
+      controlBorderRadius: "20px",
+      paperBorderRadius: "20px",
+    },
+    typography: { fontFamily: "Montserrat, sans-serif" },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          "@font-face": {
+            fontFamily: "Gumbolt",
+            src: `url(${gumboltUrl}) format("opentype")`,
+            fontStyle: "normal",
+            fontWeight: 400,
+            fontDisplay: "swap",
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            "&:is(article, aside)": {
+              borderRadius: "var(--mui-app-paperBorderRadius)",
+            },
+            "&:is(article)": { overflow: "hidden" },
+          },
+        },
+      },
       MuiTextField: { defaultProps: { size: "small" } },
       MuiOutlinedInput: {
-        styleOverrides: { root: { height: "var(--mui-app-controlHeight)" } },
+        styleOverrides: {
+          root: {
+            height: "var(--mui-app-controlHeight)",
+            borderRadius: "var(--mui-app-controlBorderRadius)",
+          },
+        },
       },
       MuiToggleButton: {
-        styleOverrides: { root: { height: "var(--mui-app-controlHeight)" } },
+        styleOverrides: {
+          root: {
+            height: "var(--mui-app-controlHeight)",
+            borderRadius: "var(--mui-app-controlBorderRadius)",
+          },
+        },
       },
     },
     palette: {

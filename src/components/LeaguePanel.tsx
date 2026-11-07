@@ -6,13 +6,14 @@ import Alert from "@mui/material/Alert";
 import Paper from "@mui/material/Paper";
 
 import { useMemo, useState } from "react";
-import type { Division, LeagueSource } from "../data/types";
+import { useAppData } from "../context/appDataContext";
 import { useLeagueTables, type LeagueView } from "../hooks/useLeagueTables";
 import { LeagueTable } from "./LeagueTable";
 
-type LeaguePanelProps = { source: LeagueSource; division: Division };
+type LeaguePanelProps = Record<string, never>;
 
-export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
+export const LeaguePanel = ({}: LeaguePanelProps) => {
+  const { leagueSource: source, division } = useAppData();
   const [selectedView, setView] = useState<LeagueView>("standings");
   const view = division === "nfl" ? "standings" : selectedView;
   const [selectedId, setSelectedId] = useState("");

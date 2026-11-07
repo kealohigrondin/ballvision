@@ -1,3 +1,4 @@
+import { useAppData } from "../context/appDataContext";
 import IconButton from "@mui/material/IconButton";
 import { useMemo } from "react";
 import Typography from "@mui/material/Typography";
@@ -5,23 +6,17 @@ import Stack from "@mui/material/Stack";
 
 import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
 
-type SyncControlsProps = {
-  loading: boolean;
-  paused: boolean;
-  error: string | null;
-  updatedAt: Date | null;
-  onTogglePause: () => void;
-  onRefresh: () => void;
-};
+type SyncControlsProps = Record<string, never>;
 
-export const SyncControls = ({
-  loading,
-  paused,
-  error,
-  updatedAt,
-  onTogglePause,
-  onRefresh,
-}: SyncControlsProps) => {
+export const SyncControls = ({}: SyncControlsProps) => {
+  const {
+    loading,
+    paused,
+    error,
+    updatedAt,
+    setPaused,
+    refresh: onRefresh,
+  } = useAppData();
   const pauseLabel = paused ? "Resume auto-refresh" : "Pause auto-refresh";
   const pauseIcon = paused ? (
     <CirclePlay size={17} />
@@ -60,7 +55,7 @@ export const SyncControls = ({
       <IconButton
         title={pauseLabel}
         aria-label={pauseLabel}
-        onClick={onTogglePause}
+        onClick={() => setPaused((current) => !current)}
       >
         {pauseIcon}
       </IconButton>

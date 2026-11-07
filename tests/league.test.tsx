@@ -1,3 +1,4 @@
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -152,11 +153,21 @@ describe("league panel", () => {
   it("uses NFL standings when switching from a college poll", async () => {
     const provider = source();
     const { rerender } = render(
-      <LeaguePanel source={provider} division="fbs" />,
+      <AppDataTestProvider
+        value={createAppData({ leagueSource: provider, division: "fbs" })}
+      >
+        <LeaguePanel />
+      </AppDataTestProvider>,
     );
     fireEvent.click(screen.getByRole("button", { name: "Top 25" }));
     await screen.findByRole("table", { name: /AP Top 25/ });
-    rerender(<LeaguePanel source={provider} division="nfl" />);
+    rerender(
+      <AppDataTestProvider
+        value={createAppData({ leagueSource: provider, division: "nfl" })}
+      >
+        <LeaguePanel />
+      </AppDataTestProvider>,
+    );
     await screen.findByRole("table", { name: /SEC/ });
     expect(screen.queryByRole("button", { name: "Top 25" })).toBeNull();
     expect(screen.getByLabelText("Division")).toBeTruthy();
@@ -190,7 +201,13 @@ describe("league panel", () => {
       conference,
       { ...conference, id: "acc", title: "ACC" },
     ]);
-    render(<LeaguePanel source={provider} division="fbs" />);
+    render(
+      <AppDataTestProvider
+        value={createAppData({ leagueSource: provider, division: "fbs" })}
+      >
+        <LeaguePanel />
+      </AppDataTestProvider>,
+    );
     await screen.findByRole("table", { name: /SEC/ });
     fireEvent.change(screen.getByLabelText("Conference"), {
       target: { value: "acc" },
@@ -214,7 +231,13 @@ describe("league panel", () => {
     vi.mocked(provider.loadStandings).mockRejectedValueOnce(
       new Error("offline"),
     );
-    render(<LeaguePanel source={provider} division="fcs" />);
+    render(
+      <AppDataTestProvider
+        value={createAppData({ leagueSource: provider, division: "fcs" })}
+      >
+        <LeaguePanel />
+      </AppDataTestProvider>,
+    );
     await screen.findByRole("alert");
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
     await screen.findByRole("table", { name: /SEC/ });

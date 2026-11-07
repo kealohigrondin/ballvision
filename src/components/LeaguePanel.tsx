@@ -1,6 +1,8 @@
 import { SegmentedControl } from "./SegmentedControl";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 import Paper from "@mui/material/Paper";
 
 import { useMemo, useState } from "react";
@@ -38,7 +40,7 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
           component="p"
           className="league-message"
           role="status"
-          sx={{ color: "var(--mui-palette-text-secondary)" }}
+          color="text.secondary"
         >
           Loading league data…
         </Typography>
@@ -52,7 +54,7 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
         variant="body2"
         component="p"
         className="league-message"
-        sx={{ color: "var(--mui-palette-text-secondary)" }}
+        color="text.secondary"
       >
         No league data is available for this division.
       </Typography>
@@ -67,35 +69,17 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
   return (
     <Paper
       component="aside"
-      elevation={0}
-      sx={[
-        {
-          position: "sticky",
-          gridRow: { xs: 1, md: "auto" },
-          top: "16px",
-          marginTop: "16px",
-          padding: "20px",
-          background: "var(--mui-palette-background-paper)",
-          border: "1px solid var(--mui-palette-divider)",
-          borderRadius: "24px",
-          height: "calc(100dvh - 32px)",
-          maxHeight: "calc(100dvh - 32px)",
-          minWidth: "0",
-          overflowY: "auto",
-          scrollbarWidth: "thin",
-          "& h2": {
-            color: "var(--mui-palette-text-primary)",
-            margin: "0 0 22px",
-          },
-          "@media (max-width: 899.95px)": {
-            position: "static",
-            height: "auto",
-            maxHeight: "440px",
-            marginTop: "24px",
-          },
-        },
-        { borderRadius: "24px" },
-      ]}
+      sx={{
+        position: { xs: "static", md: "sticky" },
+        gridRow: { xs: 1, md: "auto" },
+        top: 16,
+        mt: 2,
+        p: 2,
+        height: { xs: "auto", md: "calc(100dvh - 32px)" },
+        maxHeight: { xs: 440, md: "calc(100dvh - 32px)" },
+        minWidth: 0,
+        overflowY: "auto",
+      }}
       className="league-panel"
       id="league-panel"
       aria-label="League information"
@@ -113,87 +97,43 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
             setView(nextView);
             setSelectedId("");
           }}
-          sx={{ marginBottom: "16px" }}
+          sx={{ mb: 2 }}
         />
       )}
       {tables.length > 0 && (
-        <Box
-          component="label"
-          className="league-select-label"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "7px",
-            marginBottom: "16px",
-            color: "var(--mui-palette-text-secondary)",
-            "& select": {
-              width: "100%",
-              height: "var(--mui-app-controlHeight)",
-              minHeight: "var(--mui-app-controlHeight)",
-              padding: "0 12px",
-              borderRadius: "12px",
-              border: "1px solid var(--mui-palette-divider)",
-              background: "var(--mui-app-colors-inputSurface)",
-              color: "var(--mui-palette-text-primary)",
-            },
-            "& select option": {
-              background: "var(--mui-palette-background-paper)",
-              color: "var(--mui-palette-text-primary)",
-            },
-            "& select:focus-visible": {
-              outline: "2px solid var(--mui-palette-primary-main)",
-              outlineOffset: "2px",
-            },
-          }}
+        <TextField
+          select
+          fullWidth
+          label={secondaryLabel}
+          value={selected?.id ?? ""}
+          onChange={(e) => setSelectedId(e.target.value)}
+          slotProps={{ select: { native: true } }}
+          sx={{ mb: 2 }}
         >
-          {secondaryLabel}
-          <select
-            value={selected?.id ?? ""}
-            onChange={(e) => setSelectedId(e.target.value)}
-          >
-            {options}
-          </select>
-        </Box>
+          {options}
+        </TextField>
       )}
       {error && (
-        <Box
-          className="league-warning"
-          role="alert"
-          sx={{
-            padding: "12px",
-            borderRadius: "12px",
-            background: "var(--mui-app-colors-warningSurface)",
-            color: "var(--mui-app-colors-warningText)",
-            marginBottom: "12px",
-            "& button": {
-              display: "block",
-              marginTop: "8px",
-              border: "1px solid var(--mui-app-colors-warningBorder)",
-              borderRadius: "12px",
-              padding: "5px 12px",
-              background: "var(--mui-app-colors-transparent)",
-              color: "inherit",
-            },
-          }}
+        <Alert
+          severity="warning"
+          sx={{ mb: 2 }}
+          action={
+            <Button color="inherit" onClick={refresh} disabled={loading}>
+              Retry
+            </Button>
+          }
         >
           Unable to update league data. Any displayed records may be out of
           date.
-          <button onClick={refresh} disabled={loading}>
-            Retry
-          </button>
-        </Box>
+        </Alert>
       )}
       {content}
       <Typography
         variant="caption"
         component="p"
         className="league-note"
-        sx={{
-          color: "var(--mui-palette-text-secondary)",
-          margin: "18px 0 0",
-          borderTop: "1px solid var(--mui-palette-divider)",
-          paddingTop: "14px",
-        }}
+        color="text.secondary"
+        sx={{ mt: 2 }}
       >
         {label} · {division.toUpperCase()} · Current season. Updates every 5
         minutes; records may lag live games.

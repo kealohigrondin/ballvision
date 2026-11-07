@@ -1,12 +1,11 @@
-import { segmentedButtonSx, iconButtonSx } from "../styles/shared";
-import { liveDotSx, controlHeightSx, visuallyHiddenSx } from "../styles/shared";
 import Box from "@mui/material/Box";
-import { SegmentedControl } from "./SegmentedControl";
-import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-import clsx from "clsx";
-
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { SegmentedControl } from "./SegmentedControl";
 import type { Division } from "../data/types";
 import { localDate } from "../utils/date";
 export type Filter = "all" | "live" | "upcoming" | "final" | "pinned";
@@ -38,28 +37,6 @@ export const Toolbar = ({
     next.setDate(next.getDate() + days);
     onDate(localDate(next));
   };
-  const divisionButtons = (["fbs", "fcs", "nfl"] as const).map((d) => {
-    return (
-      <Box
-        component="button"
-        key={d}
-        aria-pressed={division === d}
-        className={clsx(division === d && "active")}
-        onClick={() => onDivision(d)}
-        sx={[
-          segmentedButtonSx,
-          {
-            padding: { xs: "4px", sm: "0 14px" },
-            borderRadius: "20px",
-            color: "var(--mui-palette-text-secondary)",
-          },
-        ]}
-      >
-        {d.toUpperCase()}
-      </Box>
-    );
-  });
-
   const filterOptions = (
     ["all", "live", "upcoming", "final", "pinned"] as const
   ).map((f) => {
@@ -73,217 +50,93 @@ export const Toolbar = ({
     return {
       value: f,
       label: (
-        <>
-          {f === "live" && (
-            <Box component="span" className="live-dot" sx={liveDotSx} />
-          )}
-          {label}
-          <Typography
-            variant="caption"
-            component="span"
-            className="count"
-            sx={{ color: "var(--mui-app-colors-badgeText)" }}
-          >
-            {counts[f]}
-          </Typography>
-        </>
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <span>{label}</span>
+          <span>{counts[f]}</span>
+        </Stack>
       ),
     };
   });
   return (
-    <>
+    <Stack spacing={2}>
       <Stack
         direction="row"
-        className="toolbar"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "10px",
-          paddingBottom: "20px",
-        }}
+        useFlexGap
+        spacing={1}
+        sx={{ alignItems: "center", flexWrap: "wrap" }}
       >
         <Stack
           direction="row"
+          spacing={1}
+          sx={{ alignItems: "center" }}
           className="date-control"
-          sx={[
-            controlHeightSx,
-            {
-              display: "flex",
-              alignItems: "center",
-              padding: "3px 6px",
-              border: "1px solid var(--mui-palette-divider)",
-              borderRadius: "24px",
-              background: "var(--mui-app-colors-inputSurface)",
-              "& input": {
-                width: "125px",
-                background: "var(--mui-app-colors-transparent)",
-                border: "0",
-                color: "var(--mui-palette-text-primary)",
-              },
-              "& input::-webkit-calendar-picker-indicator": { opacity: "0.65" },
-            },
-          ]}
         >
-          <Box
-            component="button"
-            className="icon-button"
-            aria-label="Previous day"
-            onClick={() => shift(-1)}
-            sx={[
-              iconButtonSx,
-              {
-                background: "transparent",
-                color: "var(--mui-palette-text-primary)",
-                height: "24px",
-                "&:hover": {
-                  background: "var(--mui-app-colors-iconHoverSurface)",
-                },
-              },
-            ]}
-          >
-            <ChevronLeft size={17} />
-          </Box>
-          <Box
-            component="label"
-            className="sr-only"
-            htmlFor="game-date"
-            sx={visuallyHiddenSx}
-          >
-            Game date
-          </Box>
-          <input
+          <IconButton aria-label="Previous day" onClick={() => shift(-1)}>
+            <ChevronLeft />
+          </IconButton>
+          <TextField
             id="game-date"
+            label="Game date"
             type="date"
             value={date}
-            min="2000-01-01"
-            max="2099-12-31"
+            slotProps={{
+              inputLabel: { shrink: true },
+              htmlInput: { min: "2000-01-01", max: "2099-12-31" },
+            }}
             onChange={(e) => {
               if (/^\d{4}-\d{2}-\d{2}$/.test(e.target.value))
                 onDate(e.target.value);
             }}
           />
-          <Box
-            component="button"
-            className="icon-button"
-            aria-label="Next day"
-            onClick={() => shift(1)}
-            sx={[
-              iconButtonSx,
-              {
-                background: "transparent",
-                color: "var(--mui-palette-text-primary)",
-                height: "24px",
-                "&:hover": {
-                  background: "var(--mui-app-colors-iconHoverSurface)",
-                },
-              },
-            ]}
-          >
-            <ChevronRight size={17} />
-          </Box>
+          <IconButton aria-label="Next day" onClick={() => shift(1)}>
+            <ChevronRight />
+          </IconButton>
         </Stack>
-        <Box
-          component="button"
-          className="today-button"
-          onClick={() => onDate(localDate())}
-          sx={[
-            controlHeightSx,
-            {
-              border: "0",
-              padding: "6px 16px",
-              borderRadius: "24px",
-              background: "var(--mui-app-colors-inputSurface)",
-              color: "var(--mui-palette-text-primary)",
-              "&:hover": {
-                background: "var(--mui-app-colors-buttonHoverSurface)",
-              },
-              "@media (max-width: 599.95px)": { padding: "4px" },
+        <Button onClick={() => onDate(localDate())}>Today</Button>
+        <SegmentedControl
+          label="Division"
+          value={division}
+          options={(["fbs", "fcs", "nfl"] as const).map((value) => ({
+            value,
+            label: value.toUpperCase(),
+          }))}
+          onChange={onDivision}
+        />
+        <TextField
+          label="Search teams"
+          placeholder="Find your team…"
+          value={search}
+          onChange={(e) => onSearch(e.target.value)}
+          sx={{ ml: { sm: "auto" }, width: { xs: "100%", sm: "auto" } }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+              endAdornment: search && (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="Clear search"
+                    onClick={() => onSearch("")}
+                  >
+                    <X />
+                  </IconButton>
+                </InputAdornment>
+              ),
             },
-          ]}
-        >
-          Today
-        </Box>
-        <Stack
-          direction="row"
-          className="division-switch"
-          role="group"
-          aria-label="Division"
-          sx={[
-            controlHeightSx,
-            {
-              display: "flex",
-              alignItems: "center",
-              padding: "0",
-              borderRadius: "24px",
-              background: "var(--mui-app-colors-inputSurface)",
-
-              "@media (max-width: 599.95px)": {},
-            },
-          ]}
-        >
-          {divisionButtons}
-        </Stack>
-        <Box
-          component="label"
-          className="search"
-          sx={[
-            controlHeightSx,
-            {
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginLeft: "auto",
-              maxWidth: "230px",
-              padding: "0 14px",
-              borderRadius: "14px",
-              background: "var(--mui-app-colors-inputSurface)",
-              color: "var(--mui-app-colors-searchIcon)",
-              "& input": {
-                border: "0",
-                background: "var(--mui-app-colors-transparent)",
-                color: "var(--mui-palette-text-primary)",
-                width: "100%",
-                minWidth: "0",
-                outline: "0",
-              },
-              "&:focus-within": {
-                outline: "2px solid var(--mui-palette-primary-main)",
-              },
-              "& input::placeholder": {
-                color: "var(--mui-app-colors-placeholder)",
-              },
-
-              "@media (max-width: 599.95px)": {
-                width: "100%",
-                maxWidth: "none",
-                marginLeft: "0",
-              },
-            },
-          ]}
-        >
-          <Search size={16} />
-          <Box component="span" className="sr-only" sx={visuallyHiddenSx}>
-            Search teams
-          </Box>
-          <input
-            placeholder="Find your team…"
-            value={search}
-            onChange={(e) => onSearch(e.target.value)}
-          />
-          {search && (
-            <button aria-label="Clear search" onClick={() => onSearch("")}>
-              ×
-            </button>
-          )}
-        </Box>
+          }}
+        />
       </Stack>
-      <SegmentedControl
-        label="Filter games"
-        value={filter}
-        options={filterOptions}
-        onChange={onFilter}
-      />
-    </>
+      <Box sx={{ overflowX: "auto" }}>
+        <SegmentedControl
+          label="Filter games"
+          value={filter}
+          options={filterOptions}
+          onChange={onFilter}
+        />
+      </Box>
+    </Stack>
   );
 };

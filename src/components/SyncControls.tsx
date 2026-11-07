@@ -1,11 +1,9 @@
-import { iconButtonSx, liveDotSx } from "../styles/shared";
-import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import { useMemo } from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import clsx from "clsx";
 
-import { CirclePause, CirclePlay, RefreshCw, WifiOff } from "lucide-react";
+import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
 
 type SyncControlsProps = {
   loading: boolean;
@@ -24,18 +22,6 @@ export const SyncControls = ({
   onTogglePause,
   onRefresh,
 }: SyncControlsProps) => {
-  const indicator = error ? (
-    <WifiOff size={13} />
-  ) : (
-    <Box
-      component="span"
-      className={clsx("sync-dot", paused && "paused")}
-      sx={[
-        liveDotSx,
-        { "&.paused": { background: "var(--mui-app-colors-paused)" } },
-      ]}
-    />
-  );
   const pauseLabel = paused ? "Resume auto-refresh" : "Pause auto-refresh";
   const pauseIcon = paused ? (
     <CirclePlay size={17} />
@@ -61,56 +47,31 @@ export const SyncControls = ({
   }, [loading, paused, time]);
 
   return (
-    <Stack
-      direction="row"
-      className="sync-controls"
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: "6px",
-      }}
-    >
+    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <Typography
         variant="caption"
         component="span"
-        className={clsx("sync-status", error && "has-error")}
         role="status"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          color: "var(--mui-palette-text-secondary)",
-          marginRight: "4px",
-          "&.has-error": { color: "var(--mui-app-colors-syncWarning)" },
-        }}
+        color="text.secondary"
       >
-        {indicator}
         {status}
+        {error && " · Connection error"}
       </Typography>
-      <Box
-        component="button"
-        className="icon-button"
+      <IconButton
         title={pauseLabel}
         aria-label={pauseLabel}
         onClick={onTogglePause}
-        sx={iconButtonSx}
       >
         {pauseIcon}
-      </Box>
-      <Box
-        component="button"
-        className={clsx("icon-button", loading && "spinning")}
-        sx={[
-          iconButtonSx,
-          { "&.spinning svg": { animation: "rotate 1.5s linear infinite" } },
-        ]}
+      </IconButton>
+      <IconButton
         aria-label="Refresh scores"
         title="Refresh scores"
         onClick={onRefresh}
         disabled={loading}
       >
-        <RefreshCw size={16} />
-      </Box>
+        <RefreshCw />
+      </IconButton>
     </Stack>
   );
 };

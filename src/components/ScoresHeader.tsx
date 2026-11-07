@@ -1,4 +1,4 @@
-import { controlHeightSx } from "../styles/shared";
+import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -39,90 +39,32 @@ export const ScoresHeader = ({
 
   return (
     <Box
-      component="div"
       id="scores-header"
-      className="scores-header"
       sx={{
         position: "sticky",
-        top: "0",
-        zIndex: "10",
-        isolation: "isolate",
-        paddingBottom: "8px",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          inset: "0",
-          zIndex: "-1",
-          pointerEvents: "none",
-          background: "var(--mui-app-background)",
-          backgroundAttachment: "fixed",
-        },
+        top: 0,
+        zIndex: 1,
+        bgcolor: "background.default",
+        py: 2,
       }}
     >
       <Stack
         direction="row"
-        className="section-heading"
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "end",
-          gap: "16px",
-          padding: "16px 0 8px",
-          "& h2": { margin: "6px 0 0" },
-          "@media (max-width: 599.95px)": {
-            alignItems: "start",
-            flexDirection: "column",
-            padding: "24px 0 20px",
-            gap: "14px",
-          },
-        }}
+        spacing={2}
+        sx={{ alignItems: "center", justifyContent: "space-between", mb: 2 }}
       >
         <Typography variant="h5" component="h1">
-          {dayLabel}
-          <Box
-            component="span"
-            className="year"
-            sx={{
-              color: "var(--mui-app-colors-year)",
-              "@media (max-width: 599.95px)": { display: "none" },
-            }}
-          >
-            {" "}
-            {day.getFullYear()}
-          </Box>
+          {dayLabel} {day.getFullYear()}
         </Typography>
-        <Box
-          component="button"
-          className="league-toggle"
-          type="button"
+        <IconButton
           onClick={onTogglePanel}
           aria-label={panelLabel}
           title={panelLabel}
           aria-expanded={panelOpen}
           aria-controls="league-panel"
-          sx={[
-            controlHeightSx,
-            {
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              border: "1px solid var(--mui-palette-divider)",
-              borderRadius: "24px",
-              background: "var(--mui-app-colors-inputSurface)",
-              padding: "0 18px",
-              color: "var(--mui-palette-text-primary)",
-              "&:hover": {
-                background: "var(--mui-app-colors-buttonHoverSurface)",
-              },
-              '&[aria-expanded="true"]': {
-                background: "var(--mui-app-colors-divisionSelectedSurface)",
-              },
-              "@media (max-width: 599.95px)": { padding: "0 12px" },
-            },
-          ]}
         >
           {panelIcon}
-        </Box>
+        </IconButton>
       </Stack>
       <Toolbar
         date={date}

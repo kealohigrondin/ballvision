@@ -87,6 +87,7 @@ describe("scoreboard presentation", () => {
     expect(screen.getByText("Q2 · 3:42")).toBeTruthy();
     expect(screen.getByText("RED ZONE ·")).toBeTruthy();
     expect(screen.getByText("ESPN")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Game details" }));
     expect(screen.getByText("Pass complete.")).toBeTruthy();
     expect(
       screen.getByRole("table", { name: "Score by period", hidden: true }),

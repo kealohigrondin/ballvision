@@ -1,4 +1,4 @@
-import { tableCellSx } from "../styles/shared";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { TeamLogo } from "./TeamLogo";
@@ -25,91 +25,54 @@ export const LeagueTable = ({ table, view }: LeagueTableProps) => {
           <Stack
             direction="row"
             className="league-team"
-            sx={{
-              alignItems: "center",
-              gap: "8px",
-              "& .team-logo": { width: "24px", height: "24px" },
-              "& .league-rank": { flexShrink: "0", minWidth: "18px" },
-              minWidth: "0",
-              "& > span:last-child": {
-                minWidth: "0",
-                overflowWrap: "anywhere",
-              },
-            }}
+            spacing={1}
+            sx={{ alignItems: "center", minWidth: 0 }}
           >
             {ranked && (
-              <Box
-                component="span"
-                className="league-rank"
-                sx={{
-                  display: "inline-block",
-                  minWidth: "23px",
-                  color: "var(--mui-palette-text-secondary)",
-                }}
-              >
+              <Box component="span" className="league-rank">
                 {row.rank}
               </Box>
             )}
             <TeamLogo
               team={{ ...row, abbreviation: row.abbreviation || row.name }}
+              size={24}
             />
-            <span>{row.name}</span>
+            <Typography
+              component="span"
+              variant="body2"
+              sx={{ overflowWrap: "anywhere" }}
+            >
+              {row.name}
+            </Typography>
           </Stack>
         </TableCell>
-        <TableCell>{value ?? "—"}</TableCell>
-        <TableCell>{row.record}</TableCell>
+        <TableCell align="right">{value ?? "—"}</TableCell>
+        <TableCell align="right">{row.record}</TableCell>
       </TableRow>
     );
   });
   return (
     <TableContainer className="league-table-scroll" sx={{ overflowX: "auto" }}>
-      <Table
-        className="league-table"
-        sx={{
-          width: "100%",
-          borderCollapse: "collapse",
-          tableLayout: "fixed",
-          "& caption": {
-            textAlign: "left",
-            color: "var(--mui-palette-text-primary)",
-            padding: "8px 0 14px",
-          },
-          "& caption span": {
-            display: "block",
-            marginTop: "4px",
-            color: "var(--mui-palette-text-secondary)",
-          },
-          "& th": {
-            ...tableCellSx,
-            padding: "12px 4px",
-          },
-          "& td": {
-            ...tableCellSx,
-            padding: "12px 4px",
-            color: "var(--mui-app-colors-tableText)",
-            whiteSpace: "nowrap",
-          },
-          "& th:first-of-type": { textAlign: "left" },
-          "& thead th": { color: "var(--mui-palette-text-secondary)" },
-          "& th:nth-child(2)": { width: "60px" },
-          "& td:nth-child(2)": { width: "60px" },
-          "& th:nth-child(3)": { width: "76px" },
-          "& td:nth-child(3)": { width: "76px" },
-        }}
-      >
+      <Table className="league-table">
         <caption>
           {table.title}
-          <span>{table.subtitle}</span>
+          <Typography
+            variant="caption"
+            component="span"
+            sx={{ display: "block" }}
+          >
+            {table.subtitle}
+          </Typography>
         </caption>
         <TableHead>
           <TableRow>
             <TableCell component="th" scope="col">
               TEAM
             </TableCell>
-            <TableCell component="th" scope="col">
+            <TableCell component="th" scope="col" align="right">
               {column}
             </TableCell>
-            <TableCell component="th" scope="col">
+            <TableCell component="th" scope="col" align="right">
               OVR
             </TableCell>
           </TableRow>

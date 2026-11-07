@@ -9,6 +9,7 @@ type SegmentedControlProps<Value extends string> = {
   options: readonly { value: Value; label: ReactNode }[];
   onChange: (value: Value) => void;
   className?: string;
+  fullWidth?: boolean;
   sx?: SxProps<Theme>;
 };
 
@@ -18,6 +19,7 @@ export const SegmentedControl = <Value extends string>({
   options,
   onChange,
   className,
+  fullWidth = false,
   sx,
 }: SegmentedControlProps<Value>) => {
   const buttons = options.map((option) => (
@@ -28,6 +30,7 @@ export const SegmentedControl = <Value extends string>({
   return (
     <ToggleButtonGroup
       exclusive
+      fullWidth={fullWidth}
       color="primary"
       value={value}
       onChange={(_, next: Value | null) => {

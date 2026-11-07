@@ -66,6 +66,14 @@ export const createAppTheme = (mode: "light" | "dark") =>
           },
         },
       },
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            height: "var(--mui-app-controlHeight)",
+            borderRadius: "var(--mui-app-controlBorderRadius)",
+          },
+        },
+      },
     },
     palette: {
       mode,

@@ -156,8 +156,9 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
             {panelIcon}
           </IconButton>
         </Stack>
-        <Box sx={{ overflowX: "auto" }}>
+        <Box sx={{ overflowX: "auto", width: "100%" }}>
           <SegmentedControl
+            fullWidth
             label="Filter games"
             value={filter}
             options={filterOptions}

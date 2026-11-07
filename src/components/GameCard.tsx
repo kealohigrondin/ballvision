@@ -91,6 +91,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
           aria-label={`${game.away.name} at ${game.home.name} scores by period`}
           sx={{
             tableLayout: "fixed",
+            "& .MuiTableCell-root": { borderBottom: 0 },
             "& .period-heading, & .team-period": { display: "none" },
             "& .total-heading": { visibility: "hidden" },
             "@container game-grid (min-width: 1200px)": {

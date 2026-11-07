@@ -65,7 +65,7 @@ export const GameGrid = ({}: GameGridProps) => {
       spacing={1.5}
       className="game-grid"
       aria-label="Football games"
-      sx={{ container: "game-grid / inline-size", alignItems: "flex-start" }}
+      sx={{ alignItems: "flex-start" }}
     >
       {cards}
     </Grid>

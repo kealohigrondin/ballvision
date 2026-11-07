@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material/styles";
-import gumboltUrl from "./assets/fonts/Gumbolt-Regular.otf";
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -7,6 +6,7 @@ declare module "@mui/material/styles" {
       controlHeight: string;
       controlBorderRadius: string;
       paperBorderRadius: string;
+      boxScoreMinWidth: number;
     };
   }
   interface ThemeOptions {
@@ -14,6 +14,7 @@ declare module "@mui/material/styles" {
       controlHeight: string;
       controlBorderRadius: string;
       paperBorderRadius: string;
+      boxScoreMinWidth: number;
     };
   }
 }
@@ -25,20 +26,10 @@ export const createAppTheme = (mode: "light" | "dark") =>
       controlHeight: "40px",
       controlBorderRadius: "20px",
       paperBorderRadius: "20px",
+      boxScoreMinWidth: 350,
     },
     typography: { fontFamily: "Montserrat, sans-serif" },
     components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          "@font-face": {
-            fontFamily: "Gumbolt",
-            src: `url(${gumboltUrl}) format("opentype")`,
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontDisplay: "swap",
-          },
-        },
-      },
       MuiPaper: {
         styleOverrides: {
           root: {

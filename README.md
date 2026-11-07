@@ -55,3 +55,5 @@ Use the panel button in the scores header to open or close the right-side panel.
 ## MUI layout and theme
 
 `AppTheme` installs the MUI `ThemeProvider` and `CssBaseline`. Gumbolt Regular is bundled locally and registered through `MuiCssBaseline`, with `sans-serif` as the fallback. Colors, typography sizes, and breakpoints use MUI defaults, with the existing green as the primary color in each mode. `theme.app.controlHeight` sets outlined inputs and segmented buttons to 40px; text fields use MUI’s small size for matching label and input spacing. `Grid` powers game cards and loading placeholders using shared responsive sizing. Layout-only `sx` preserves the sticky header, league panel, and responsive score columns.
+
+Quarter scores and the total-column heading appear when an individual game card is at least `theme.app.boxScoreMinWidth` pixels wide (480px by default). A named container query measures each card independently of the screen or game grid width.

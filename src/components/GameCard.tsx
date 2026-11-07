@@ -1,3 +1,4 @@
+import { compactBoxScoreSx } from "../styles/boxScore";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
@@ -78,6 +79,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   return (
     <Paper
       component="article"
+      sx={{ container: "game-card / inline-size" }}
       className={clsx(
         "game-card",
         isLive && "is-live",
@@ -89,16 +91,22 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
           className="card-scoreboard"
           size="small"
           aria-label={`${game.away.name} at ${game.home.name} scores by period`}
-          sx={{
-            tableLayout: "fixed",
-            "& .MuiTableCell-root": { borderBottom: 0 },
-            "& .period-heading, & .team-period": { display: "none" },
-            "& .total-heading": { visibility: "hidden" },
-            "@container game-grid (min-width: 1200px)": {
-              "& .period-heading, & .team-period": { display: "table-cell" },
-              "& .total-heading": { visibility: "visible" },
-            },
-          }}
+          sx={[
+            compactBoxScoreSx,
+            (theme) => ({
+              tableLayout: "fixed",
+              "& .MuiTableCell-root": { borderBottom: 0 },
+              "& .period-heading, & .team-period": { display: "none" },
+              "& .total-heading": { visibility: "hidden" },
+              [`@container game-card (min-width: ${theme.app.boxScoreMinWidth}px)`]:
+                {
+                  "& .period-heading, & .team-period": {
+                    display: "table-cell",
+                  },
+                  "& .total-heading": { visibility: "visible" },
+                },
+            }),
+          ]}
         >
           <TableHead>
             <TableRow>

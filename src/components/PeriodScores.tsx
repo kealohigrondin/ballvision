@@ -1,3 +1,4 @@
+import { compactBoxScoreSx } from "../styles/boxScore";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -43,7 +44,7 @@ export const PeriodScores = ({ home, away }: PeriodScoresProps) => {
 
   return (
     <TableContainer>
-      <Table aria-label="Score by period">
+      <Table aria-label="Score by period" size="small" sx={compactBoxScoreSx}>
         <TableHead>
           <TableRow>
             <TableCell component="th" scope="col" align="right">

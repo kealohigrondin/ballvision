@@ -1,8 +1,10 @@
+import type { ReactNode } from "react";
+import { AppTheme } from "../src/components/AppTheme";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
-  render,
+  render as renderWithoutTheme,
   screen,
   within,
 } from "@testing-library/react";
@@ -11,6 +13,8 @@ import { GameCard } from "../src/components/GameCard";
 import { TeamLogo } from "../src/components/TeamLogo";
 import { SyncControls } from "../src/components/SyncControls";
 import type { Game, Team } from "../src/data/types";
+
+const render = (ui: ReactNode) => renderWithoutTheme(ui, { wrapper: AppTheme });
 
 const home: Team = {
   id: "home",

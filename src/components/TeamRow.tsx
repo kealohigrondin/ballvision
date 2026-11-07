@@ -37,9 +37,9 @@ export const TeamRow = ({
           sx={{ alignItems: "center", gap: 1, minWidth: "0" }}
         >
           <TeamLogo team={team} size={36} />
-          <Box className="team-info" sx={{ minWidth: "0" }}>
+          <Box sx={{ minWidth: "0" }}>
             <Typography
-              variant="body2"
+              variant="caption"
               component="div"
               className="team-name"
               sx={{
@@ -86,7 +86,6 @@ export const TeamRow = ({
               sx={{
                 color: "text.secondary",
                 display: "block",
-                mt: 0.5,
               }}
             >
               {record}
@@ -97,7 +96,7 @@ export const TeamRow = ({
       {periodCells}
       <TableCell className="team-total" align="right">
         <Typography
-          variant="h6"
+          variant="body1"
           component="span"
           className="score"
           sx={{ fontVariantNumeric: "tabular-nums" }}

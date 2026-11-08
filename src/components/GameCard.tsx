@@ -89,6 +89,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
     <PolymarketGameProvider game={game}>
       <Paper
         component="article"
+        className={clsx(isInRedZone && "red-zone")}
         sx={{
           container: "game-card / inline-size",
           ...(isInRedZone

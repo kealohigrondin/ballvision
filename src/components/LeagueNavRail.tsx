@@ -9,7 +9,11 @@ import { NavRailItem } from "./NavRailItem";
 
 type LeagueNavRailProps = Record<string, never>;
 
-const destinations: { view: LeagueView; label: string; icon: ReactNode }[] = [
+export const leagueNavDestinations: {
+  view: LeagueView;
+  label: string;
+  icon: ReactNode;
+}[] = [
   { view: "rankings", label: "Rankings", icon: <Trophy size={20} /> },
   { view: "standings", label: "Standings", icon: <ListOrdered size={20} /> },
   { view: "schedule", label: "Schedules", icon: <CalendarDays size={20} /> },
@@ -33,7 +37,7 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
     setPanelOpen(true);
   };
 
-  const items = destinations.map((destination) => (
+  const items = leagueNavDestinations.map((destination) => (
     <NavRailItem
       key={destination.view}
       icon={destination.icon}

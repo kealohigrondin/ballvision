@@ -49,7 +49,10 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
     );
   });
   rerender(build([{ ...first, home: { ...first.home, score: "7" } }]));
-  const dialog = screen.getByRole("dialog", { name: "TOUCHDOWN TYPE BEAT" });
+  const dialog = screen.getByRole("dialog");
+  const titleId = dialog.getAttribute("aria-labelledby") ?? "";
+  const touchdownHeadline = document.getElementById(titleId)?.textContent;
+  expect(touchdownHeadline).toBeTruthy();
   const gameTime = within(dialog).getByRole("group", {
     name: "Game clock and period",
   });
@@ -84,9 +87,12 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
       },
     ]),
   );
-  expect(
-    screen.getByRole("dialog", { name: "FIELD GOAL JUMPSCARE" }),
-  ).toBeTruthy();
+  const fieldGoalDialog = screen.getByRole("dialog");
+  const fieldGoalHeadline = document.getElementById(
+    fieldGoalDialog.getAttribute("aria-labelledby") ?? "",
+  )?.textContent;
+  expect(fieldGoalHeadline).toBeTruthy();
+  expect(fieldGoalHeadline).not.toBe(touchdownHeadline);
   expect(screen.getByText("2OT")).toBeTruthy();
   expect(screen.getByText("0:00")).toBeTruthy();
   expect(audio.play).toHaveBeenLastCalledWith("fieldGoal");

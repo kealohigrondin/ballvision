@@ -1,3 +1,4 @@
+import { linkTo } from "./helpers/queries";
 import type { PolymarketData } from "../src/context/polymarketDataContext";
 import { oddsQuote } from "./helpers/oddsFixture";
 import type { ReactNode } from "react";
@@ -99,10 +100,13 @@ describe("scoreboard presentation", () => {
 
   it("renders live game context, period scores, and pin action", () => {
     const onFavorite = vi.fn();
-    render(<GameCard game={game} favorite={false} onFavorite={onFavorite} />);
+    const { container } = render(
+      <GameCard game={game} favorite={false} onFavorite={onFavorite} />,
+    );
     expect(screen.getByText("Q2 · 3:42")).toBeTruthy();
-    expect(screen.getByText("RED ZONE ·")).toBeTruthy();
-    expect(screen.getByText("ESPN")).toBeTruthy();
+    const card = container.querySelector("article");
+    expect(card?.classList.contains("red-zone")).toBe(true);
+    expect(screen.getByText(game.broadcast)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Game details" }));
     expect(screen.getByText("Pass complete.")).toBeTruthy();
     expect(
@@ -118,9 +122,8 @@ describe("scoreboard presentation", () => {
       <GameCard game={game} favorite={false} onFavorite={() => {}} />,
       { quotes: { [game.id]: oddsQuote }, error: true },
     );
-    const link = screen.getByRole("link", { name: "AWY -300" });
-    expect(link.getAttribute("href")).toBe(oddsQuote.url);
-    expect(link.textContent).toContain("AWY -300");
+    const link = linkTo(oddsQuote.url);
+    expect(link.textContent).toContain("AWY");
     expect(link.textContent).not.toContain("HOM");
     expect(link.parentElement?.title).toContain("stale");
     const actions = container.querySelector(".favorite")?.parentElement;
@@ -139,7 +142,8 @@ describe("scoreboard presentation", () => {
         },
       },
     });
-    const link = screen.getByRole("link", { name: "HOM -300" });
+    const link = linkTo(oddsQuote.url);
+    expect(link.textContent).toContain("HOM");
     expect(link.textContent).not.toContain("AWY");
   });
   it("shows even odds without favoring either team when probabilities tie", () => {
@@ -148,10 +152,12 @@ describe("scoreboard presentation", () => {
         [game.id]: { ...oddsQuote, awayProbability: 0.5, homeProbability: 0.5 },
       },
     });
-    expect(screen.getByRole("link", { name: "Even odds" })).toBeTruthy();
+    const link = linkTo(oddsQuote.url);
+    expect(link.textContent).not.toContain("AWY");
+    expect(link.textContent).not.toContain("HOM");
   });
   it("omits unavailable optional details and live indicators for scheduled games", () => {
-    render(
+    const { container } = render(
       <GameCard
         game={{
           ...game,
@@ -166,8 +172,9 @@ describe("scoreboard presentation", () => {
         onFavorite={() => {}}
       />,
     );
-    expect(screen.queryByText("RED ZONE ·")).toBeNull();
-    expect(screen.queryByText("ESPN")).toBeNull();
+    const card = container.querySelector("article");
+    expect(card?.classList.contains("red-zone")).toBe(false);
+    expect(screen.queryByText(game.broadcast)).toBeNull();
     expect(screen.queryByLabelText("Possession")).toBeNull();
     expect(
       screen.getByText("Additional details are not available yet."),

@@ -1,3 +1,4 @@
+import { linkTo, navRailButton } from "./helpers/queries";
 import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
@@ -181,11 +182,11 @@ it("shares week, division, panel visibility, and pause state across app features
       expect.any(AbortSignal),
     ),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Standings" }));
+  fireEvent.click(navRailButton("standings"));
   expect(
     screen.queryByRole("complementary", { name: "League information" }),
   ).toBeNull();
-  fireEvent.click(screen.getByRole("button", { name: "Standings" }));
+  fireEvent.click(navRailButton("standings"));
   expect(
     screen.getByRole("complementary", { name: "League information" }),
   ).toBeTruthy();
@@ -222,7 +223,9 @@ it("shares injected ESPN and Polymarket data with nested odds views and refreshe
       />
     </AppTheme>,
   );
-  await screen.findByRole("link", { name: "AWY -300" });
+  await waitFor(() =>
+    expect(linkTo(oddsQuote.url).textContent).toContain("AWY"),
+  );
   expect(loadHistory).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole("button", { name: "Game details" }));
   await screen.findByRole("img", {

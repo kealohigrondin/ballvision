@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useAppData } from "../context/appDataContext";
 import { usePolymarketData } from "../context/polymarketDataContext";
 import type { Game, OddsHistoryRange } from "../data/types";
@@ -14,6 +15,7 @@ export const usePolymarketGameState = (game: Game) => {
     ? { awayTokenId: quote.awayTokenId, homeTokenId: quote.homeTokenId, range }
     : undefined;
   const history = useOddsHistory(historySource, query, paused, historyOpen);
+
   return {
     game,
     quote,

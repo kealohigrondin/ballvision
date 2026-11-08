@@ -1,17 +1,17 @@
-import { useEspnData } from "../context/espnDataContext";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
-
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
+
 import { useAppData } from "../context/appDataContext";
-import { TeamSchedule } from "./TeamSchedule";
-import { LeagueTable } from "./LeagueTable";
-import { TeamSchedulePicker } from "./TeamSchedulePicker";
+import { useEspnData } from "../context/espnDataContext";
 import { copy } from "../copy";
+import { LeagueTable } from "./LeagueTable";
+import { TeamSchedule } from "./TeamSchedule";
+import { TeamSchedulePicker } from "./TeamSchedulePicker";
 
 type LeaguePanelProps = Record<string, never>;
 
@@ -25,13 +25,19 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       {table.title}
     </option>
   ));
+
   const secondaryLabel = useMemo(() => {
-    if (division === "nfl") return copy.league.division;
+    if (division === "nfl") {
+      return copy.league.division;
+    }
+
     return view === "standings" ? copy.league.conference : copy.league.poll;
   }, [division, view]);
 
   const content = useMemo(() => {
-    if (view === "schedule") return <TeamSchedule />;
+    if (view === "schedule") {
+      return <TeamSchedule />;
+    }
     if (loading && !selected) {
       return (
         <Typography
@@ -48,6 +54,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     if (selected?.rows.length) {
       return <LeagueTable />;
     }
+
     return (
       <Typography
         variant="body2"
@@ -61,8 +68,13 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   }, [loading, selected, view]);
 
   const label = useMemo(() => {
-    if (view === "schedule") return "Team schedule";
-    if (division === "nfl") return "NFL standings";
+    if (view === "schedule") {
+      return "Team schedule";
+    }
+    if (division === "nfl") {
+      return "NFL standings";
+    }
+
     return view === "rankings" ? "Top 25" : "Conference standings";
   }, [division, view]);
 

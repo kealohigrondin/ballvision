@@ -1,9 +1,3 @@
-import { copy } from "../src/copy";
-import { scheduleGameStatus } from "../src/utils/teamSchedule";
-import { navRailButton } from "./helpers/queries";
-import { scheduleGame } from "./helpers/scheduleFixture";
-import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
-import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -12,13 +6,14 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
 import App from "../src/App";
-import { AppTheme } from "../src/providers/AppTheme";
-import { LeaguePanel } from "../src/components/LeaguePanel";
 import {
-  LeagueNavRail,
   leagueNavDestinations,
+  LeagueNavRail,
 } from "../src/components/LeagueNavRail";
+import { LeaguePanel } from "../src/components/LeaguePanel";
+import { copy } from "../src/copy";
 import { parseRankings, parseStandings } from "../src/data/espn";
 import type {
   LeagueSource,
@@ -26,6 +21,12 @@ import type {
   ScoreboardSource,
   TeamScheduleSource,
 } from "../src/data/types";
+import { AppTheme } from "../src/providers/AppTheme";
+import { scheduleGameStatus } from "../src/utils/teamSchedule";
+import { emptyOddsSource } from "./helpers/appData";
+import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
+import { navRailButton } from "./helpers/queries";
+import { scheduleGame } from "./helpers/scheduleFixture";
 
 const conference: LeagueTable = {
   id: "sec",
@@ -39,6 +40,7 @@ const poll: LeagueTable = {
   subtitle: "Week 9",
   rows: [{ id: "2", name: "Miami", rank: 1, record: "7-0", points: "1500" }],
 };
+
 const source = (): LeagueSource => ({
   loadStandings: vi.fn().mockResolvedValue([conference]),
   loadRankings: vi.fn().mockResolvedValue([poll]),
@@ -362,6 +364,7 @@ it("selects a schedule team from conference and team dropdowns", async () => {
   fireEvent.change(screen.getByLabelText(copy.league.conference), {
     target: { value: "sec" },
   });
+
   const teamNames = () =>
     Array.from(
       (screen.getByLabelText(copy.schedule.team) as HTMLSelectElement).options,
@@ -391,6 +394,7 @@ it("retries schedule failures and clears the selected team when switching league
     .fn<TeamScheduleSource["load"]>()
     .mockRejectedValueOnce(new Error("Offline"))
     .mockResolvedValue({ season: "2026", games: [] });
+
   const build = (division: "fbs" | "nfl") => (
     <LeagueTestProvider
       source={provider}

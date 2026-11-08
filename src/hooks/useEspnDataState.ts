@@ -1,22 +1,24 @@
 import { useMemo, useState } from "react";
+
 import { useAppData } from "../context/appDataContext";
 import type {
-  LeagueSource,
-  ScoreboardSource,
-  LeagueTable,
   LeagueRow,
+  LeagueSource,
+  LeagueTable,
+  ScoreboardSource,
   TeamScheduleSource,
 } from "../data/types";
-import { useTeamSchedule } from "./useTeamSchedule";
+import { type LeagueView, useLeagueTables } from "./useLeagueTables";
 import { useScoreboard } from "./useScoreboard";
 import { useSeasonCalendar } from "./useSeasonCalendar";
-import { useLeagueTables, type LeagueView } from "./useLeagueTables";
+import { useTeamSchedule } from "./useTeamSchedule";
 
 type EspnSources = {
   source: ScoreboardSource;
   leagueSource: LeagueSource;
   scheduleSource: TeamScheduleSource;
 };
+
 export const useEspnDataState = ({
   source,
   leagueSource,
@@ -41,6 +43,7 @@ export const useEspnDataState = ({
     division,
     panelOpen && view === "schedule",
   );
+
   const selectTeam = (team: LeagueRow) => {
     schedule.selectTeam(team);
     setScheduleConferenceId("");
@@ -55,6 +58,7 @@ export const useEspnDataState = ({
   const selected: LeagueTable | undefined =
     league.tables.find((table) => table.id === selectedId) ??
     league.tables.at(0);
+
   const counts = useMemo(
     () => ({
       all: games.length,
@@ -65,8 +69,10 @@ export const useEspnDataState = ({
     }),
     [games, favoriteIds],
   );
+
   const visibleGames = useMemo(() => {
     const pinned = (id: string) => favoriteIds.includes(id);
+
     return games
       .filter(
         (game) =>
@@ -78,6 +84,7 @@ export const useEspnDataState = ({
       )
       .sort((a, b) => Number(pinned(b.id)) - Number(pinned(a.id)));
   }, [games, filter, search, favoriteIds]);
+
   return {
     games: scoreboard.games,
     loading: scoreboard.loading,

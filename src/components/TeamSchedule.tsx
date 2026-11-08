@@ -1,29 +1,32 @@
-import { teamColumnTableSx } from "../styles/leagueTable";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+
 import { useEspnData } from "../context/espnDataContext";
+import { copy } from "../copy";
+import { teamColumnTableSx } from "../styles/leagueTable";
 import { TeamLogo } from "./TeamLogo";
 import { TeamScheduleRow } from "./TeamScheduleRow";
-import { copy } from "../copy";
 
 type TeamScheduleProps = Record<string, never>;
+
 export const TeamSchedule = ({}: TeamScheduleProps) => {
   const {
     schedule: { selectedTeam, data, loading, error, refresh },
   } = useEspnData();
 
-  if (!selectedTeam)
+  if (!selectedTeam) {
     return (
       <Typography color="text.secondary">{copy.schedule.prompt}</Typography>
     );
+  }
 
   const rows = data?.games.map((game) => (
     <TeamScheduleRow key={game.id} game={game} teamId={selectedTeam.id} />

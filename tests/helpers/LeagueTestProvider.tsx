@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import type {
   Division,
   LeagueSource,
@@ -17,6 +18,7 @@ type LeagueTestProviderProps = {
   division: Division;
   scheduleSource?: TeamScheduleSource;
 };
+
 export const LeagueTestProvider = ({
   children,
   source,

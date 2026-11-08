@@ -1,5 +1,6 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import { useAppDataState } from "../src/hooks/useAppDataState";
 import {
   APP_PREFERENCES_KEY,
@@ -90,6 +91,7 @@ it("continues without errors when browser storage is blocked", () => {
   const getItem = () => {
     throw new Error("Blocked");
   };
+
   const setItem = () => {
     throw new Error("Quota exceeded");
   };

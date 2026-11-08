@@ -1,12 +1,13 @@
-import { useMemo } from "react";
 import IconButton from "@mui/material/IconButton";
 import ListSubheader from "@mui/material/ListSubheader";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Week } from "../data/types";
+import { useMemo } from "react";
+
 import { copy } from "../copy";
+import type { Week } from "../data/types";
 
 type WeekSelectProps = {
   weeks: Week[];
@@ -25,6 +26,7 @@ export const WeekSelect = ({
   // the loaded calendar render as empty rather than an unknown option.
   const selectedIndex = useMemo(() => {
     const id = week?.id ?? currentWeekId;
+
     return weeks.findIndex((option) => option.id === id);
   }, [weeks, week, currentWeekId]);
   const selectedId = weeks[selectedIndex]?.id ?? "";
@@ -60,7 +62,9 @@ export const WeekSelect = ({
         disabled={weeks.length === 0}
         onChange={(event) => {
           const next = weeks.find((option) => option.id === event.target.value);
-          if (next) onChange(next);
+          if (next) {
+            onChange(next);
+          }
         }}
         sx={{ minWidth: 180 }}
       >

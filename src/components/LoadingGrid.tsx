@@ -2,8 +2,9 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-import { getGameGridSize } from "../utils/gameGridLayout";
+
 import { copy } from "../copy";
+import { getGameGridSize } from "../utils/gameGridLayout";
 
 type LoadingGridProps = { compact?: boolean };
 
@@ -25,6 +26,7 @@ export const LoadingGrid = ({ compact = false }: LoadingGridProps) => {
       </Paper>
     </Grid>
   ));
+
   return (
     <Grid
       container

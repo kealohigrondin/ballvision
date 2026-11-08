@@ -1,11 +1,11 @@
-import airhornUrl from "./dj-airhorn-sound-effect.mp3";
-import tripleUrl from "./oh-baby-a-triple.mp3";
-import bangarangUrl from "./untitled_313.mp3";
 import anothaone from "./anothaone.mp3";
+import airhornUrl from "./dj-airhorn-sound-effect.mp3";
 import foxSports from "./fox-sports-bass-boosted-exe.mp3";
-import sixseven from "./sixseven.mp3";
-import wiiSports from "./wii_sports_sms.mp3";
+import tripleUrl from "./oh-baby-a-triple.mp3";
 import rockyTop from "./rocky-top.mp3";
+import sixseven from "./sixseven.mp3";
+import bangarangUrl from "./untitled_313.mp3";
+import wiiSports from "./wii_sports_sms.mp3";
 
 export type ScoreAlertKind =
   "score" | "fieldGoal" | "pat" | "sixSeven" | "rockyTop";
@@ -41,14 +41,18 @@ export const createChaosAudio = (): ChaosAudio => {
   master.connect(limiter).connect(context.destination);
   let sounds = new Map<string, AudioBuffer>();
   let loading: Promise<void> | undefined;
+
   const loadSounds = () => {
     loading ??= Promise.all(
       alertSoundUrls.map(async ({ url }) => {
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Unable to load score alert audio.");
+        if (!response.ok) {
+          throw new Error("Unable to load score alert audio.");
+        }
         const buffer = await context.decodeAudioData(
           await response.arrayBuffer(),
         );
+
         return [url, buffer] as const;
       }),
     )
@@ -59,13 +63,16 @@ export const createChaosAudio = (): ChaosAudio => {
         loading = undefined;
         throw error;
       });
+
     return loading;
   };
   const active = new Set<AudioScheduledSourceNode>();
+
   const track = (node: AudioScheduledSourceNode) => {
     active.add(node);
     node.onended = () => active.delete(node);
   };
+
   const stop = () => {
     for (const node of active) {
       try {
@@ -76,13 +83,18 @@ export const createChaosAudio = (): ChaosAudio => {
     }
     active.clear();
   };
+
   return {
     unlock: async () => {
       await Promise.all([context.resume(), loadSounds()]);
-      if (context.state !== "running") throw new Error("Audio is not running.");
+      if (context.state !== "running") {
+        throw new Error("Audio is not running.");
+      }
     },
     play: (kind = "score") => {
-      if (context.state !== "running" || sounds.size === 0) return;
+      if (context.state !== "running" || sounds.size === 0) {
+        return;
+      }
       stop();
       const source = context.createBufferSource();
       const candidates = alertSoundUrls.filter((sound) => sound.kind === kind);

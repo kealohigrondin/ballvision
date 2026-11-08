@@ -1,13 +1,15 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { useOddsHistory } from "../src/hooks/useOddsHistory";
+
 import type { OddsHistory, OddsHistorySource } from "../src/data/types";
+import { useOddsHistory } from "../src/hooks/useOddsHistory";
 
 const query = { awayTokenId: "222", homeTokenId: "111", range: "1d" as const };
 const history: OddsHistory = {
   away: [{ timestamp: 10000, probability: 0.6 }],
   home: [{ timestamp: 10000, probability: 0.4 }],
 };
+
 const flush = async () => {
   await act(async () => {
     await Promise.resolve();

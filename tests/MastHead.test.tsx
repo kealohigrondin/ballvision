@@ -1,10 +1,11 @@
-import { copy } from "../src/copy";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
-import { AppDataTestProvider, createAppData } from "./helpers/appData";
-import { AppTheme } from "../src/providers/AppTheme";
+
 import MastHead from "../src/components/MastHead";
 import { MASTHEAD_ICON_SIZE } from "../src/components/MastHeadIconButton";
+import { copy } from "../src/copy";
+import { AppTheme } from "../src/providers/AppTheme";
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
 
 afterEach(cleanup);
 

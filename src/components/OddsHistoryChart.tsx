@@ -1,17 +1,19 @@
-import { usePolymarketGame } from "../context/polymarketGameContext";
-import { withLiveOdds } from "../utils/oddsHistory";
-import { useElementWidth } from "../hooks/useElementWidth";
-import { useId, useMemo, useState, type PointerEvent } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import type { OddsHistory } from "../data/types";
-import { historyAt } from "../utils/oddsHistory";
-import { formatProbability } from "../utils/odds";
+import Typography from "@mui/material/Typography";
+import { type PointerEvent, useId, useMemo, useState } from "react";
+
+import { usePolymarketGame } from "../context/polymarketGameContext";
 import { copy } from "../copy";
+import type { OddsHistory } from "../data/types";
+import { useElementWidth } from "../hooks/useElementWidth";
+import { formatProbability } from "../utils/odds";
+import { withLiveOdds } from "../utils/oddsHistory";
+import { historyAt } from "../utils/oddsHistory";
 
 type OddsHistoryChartProps = Record<never, never>;
+
 const timeLabel = (time: number) =>
   new Date(time).toLocaleTimeString(undefined, {
     hour: "numeric",
@@ -24,6 +26,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
     quote,
     history: { data },
   } = usePolymarketGame();
+
   const history = useMemo(
     () => (data && quote ? withLiveOdds(data, quote) : { away: [], home: [] }),
     [data, quote],
@@ -36,6 +39,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
   const plotWidth = width - 60;
   const descriptionId = useId();
   const [selected, setSelected] = useState<number | null>(null);
+
   const times = useMemo(
     () =>
       [
@@ -52,8 +56,11 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
   const timestamp = times[index];
   const awayValue = historyAt(history.away, timestamp);
   const homeValue = historyAt(history.home, timestamp);
+
   const x = (time: number) => 40 + ((time - start) / span) * plotWidth;
+
   const y = (probability: number) => 160 - probability * 144;
+
   const path = (points: OddsHistory["away"]) =>
     points
       .map(
@@ -86,12 +93,14 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
           day: "numeric",
         })
       : timeLabel(time);
+
     return (
       <text key={i} x={x(time)} y="184" textAnchor={anchor}>
         {tickLabel}
       </text>
     );
   });
+
   const inspect = (event: PointerEvent<SVGSVGElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     const coordinate = ((event.clientX - bounds.left) / bounds.width) * width;
@@ -104,6 +113,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
     );
     setSelected(closest);
   };
+
   return (
     <Box component="figure" ref={ref} sx={{ m: 0, minWidth: 0 }}>
       <Stack

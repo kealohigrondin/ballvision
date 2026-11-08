@@ -1,25 +1,25 @@
-import { PolymarketGameProvider } from "../providers/PolymarketGameProvider";
-import { GameOdds } from "./GameOdds";
-import { compactBoxScoreSx } from "../styles/boxScore";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 import clsx from "clsx";
-
-import { useMemo } from "react";
 import { Star, StarOff, Tv } from "lucide-react";
+import { useMemo } from "react";
+
+import { copy } from "../copy";
 import type { Game } from "../data/types";
+import { PolymarketGameProvider } from "../providers/PolymarketGameProvider";
+import { compactBoxScoreSx } from "../styles/boxScore";
 import { gameTime, kickoff } from "../utils/gameTime";
 import { GameDetails } from "./GameDetails";
+import { GameOdds } from "./GameOdds";
 import { TeamRow } from "./TeamRow";
-import { copy } from "../copy";
 
 type GameCardProps = {
   game: Game;
@@ -53,6 +53,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
     if (game.state === "final") {
       return copy.gameCard.final;
     }
+
     return copy.gameCard.kickoff;
   }, [isLive, game.situation, game.state]);
 
@@ -74,6 +75,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       game.away.quarters[period]?.length ?? 1,
       game.home.quarters[period]?.length ?? 1,
     );
+
     return (
       <TableCell
         component="th"

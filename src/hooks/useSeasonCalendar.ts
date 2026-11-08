@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import type { Division, ScoreboardSource, SeasonCalendar } from "../data/types";
 
 const EMPTY: SeasonCalendar = { weeks: [] };
@@ -14,17 +15,21 @@ export const useSeasonCalendar = (
     calendar: SeasonCalendar;
     error: boolean;
   }>({ division, calendar: EMPTY, error: false });
+
   useEffect(() => {
     const request = new AbortController();
     source
       .loadCalendar(division, request.signal)
       .then((calendar) => setState({ division, calendar, error: false }))
       .catch(() => {
-        if (!request.signal.aborted)
+        if (!request.signal.aborted) {
           setState({ division, calendar: EMPTY, error: true });
+        }
       });
+
     return () => request.abort();
   }, [source, division]);
+
   // Never offer another division's weeks while the new calendar loads.
   return state.division === division
     ? { ...state.calendar, error: state.error }

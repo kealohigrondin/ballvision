@@ -1,6 +1,3 @@
-import { copy } from "../src/copy";
-import { formatProbability } from "../src/utils/odds";
-import { PolymarketGameProvider } from "../src/providers/PolymarketGameProvider";
 import {
   cleanup,
   fireEvent,
@@ -10,11 +7,15 @@ import {
   within,
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import { GameDetails } from "../src/components/GameDetails";
+import { copy } from "../src/copy";
+import type { Game, OddsHistorySource } from "../src/data/types";
 import { AppTheme } from "../src/providers/AppTheme";
+import { PolymarketGameProvider } from "../src/providers/PolymarketGameProvider";
+import { formatProbability } from "../src/utils/odds";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { oddsGame, oddsQuote } from "./helpers/oddsFixture";
-import type { Game, OddsHistorySource } from "../src/data/types";
 
 const history = {
   away: [
@@ -27,6 +28,7 @@ const history = {
   ],
 };
 afterEach(cleanup);
+
 const show = (load: OddsHistorySource["load"], game: Game = oddsGame) =>
   render(
     <AppTheme>

@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-import { createAppTheme } from "../theme";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
+
 import { ColorModeContext } from "../context/ColorModeContext";
+import { createAppTheme } from "../theme";
 
 type AppThemeProps = { children: ReactNode };
 
@@ -16,7 +17,9 @@ export const AppTheme = ({ children }: AppThemeProps) => {
       return "dark";
     }
   });
+
   const theme = useMemo(() => createAppTheme(mode), [mode]);
+
   const colorMode = useMemo(
     () => ({
       mode,
@@ -28,6 +31,7 @@ export const AppTheme = ({ children }: AppThemeProps) => {
 
   useEffect(() => {
     document.documentElement.dataset.theme = mode;
+
     try {
       localStorage.setItem("ballvision-color-mode", mode);
     } catch {

@@ -1,6 +1,3 @@
-import { copy } from "../src/copy";
-import { linkTo, navRailButton } from "./helpers/queries";
-import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -9,14 +6,18 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import App from "../src/App";
-import { AppTheme } from "../src/providers/AppTheme";
+import { copy } from "../src/copy";
 import type {
   Game,
   LeagueSource,
   ScoreboardSource,
   Week,
 } from "../src/data/types";
+import { AppTheme } from "../src/providers/AppTheme";
+import { emptyOddsSource } from "./helpers/appData";
+import { linkTo, navRailButton } from "./helpers/queries";
 
 const week = (number: number): Week => ({
   id: `2026-2-${number}`,
@@ -64,6 +65,7 @@ const game = (id: string, state: Game["state"]): Game => ({
 
 const scoreTable = (id: string) =>
   copy.gameCard.scoresByPeriod(`${id} Away`, `${id} Home`);
+
 const favoriteButton = (favorite: boolean, id: string) =>
   copy.gameCard.favorite(favorite, `${id} Away`, `${id} Home`);
 
@@ -153,6 +155,7 @@ it("shares week, division, panel visibility, and pause state across app features
     loadStandings: vi.fn().mockResolvedValue([]),
     loadRankings: vi.fn().mockResolvedValue([]),
   };
+
   const lastQuery = (query: object) =>
     waitFor(() =>
       expect(source.load).toHaveBeenLastCalledWith(

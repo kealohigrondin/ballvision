@@ -1,13 +1,13 @@
-import { useEspnData } from "../context/espnDataContext";
 import Grid from "@mui/material/Grid";
-import { getGameGridSize } from "../utils/gameGridLayout";
+import { useMemo } from "react";
 
 import { useAppData } from "../context/appDataContext";
-import { GameCard } from "./GameCard";
-import { EmptyState } from "./EmptyState";
-import { LoadingGrid } from "./LoadingGrid";
-import { useMemo } from "react";
+import { useEspnData } from "../context/espnDataContext";
 import { copy } from "../copy";
+import { getGameGridSize } from "../utils/gameGridLayout";
+import { EmptyState } from "./EmptyState";
+import { GameCard } from "./GameCard";
+import { LoadingGrid } from "./LoadingGrid";
 
 type GameGridProps = Record<string, never>;
 
@@ -22,6 +22,7 @@ export const GameGrid = ({}: GameGridProps) => {
   const hasLoaded = updatedAt !== null;
   const hasError = Boolean(error);
   const pinnedOnly = filter === "pinned";
+
   const emptyTitle = useMemo(() => {
     if (hasError && !hasLoaded) {
       return copy.grid.feedDown;
@@ -29,6 +30,7 @@ export const GameGrid = ({}: GameGridProps) => {
     if (pinnedOnly) {
       return copy.grid.watchlistEmpty;
     }
+
     return copy.grid.noGames;
   }, [hasError, hasLoaded, pinnedOnly]);
 
@@ -39,12 +41,16 @@ export const GameGrid = ({}: GameGridProps) => {
     if (pinnedOnly) {
       return copy.grid.watchlistEmptyDetail;
     }
+
     return copy.grid.noGamesDetail;
   }, [hasError, hasLoaded, pinnedOnly]);
 
-  if (loading && !hasLoaded) return <LoadingGrid compact={compact} />;
-  if (!games.length)
+  if (loading && !hasLoaded) {
+    return <LoadingGrid compact={compact} />;
+  }
+  if (!games.length) {
     return <EmptyState title={emptyTitle} detail={emptyDetail} />;
+  }
 
   const size = getGameGridSize(compact);
   const cards = games.map((game) => (

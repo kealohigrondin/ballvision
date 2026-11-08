@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import { notificationSoundKind } from "../utils/scoreNotifications";
+
+import type { ChaosAudio } from "../audio/chaosAudio";
 import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
-import { useScoreNotifications } from "./useScoreNotifications";
+import { notificationSoundKind } from "../utils/scoreNotifications";
 import { useChaosAudio } from "./useChaosAudio";
-import type { ChaosAudio } from "../audio/chaosAudio";
+import { useScoreNotifications } from "./useScoreNotifications";
 
 export const useScoreNotificationState = (audioFactory?: () => ChaosAudio) => {
   const { week, division, favoriteIds } = useAppData();
@@ -17,6 +18,7 @@ export const useScoreNotificationState = (audioFactory?: () => ChaosAudio) => {
   );
   const audio = useChaosAudio(audioFactory);
   const played = useRef<string | undefined>(undefined);
+
   useEffect(() => {
     const event = events.current;
     const id = event?.id;
@@ -24,8 +26,10 @@ export const useScoreNotificationState = (audioFactory?: () => ChaosAudio) => {
       played.current = id;
       audio.play(notificationSoundKind(event));
     }
+
     return audio.stop;
   }, [events.current?.id, audio.play, audio.stop]);
+
   return {
     ...events,
     soundArmed: audio.armed,

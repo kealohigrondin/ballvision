@@ -1,7 +1,8 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { useGameOdds } from "../src/hooks/useGameOdds";
+
 import type { GameOddsMap, OddsSource } from "../src/data/types";
+import { useGameOdds } from "../src/hooks/useGameOdds";
 import { oddsGame, oddsQuote } from "./helpers/oddsFixture";
 
 beforeEach(() => vi.useFakeTimers());
@@ -10,6 +11,7 @@ afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
 });
+
 const flush = async () => {
   await act(async () => {
     await Promise.resolve();

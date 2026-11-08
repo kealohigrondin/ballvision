@@ -1,13 +1,13 @@
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
+import { useMemo } from "react";
+
+import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
 import { usePolymarketData } from "../context/polymarketDataContext";
-import { useAppData } from "../context/appDataContext";
-import { useMemo } from "react";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import { MastHeadIconButton } from "./MastHeadIconButton";
-
-import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
 import { copy } from "../copy";
+import { MastHeadIconButton } from "./MastHeadIconButton";
 
 type SyncControlsProps = Record<string, never>;
 
@@ -22,6 +22,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
     minute: "2-digit",
     second: "2-digit",
   });
+
   const status = useMemo(() => {
     if (loading) {
       return copy.sync.updating;
@@ -32,6 +33,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
     if (time) {
       return copy.sync.updated(time);
     }
+
     return copy.sync.connecting;
   }, [loading, paused, time]);
 

@@ -1,21 +1,22 @@
-import { useMemo } from "react";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useMemo } from "react";
+
 import { usePolymarketGame } from "../context/polymarketGameContext";
+import { copy } from "../copy";
 import type { OddsHistoryRange } from "../data/types";
 import { OddsHistoryChart } from "./OddsHistoryChart";
 import { SegmentedControl } from "./SegmentedControl";
-import { copy } from "../copy";
 
 type GameOddsHistoryProps = Record<string, never>;
+
 export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
   const {
     quote,
-    paused,
     range,
     setRange,
     history: { data, loading, error, refresh },
@@ -23,10 +24,12 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
   const hasHistory = Boolean(
     data && (data.away.length > 0 || data.home.length > 0),
   );
+
   const content = useMemo(() => {
-    if (!hasHistory && loading)
+    if (!hasHistory && loading) {
       return <LinearProgress aria-label={copy.oddsHistory.loading} />;
-    if (!hasHistory && error)
+    }
+    if (!hasHistory && error) {
       return (
         <Alert
           severity="warning"
@@ -39,14 +42,18 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
           {copy.oddsHistory.loadError}
         </Alert>
       );
-    if (!hasHistory || !data || !quote)
+    }
+    if (!hasHistory || !data || !quote) {
       return (
         <Typography variant="body2" color="text.secondary">
           {copy.oddsHistory.empty}
         </Typography>
       );
+    }
+
     return <OddsHistoryChart key={range} />;
   }, [hasHistory, loading, error, data, quote, refresh, range]);
+
   return (
     <Stack
       component="section"

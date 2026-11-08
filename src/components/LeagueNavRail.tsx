@@ -2,11 +2,12 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { CalendarDays, ListOrdered, Trophy } from "lucide-react";
 import type { ReactNode } from "react";
+
 import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
+import { copy } from "../copy";
 import type { LeagueView } from "../hooks/useLeagueTables";
 import { NavRailItem } from "./NavRailItem";
-import { copy } from "../copy";
 
 type LeagueNavRailProps = Record<string, never>;
 
@@ -41,6 +42,7 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
   const open = (nextView: LeagueView) => {
     if (panelOpen && view === nextView) {
       setPanelOpen(false);
+
       return;
     }
     if (view !== nextView) {

@@ -2,6 +2,7 @@ import type { AppPreferences, Filter } from "../context/appDataTypes";
 import type { Week } from "../data/types";
 
 export const APP_PREFERENCES_KEY = "ballvision:app-data:v1";
+
 export const defaultAppPreferences = (): AppPreferences => ({
   panelOpen: true,
   week: null,
@@ -10,12 +11,17 @@ export const defaultAppPreferences = (): AppPreferences => ({
   search: "",
   paused: false,
 });
+
 const validFilter = (value: unknown): value is Filter =>
   typeof value === "string" &&
   ["all", "live", "upcoming", "final", "pinned"].includes(value);
+
 const validWeek = (value: unknown): value is Week => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
   const week = value as Record<string, unknown>;
+
   return (
     ["id", "label", "group", "detail"].every(
       (key) => typeof week[key] === "string",
@@ -28,13 +34,19 @@ export const loadAppPreferences = (
   storage?: Pick<Storage, "getItem">,
 ): AppPreferences => {
   const defaults = defaultAppPreferences();
+
   try {
     const raw: unknown = JSON.parse(
       (storage ?? localStorage).getItem(APP_PREFERENCES_KEY) ?? "null",
     );
-    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return defaults;
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+      return defaults;
+    }
     const value = raw as Record<string, unknown>;
-    if (value.version !== 1) return defaults;
+    if (value.version !== 1) {
+      return defaults;
+    }
+
     return {
       panelOpen:
         typeof value.panelOpen === "boolean"
@@ -56,6 +68,7 @@ export const loadAppPreferences = (
     return defaults;
   }
 };
+
 export const saveAppPreferences = (
   preferences: AppPreferences,
   storage?: Pick<Storage, "setItem">,

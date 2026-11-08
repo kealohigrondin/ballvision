@@ -1,4 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
+
 import { createChaosAudio } from "../src/audio/chaosAudio";
 
 afterEach(() => {
@@ -12,6 +13,7 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
     setValueAtTime: vi.fn(),
     exponentialRampToValueAtTime: vi.fn(),
   });
+
   const node = () => {
     const result = {
       connect: vi.fn(),
@@ -28,6 +30,7 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
       buffer: undefined as unknown,
     };
     result.connect.mockImplementation(() => result);
+
     return result;
   };
   const decoded = Array.from({ length: 8 }, (_, index) => ({
@@ -51,6 +54,7 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
     createBufferSource: () => {
       const source = node();
       sources.push(source);
+
       return source;
     },
   };
@@ -88,7 +92,9 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
     expect(sources).toHaveLength(index + 1);
     expect(sources[index].buffer).toBe(decoded[index + 4]);
     expect(sources[index].start).toHaveBeenCalled();
-    if (index > 0) expect(sources[index - 1].stop).toHaveBeenCalled();
+    if (index > 0) {
+      expect(sources[index - 1].stop).toHaveBeenCalled();
+    }
   }
   for (const [index, kind] of (
     ["rockyTop", "fieldGoal", "sixSeven", "pat"] as const

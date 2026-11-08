@@ -1,15 +1,16 @@
-import { useEspnData } from "../context/espnDataContext";
-import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import Button from "@mui/material/Button";
 import { Search, X } from "lucide-react";
+
+import { useAppData } from "../context/appDataContext";
+import { useEspnData } from "../context/espnDataContext";
+import { copy } from "../copy";
 import { SegmentedControl } from "./SegmentedControl";
 import { WeekSelect } from "./WeekSelect";
-import { useAppData } from "../context/appDataContext";
-import { copy } from "../copy";
 
 type ScoresHeaderProps = Record<string, never>;
 
@@ -30,6 +31,7 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
     ["all", "live", "upcoming", "final", "pinned"] as const
   ).map((f) => {
     const label = copy.scoresHeader.filters[f];
+
     return {
       value: f,
       label: (

@@ -1,10 +1,13 @@
-import { useId } from "react";
 import Box from "@mui/material/Box";
+import { useId } from "react";
+
 import chalkCircleUrl from "../assets/red-chalk-circle.png";
 
 type ScoreChalkCircleProps = Record<string, never>;
+
 export const ScoreChalkCircle = ({}: ScoreChalkCircleProps) => {
   const filterId = `score-chalk-${useId().replace(/:/g, "")}`;
+
   return (
     <Box
       aria-hidden="true"

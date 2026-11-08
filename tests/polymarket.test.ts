@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+
 import {
   createPolymarketSource,
   matchMoneyline,
@@ -21,6 +22,7 @@ const event = {
   ended: false,
   markets: [market],
 };
+
 const response = (data: unknown) =>
   new Response(JSON.stringify(data), {
     headers: { "Content-Type": "application/json" },
@@ -199,7 +201,8 @@ describe("Polymarket moneylines", () => {
     expect(americanOdds(0.75)).toBe("-300");
     expect(americanOdds(0.25)).toBe("+300");
     expect(americanOdds(0.5)).toBe("-100");
-    for (const price of [0, 1, NaN, -1, 2])
+    for (const price of [0, 1, NaN, -1, 2]) {
       expect(americanOdds(price)).toBe("—");
+    }
   });
 });

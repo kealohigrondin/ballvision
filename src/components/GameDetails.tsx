@@ -1,14 +1,15 @@
-import { usePolymarketGame } from "../context/polymarketGameContext";
-import { GameOddsHistory } from "./GameOddsHistory";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { ChevronDown, MapPin } from "lucide-react";
-import type { Game } from "../data/types";
-import { PeriodScores } from "./PeriodScores";
+
+import { usePolymarketGame } from "../context/polymarketGameContext";
 import { copy } from "../copy";
+import type { Game } from "../data/types";
+import { GameOddsHistory } from "./GameOddsHistory";
+import { PeriodScores } from "./PeriodScores";
 
 type GameDetailsProps = { game: Game };
 
@@ -28,6 +29,7 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
     game.venue ||
     hasTimeouts,
   );
+
   return (
     <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
       <AccordionSummary expandIcon={<ChevronDown />}>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+
 import type {
   Division,
   LeagueRow,
@@ -26,18 +27,27 @@ export const useTeamSchedule = (
     loading: boolean;
     error: boolean;
   }>({ key, loading: false, error: false });
+
   useEffect(() => setSelection(undefined), [division]);
+
   const selectTeam = useCallback(
     (team: LeagueRow) => setSelection({ division, team }),
     [division],
   );
+
   const refresh = useCallback(() => setRevision((value) => value + 1), []);
+
   useEffect(() => {
-    if (!enabled || !teamId) return;
+    if (!enabled || !teamId) {
+      return;
+    }
     let disposed = false;
     let request: AbortController | undefined;
+
     const load = async () => {
-      if (disposed || request) return;
+      if (disposed || request) {
+        return;
+      }
       const controller = new AbortController();
       request = controller;
       const timeout = setTimeout(() => controller.abort(), 15_000);
@@ -47,17 +57,21 @@ export const useTeamSchedule = (
         loading: true,
         error: false,
       }));
+
       try {
         const data = await source.load({ division, teamId }, controller.signal);
-        if (!disposed) setState({ key, data, loading: false, error: false });
+        if (!disposed) {
+          setState({ key, data, loading: false, error: false });
+        }
       } catch {
-        if (!disposed)
+        if (!disposed) {
           setState((previous) => ({
             key,
             data: previous.key === key ? previous.data : undefined,
             loading: false,
             error: true,
           }));
+        }
       } finally {
         clearTimeout(timeout);
         request = undefined;
@@ -65,8 +79,11 @@ export const useTeamSchedule = (
     };
     void load();
     const timer = setInterval(() => {
-      if (!document.hidden) void load();
+      if (!document.hidden) {
+        void load();
+      }
     }, 300_000);
+
     return () => {
       disposed = true;
       clearInterval(timer);
@@ -77,6 +94,7 @@ export const useTeamSchedule = (
     state.key === key
       ? state
       : { data: undefined, loading: Boolean(enabled && teamId), error: false };
+
   return {
     selectedTeam,
     selectTeam,

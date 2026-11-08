@@ -5,26 +5,31 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
 import { useScoreNotification } from "../context/scoreNotificationContext";
-import {
-  notificationHeadline,
-  NOTIFICATION_DURATION_MS,
-} from "../utils/scoreNotifications";
-import { ScoreNotificationControls } from "./ScoreNotificationControls";
-import { ScoreChalkCircle } from "./ScoreChalkCircle";
-import { ScoreAlertTime } from "./ScoreAlertTime";
-import { TeamLogo } from "./TeamLogo";
 import { copy } from "../copy";
+import {
+  NOTIFICATION_DURATION_MS,
+  notificationHeadline,
+} from "../utils/scoreNotifications";
+import { ScoreAlertTime } from "./ScoreAlertTime";
+import { ScoreChalkCircle } from "./ScoreChalkCircle";
+import { ScoreNotificationControls } from "./ScoreNotificationControls";
+import { TeamLogo } from "./TeamLogo";
 
 type ScoreNotificationModalProps = Record<string, never>;
+
 export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
   const { current, pending, dismiss, dismissAll } = useScoreNotification();
-  if (!current) return null;
+  if (!current) {
+    return null;
+  }
 
   const teams = [current.game.away, current.game.home].map((team) => {
     const scoring = current.scoringTeamIds.includes(team.id);
     const scoreColor = scoring ? "warning.main" : "text.primary";
     const scoreWeight = scoring ? "fontWeightBold" : "fontWeightRegular";
+
     return (
       <Stack
         key={team.id}
@@ -52,6 +57,7 @@ export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
       </Stack>
     );
   });
+
   return (
     <Dialog
       open

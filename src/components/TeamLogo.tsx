@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+
 import type { Team } from "../data/types";
 
 type TeamLogoProps = {
@@ -25,6 +26,7 @@ export const TeamLogo = ({ team, size = 40 }: TeamLogoProps) => {
         {(team.abbreviation ?? "?").slice(0, 3)}
       </Typography>
     );
+
   return (
     <Box
       component="span"

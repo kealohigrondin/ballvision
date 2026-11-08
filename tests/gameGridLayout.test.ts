@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+
 import { getGameGridSize } from "../src/utils/gameGridLayout";
 
 it.each([

@@ -1,6 +1,6 @@
+import type { SxProps, Theme } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import type { SxProps, Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
 
 type SegmentedControlProps<Value extends string> = {
@@ -29,6 +29,7 @@ export const SegmentedControl = <Value extends string>({
       {option.label}
     </ToggleButton>
   ));
+
   return (
     <ToggleButtonGroup
       exclusive
@@ -36,7 +37,9 @@ export const SegmentedControl = <Value extends string>({
       color="primary"
       value={value}
       onChange={(_, next: Value | null) => {
-        if (next !== null) onChange(next);
+        if (next !== null) {
+          onChange(next);
+        }
       }}
       aria-label={label}
       className={className}

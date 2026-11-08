@@ -1,10 +1,11 @@
-import Tooltip from "@mui/material/Tooltip";
 import { BellOff, BellRing, Flame } from "lucide-react";
+
 import { useScoreNotification } from "../context/scoreNotificationContext";
-import { MastHeadIconButton } from "./MastHeadIconButton";
 import { copy } from "../copy";
+import { MastHeadIconButton } from "./MastHeadIconButton";
 
 type ScoreNotificationControlsProps = Record<string, never>;
+
 export const ScoreNotificationControls =
   ({}: ScoreNotificationControlsProps) => {
     const {
@@ -22,6 +23,7 @@ export const ScoreNotificationControls =
     const soundLabel = muted
       ? copy.scoreNotification.unmuteSound
       : copy.scoreNotification.muteSound;
+
     return (
       <>
         {soundArmed ? (

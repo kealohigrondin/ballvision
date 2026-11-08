@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import type { Game } from "../data/types";
 import {
   baselineScores,
@@ -21,18 +22,22 @@ export const useScoreNotifications = (
   }>({ key, initialized: false, scores: new Map() });
   const [queue, setQueue] = useState<ScoreNotification[]>([]);
   const previewId = useRef(0);
+
   useEffect(() => {
     if (tracker.current.key !== key) {
       tracker.current = { key, initialized: false, scores: new Map() };
       setQueue([]);
     }
-    if (!ready) return;
+    if (!ready) {
+      return;
+    }
     if (!tracker.current.initialized) {
       tracker.current = {
         key,
         initialized: true,
         scores: baselineScores(games),
       };
+
       return;
     }
     const { snapshots, notifications } = detectScoreChanges(
@@ -44,9 +49,11 @@ export const useScoreNotifications = (
     const pinnedNotifications = notifications.filter((event) =>
       pinnedIds.includes(event.game.id),
     );
-    if (pinnedNotifications.length > 0)
+    if (pinnedNotifications.length > 0) {
       setQueue((current) => [...current, ...pinnedNotifications]);
+    }
   }, [games, key, ready, pinnedIds]);
+
   useEffect(() => {
     if (queue.some((event) => !pinnedIds.includes(event.game.id))) {
       setQueue((current) =>
@@ -54,25 +61,34 @@ export const useScoreNotifications = (
       );
     }
   }, [queue, pinnedIds]);
+
   const dismiss = useCallback(
     () => setQueue((current) => current.slice(1)),
     [],
   );
+
   const dismissAll = useCallback(() => setQueue([]), []);
   const eligibleQueue = queue.filter((event) =>
     pinnedIds.includes(event.game.id),
   );
   const current = tracker.current.key === key ? eligibleQueue[0] : undefined;
+
   useEffect(() => {
-    if (!current) return;
+    if (!current) {
+      return;
+    }
     const timer = setTimeout(dismiss, NOTIFICATION_DURATION_MS);
+
     return () => clearTimeout(timer);
   }, [current?.id, dismiss]);
+
   const preview = useCallback(() => {
     const pinnedGames = games.filter((game) => pinnedIds.includes(game.id));
     const game =
       pinnedGames.find((game) => game.state === "live") ?? pinnedGames[0];
-    if (!game) return;
+    if (!game) {
+      return;
+    }
     previewId.current += 1;
     setQueue((current) => [
       ...current,
@@ -85,6 +101,7 @@ export const useScoreNotifications = (
       },
     ]);
   }, [games, pinnedIds]);
+
   return {
     current,
     pending: Math.max(0, eligibleQueue.length - 1),

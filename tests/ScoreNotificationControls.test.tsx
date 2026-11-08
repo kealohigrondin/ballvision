@@ -1,11 +1,12 @@
-import { copy } from "../src/copy";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import { ScoreNotificationControls } from "../src/components/ScoreNotificationControls";
 import {
   scoreNotificationContext,
   type ScoreNotificationData,
 } from "../src/context/scoreNotificationContext";
+import { copy } from "../src/copy";
 
 afterEach(cleanup);
 
@@ -30,6 +31,7 @@ const renderControls = (overrides: Partial<ScoreNotificationData>) =>
       <ScoreNotificationControls />
     </scoreNotificationContext.Provider>,
   );
+
 const iconClass = (name: string) =>
   screen
     .getByRole("button", { name })

@@ -1,7 +1,8 @@
 import { Moon, Sun } from "lucide-react";
+
 import { useColorMode } from "../context/ColorModeContext";
-import { MastHeadIconButton } from "./MastHeadIconButton";
 import { copy } from "../copy";
+import { MastHeadIconButton } from "./MastHeadIconButton";
 
 type ThemeToggleProps = Record<string, never>;
 

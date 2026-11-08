@@ -1,11 +1,3 @@
-import { copy } from "../src/copy";
-import { gameTime } from "../src/utils/gameTime";
-import { linkTo } from "./helpers/queries";
-import type { PolymarketData } from "../src/context/polymarketDataContext";
-import { oddsQuote } from "./helpers/oddsFixture";
-import type { ReactNode } from "react";
-import { AppTheme } from "../src/providers/AppTheme";
-import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -13,11 +5,20 @@ import {
   screen,
   within,
 } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
 import { GameCard } from "../src/components/GameCard";
-import { TeamLogo } from "../src/components/TeamLogo";
 import { SyncControls } from "../src/components/SyncControls";
+import { TeamLogo } from "../src/components/TeamLogo";
+import type { PolymarketData } from "../src/context/polymarketDataContext";
+import { copy } from "../src/copy";
 import type { Game, Team } from "../src/data/types";
+import { AppTheme } from "../src/providers/AppTheme";
+import { gameTime } from "../src/utils/gameTime";
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
+import { oddsQuote } from "./helpers/oddsFixture";
+import { linkTo } from "./helpers/queries";
 
 const render = (ui: ReactNode, polymarket?: Partial<PolymarketData>) =>
   renderWithoutTheme(ui, {

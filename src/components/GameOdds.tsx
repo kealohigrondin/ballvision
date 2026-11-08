@@ -1,11 +1,12 @@
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
 import { usePolymarketGame } from "../context/polymarketGameContext";
-import { americanOdds } from "../utils/odds";
 import { copy } from "../copy";
 
 type GameOddsProps = Record<string, never>;
+
 export const GameOdds = ({}: GameOddsProps) => {
   const { quote, game, loading, error: stale } = usePolymarketGame();
   const away = game.away.abbreviation;
@@ -13,6 +14,7 @@ export const GameOdds = ({}: GameOddsProps) => {
   if (!quote) {
     const label = loading ? copy.odds.loading : copy.odds.missing;
     const detail = stale ? copy.odds.unavailable : copy.odds.noMarket;
+
     return (
       <Typography color="text.secondary" title={detail}>
         {label}
@@ -28,6 +30,7 @@ export const GameOdds = ({}: GameOddsProps) => {
   const status = stale ? ` · ${copy.odds.stale}` : "";
   const updated = new Date(quote.updatedAt).toLocaleTimeString();
   const description = `Polymarket moneyline, derived from market midpoint prices. ${away}: ${(quote.awayProbability * 100).toFixed(1)}% implied probability. ${home}: ${(quote.homeProbability * 100).toFixed(1)}%. Updated ${updated}${status}.`;
+
   return (
     <Stack sx={{ textAlign: "right", minWidth: 0 }} title={description}>
       <Link href={quote.url} target="_blank" rel="noopener noreferrer">

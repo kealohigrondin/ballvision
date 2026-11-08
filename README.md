@@ -25,6 +25,10 @@ npm run build
 npm run preview
 ```
 
+### Pre-push checks
+
+`npm ci` points Git at the hooks in `.githooks/`. Before every `git push`, the `pre-push` hook runs `npm run lint` (ESLint and Prettier), `npm run typecheck` and `npm test`, and rejects the push if any of them fail. In an emergency, `git push --no-verify` skips it.
+
 ## End-to-end tests and screenshots
 
 Playwright drives the app in Chromium against a Vite dev server. ESPN and Polymarket requests are served from `e2e/fixtures/` by `e2e/support/mockApis.ts`, so runs are offline and deterministic.

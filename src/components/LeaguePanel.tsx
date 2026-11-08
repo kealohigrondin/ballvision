@@ -2,6 +2,7 @@ import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
+import type { SxProps, Theme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
@@ -9,14 +10,47 @@ import { useMemo } from "react";
 import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
 import { copy } from "../copy";
+import { useCompactWindow } from "../hooks/useCompactWindow";
 import { LeagueTable } from "./LeagueTable";
 import { TeamSchedule } from "./TeamSchedule";
 import { TeamSchedulePicker } from "./TeamSchedulePicker";
 
 type LeaguePanelProps = Record<string, never>;
 
+const panelSx: SxProps<Theme> = {
+  p: 2,
+  minWidth: 0,
+  overflowY: "auto",
+};
+
+// Small and wider windows: a panel beside (or above) the scores.
+const sidePanelSx: SxProps<Theme> = {
+  ...panelSx,
+  gridArea: "panel",
+  position: { xs: "static", md: "sticky" },
+  top: 16,
+  mt: 2,
+  height: { xs: "auto", md: "calc(100dvh - 32px)" },
+  maxHeight: { xs: 440, md: "calc(100dvh - 32px)" },
+};
+
+// Compact windows: a standard (non-modal) bottom sheet resting on the
+// navigation bar, so the bar stays usable to switch or close the panel.
+const bottomSheetSx: SxProps<Theme> = {
+  ...panelSx,
+  position: "fixed",
+  left: 0,
+  right: 0,
+  bottom: (theme) =>
+    `calc(${theme.app.navigationBarHeight}px + env(safe-area-inset-bottom))`,
+  zIndex: (theme) => theme.zIndex.appBar,
+  maxHeight: "60dvh",
+  "&&": { borderRadius: "28px 28px 0 0" },
+};
+
 export const LeaguePanel = ({}: LeaguePanelProps) => {
   const { division } = useAppData();
+  const compact = useCompactWindow();
   const {
     league: { tables, loading, error, refresh, view, selected, setSelectedId },
   } = useEspnData();
@@ -79,20 +113,11 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   }, [division, view]);
 
   return (
-    <Slide in direction="right" appear>
+    <Slide in direction={compact ? "up" : "right"} appear>
       <Paper
         component="aside"
-        sx={{
-          gridArea: "panel",
-          position: { xs: "static", md: "sticky" },
-          top: 16,
-          mt: 2,
-          p: 2,
-          height: { xs: "auto", md: "calc(100dvh - 32px)" },
-          maxHeight: { xs: 440, md: "calc(100dvh - 32px)" },
-          minWidth: 0,
-          overflowY: "auto",
-        }}
+        elevation={compact ? 3 : 1}
+        sx={compact ? bottomSheetSx : sidePanelSx}
         className="league-panel"
         id="league-panel"
         aria-label={copy.league.panel}

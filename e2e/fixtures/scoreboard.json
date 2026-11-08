@@ -1,0 +1,165 @@
+{
+  "leagues": [
+    {
+      "season": { "year": 2026, "type": 2 },
+      "calendar": [
+        {
+          "label": "Regular Season",
+          "value": "2",
+          "entries": [
+            { "label": "Week 10", "value": "10", "detail": "Oct 31-Nov 6" },
+            { "label": "Week 11", "value": "11", "detail": "Nov 7-13" }
+          ]
+        }
+      ]
+    }
+  ],
+  "season": { "year": 2026, "type": 2 },
+  "week": { "number": 11 },
+  "events": [
+    {
+      "id": "1001",
+      "date": "2026-11-07T20:30Z",
+      "status": {
+        "displayClock": "4:12",
+        "period": 3,
+        "type": { "state": "in", "detail": "4:12 - 3rd Quarter" }
+      },
+      "competitions": [
+        {
+          "venue": { "fullName": "Harbor Field" },
+          "broadcasts": [{ "names": ["ABC"] }],
+          "situation": {
+            "possession": "11",
+            "downDistanceText": "2nd & 7 at RIV 34",
+            "lastPlay": { "text": "Ridge Hawks rush for 6 yards." },
+            "homeTimeouts": 2,
+            "awayTimeouts": 3
+          },
+          "competitors": [
+            {
+              "id": "11",
+              "homeAway": "home",
+              "score": "24",
+              "linescores": [{ "value": 7 }, { "value": 10 }, { "value": 7 }],
+              "records": [{ "type": "total", "summary": "8-1" }],
+              "curatedRank": { "current": 6 },
+              "team": {
+                "shortDisplayName": "Ridge Hawks",
+                "location": "Ridge",
+                "abbreviation": "RDG",
+                "color": "1d4ed8"
+              }
+            },
+            {
+              "id": "12",
+              "homeAway": "away",
+              "score": "17",
+              "linescores": [{ "value": 3 }, { "value": 14 }, { "value": 0 }],
+              "records": [{ "type": "total", "summary": "6-3" }],
+              "team": {
+                "shortDisplayName": "River Otters",
+                "location": "River",
+                "abbreviation": "RIV",
+                "color": "b45309"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1002",
+      "date": "2026-11-08T00:00Z",
+      "status": {
+        "type": {
+          "state": "pre",
+          "name": "STATUS_SCHEDULED",
+          "detail": "Sat, November 7th at 7:00 PM EST"
+        }
+      },
+      "competitions": [
+        {
+          "venue": { "fullName": "Summit Stadium" },
+          "broadcasts": [{ "names": ["ESPN"] }],
+          "competitors": [
+            {
+              "id": "21",
+              "homeAway": "home",
+              "records": [{ "type": "total", "summary": "7-2" }],
+              "team": {
+                "shortDisplayName": "Summit Goats",
+                "location": "Summit",
+                "abbreviation": "SUM",
+                "color": "15803d"
+              }
+            },
+            {
+              "id": "22",
+              "homeAway": "away",
+              "records": [{ "type": "total", "summary": "5-4" }],
+              "team": {
+                "shortDisplayName": "Prairie Bison",
+                "location": "Prairie",
+                "abbreviation": "PRA",
+                "color": "7c3aed"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1003",
+      "date": "2026-11-07T17:00Z",
+      "status": {
+        "period": 4,
+        "type": { "state": "post", "completed": true, "detail": "Final" }
+      },
+      "competitions": [
+        {
+          "venue": { "fullName": "Lakeside Bowl" },
+          "broadcasts": [{ "names": ["FOX"] }],
+          "competitors": [
+            {
+              "id": "31",
+              "homeAway": "home",
+              "score": "31",
+              "linescores": [
+                { "value": 7 },
+                { "value": 7 },
+                { "value": 10 },
+                { "value": 7 }
+              ],
+              "records": [{ "type": "total", "summary": "4-5" }],
+              "team": {
+                "shortDisplayName": "Lake Herons",
+                "location": "Lake",
+                "abbreviation": "LAK",
+                "color": "0e7490"
+              }
+            },
+            {
+              "id": "32",
+              "homeAway": "away",
+              "score": "28",
+              "linescores": [
+                { "value": 0 },
+                { "value": 14 },
+                { "value": 7 },
+                { "value": 7 }
+              ],
+              "records": [{ "type": "total", "summary": "3-6" }],
+              "team": {
+                "shortDisplayName": "Canyon Foxes",
+                "location": "Canyon",
+                "abbreviation": "CAN",
+                "color": "be123c"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

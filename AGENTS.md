@@ -18,6 +18,7 @@
 - Use MUI components, theming, and styling.
 - Add meaningful tests for behavior changes and bug fixes.
 - Run npm test and npm run build before completing changes.
+- For UI changes, also run `npm run test:e2e`, add or update Playwright specs in `e2e/` when user-visible behavior changes, and run `npm run screenshots` to check the result visually. Extend `e2e/screenshots.spec.ts` when a change is not visible in the existing shots. CI posts these screenshots to the PR automatically.
 - use prettier formatting in all files
 - for variables that need more than one inline if statement to determine its value, use usememo to determine value
 - For new UI components, keep them general and reusable. Do not make them specific to a feature

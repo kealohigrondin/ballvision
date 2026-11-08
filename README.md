@@ -35,7 +35,7 @@ npm run test:e2e                  # browser tests
 npm run screenshots               # writes PNGs to ./screenshots
 ```
 
-On every pull request, the **PR screenshots** workflow runs `npm run screenshots` (desktop, tablet and mobile viewports, each in dark and light, at the exact screen size), stores the images on the `pr-screenshots` branch, and posts (or updates) a comment on the PR showing them inline.
+On every pull request that changes `src/components/`, the **PR screenshots** workflow runs `npm run screenshots` (desktop, tablet and mobile viewports, each in dark and light, at the exact screen size), stores the images on the `pr-screenshots` branch, and posts (or updates) a comment on the PR showing them inline.
 
 `dist/` is a static production build and can be served by any static host. Direct ESPN requests currently support CORS. If that changes, implement a server-side provider behind `ScoreboardSource` rather than coupling proxy logic to components. No credentials are shipped to the browser.
 

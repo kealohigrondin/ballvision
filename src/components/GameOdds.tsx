@@ -7,7 +7,7 @@ import { copy } from "../copy";
 
 type GameOddsProps = Record<string, never>;
 
-export const GameOdds = ({ }: GameOddsProps) => {
+export const GameOdds = ({}: GameOddsProps) => {
   const { quote, game, loading, error: stale } = usePolymarketGame();
   const away = game.away.abbreviation;
   const home = game.home.abbreviation;

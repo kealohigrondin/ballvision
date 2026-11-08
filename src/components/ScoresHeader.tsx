@@ -14,7 +14,7 @@ import { WeekSelect } from "./WeekSelect";
 
 type ScoresHeaderProps = Record<string, never>;
 
-export const ScoresHeader = ({}: ScoresHeaderProps) => {
+export const ScoresHeader = ({ }: ScoresHeaderProps) => {
   const {
     week,
     setWeek,
@@ -67,9 +67,6 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
             currentWeekId={currentWeekId}
             onChange={setWeek}
           />
-          <Button onClick={() => setWeek(null)} disabled={week === null}>
-            {copy.scoresHeader.thisWeek}
-          </Button>
           <SegmentedControl
             label={copy.scoresHeader.division}
             value={division}

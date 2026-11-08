@@ -10,9 +10,11 @@
     "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint . && prettier --check . && tsc -b",
+    "lint": "eslint . && prettier --check .",
+    "typecheck": "tsc -b",
     "test:e2e": "playwright test --grep-invert @screenshots",
-    "screenshots": "playwright test --grep @screenshots"
+    "screenshots": "playwright test --grep @screenshots",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

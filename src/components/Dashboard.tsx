@@ -39,7 +39,7 @@ export const Dashboard = ({}: DashboardProps) => {
 
   return (
     <Box sx={{ pr: 1, py: 1 }} id="root-container">
-      <ScoreCelebrationModal />
+      <ScoreNotificationModal />
       <MastHead />
       <Box component="main">
         <Box

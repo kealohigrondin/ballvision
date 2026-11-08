@@ -28,7 +28,8 @@ export const Dashboard = ({}: DashboardProps) => {
           lg: "80px 380px minmax(0, 1fr)",
         },
         gridTemplateAreas: {
-          xs: '"panel" "main"',
+          // Compact windows show the panel as a bottom sheet, outside the grid.
+          xs: '"main"',
           sm: '"rail panel" "rail main"',
           md: '"rail panel main"',
         },

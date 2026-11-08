@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import { useTheme } from "@mui/material/styles";
 import clsx from "clsx";
 
 import { useAppData } from "../context/appDataContext";
@@ -15,30 +16,46 @@ import { ScoresHeader } from "./ScoresHeader";
 type DashboardProps = Record<string, never>;
 
 export const Dashboard = ({}: DashboardProps) => {
+  const theme = useTheme();
   const { panelOpen } = useAppData();
   const { error, loading, refresh } = useEspnData();
   const layout = panelOpen
     ? {
         gridTemplateColumns: {
-          xs: "72px minmax(0, 1fr)",
+          xs: "minmax(0, 1fr)",
+          sm: "80px minmax(0, 1fr)",
           md: "80px 360px minmax(0, 1fr)",
           lg: "80px 380px minmax(0, 1fr)",
         },
         gridTemplateAreas: {
-          xs: '"rail panel" "rail main"',
+          // Compact windows show the panel as a bottom sheet, outside the grid.
+          xs: '"main"',
+          sm: '"rail panel" "rail main"',
           md: '"rail panel main"',
         },
       }
     : {
         gridTemplateColumns: {
-          xs: "72px minmax(0, 1fr)",
-          md: "80px minmax(0, 1fr)",
+          xs: "minmax(0, 1fr)",
+          sm: "80px minmax(0, 1fr)",
         },
-        gridTemplateAreas: '"rail main"',
+        gridTemplateAreas: { xs: '"main"', sm: '"rail main"' },
       };
 
   return (
-    <Box sx={{ pr: 1, py: 1 }} id="root-container">
+    <Box
+      sx={{
+        pr: 1,
+        pl: { xs: 1, sm: 0 },
+        pt: 1,
+        // Leave room for the fixed bottom navigation bar on compact windows.
+        pb: {
+          xs: `calc(${theme.app.navigationBarHeight}px + env(safe-area-inset-bottom) + 8px)`,
+          sm: 1,
+        },
+      }}
+      id="root-container"
+    >
       <ScoreNotificationModal />
       <MastHead />
       <Box component="main">

@@ -7,3 +7,6 @@ dist/
 .openai/
 src/assets/
 *.tsbuildinfo
+test-results/
+playwright-report/
+screenshots/

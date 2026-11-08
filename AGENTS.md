@@ -13,11 +13,11 @@
 - Each component should have it's own file
 - Keep ESPN-specific logic in src/data/espn.ts.
 - Keep network and refresh logic out of UI components.
-- Depend on ScoreboardSource for provider access.
 - Prefer low coupling and high cohesion.
-- Use semantic HTML and accessible controls.
+- Use MUI components, theming, and styling.
 - Add meaningful tests for behavior changes and bug fixes.
 - Run npm test and npm run build before completing changes.
-- Run locally only. Do not publish or deploy.
 - use prettier formatting in all files
 - for variables that need more than one inline if statement to determine its value, use usememo to determine value
+- For new UI components, keep them general and reusable. Do not make them specific to a feature
+- For new UI components, follow [material design 3](https://m3.material.io/components) unless specified otherwise

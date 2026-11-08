@@ -1,6 +1,7 @@
-import { iconButtonSx } from "../styles/shared";
-import { liveDotSx } from "../styles/shared";
-import Box from "@mui/material/Box";
+import { PolymarketGameProvider } from "../providers/PolymarketGameProvider";
+import { GameOdds } from "./GameOdds";
+import { compactBoxScoreSx } from "../styles/boxScore";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -63,11 +64,20 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   );
   const periodHeaders = periods.map((period) => {
     const label = period < 4 ? period + 1 : `${period - 3}OT`;
+    const contentLength = Math.max(
+      String(label).length,
+      game.away.quarters[period]?.length ?? 1,
+      game.home.quarters[period]?.length ?? 1,
+    );
     return (
       <TableCell
         component="th"
         scope="col"
         className="period-heading"
+        align="right"
+        sx={(theme) => ({
+          width: `calc(${contentLength}ch + ${theme.app.periodColumnPadding} + ${theme.app.periodColumnPadding})`,
+        })}
         key={period}
       >
         {label}
@@ -76,194 +86,132 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   });
 
   return (
-    <Paper
-      component="article"
-      elevation={0}
-      sx={[
-        {
-          border: "1px solid var(--mui-app-colors-cardBorder)",
-          overflow: "hidden",
-          boxShadow: "0 4px 18px var(--mui-app-colors-shadow)",
-          transition: "border-color 0.2s",
-          "&:hover": { borderColor: "var(--mui-app-colors-cardHoverBorder)" },
-        },
-        {
-          borderRadius: "22px",
-          background: `linear-gradient(110deg, color-mix(in srgb, ${game.away.color} var(--mui-app-teamColorTint), var(--mui-app-colors-cardShade)), var(--mui-app-colors-cardShade) 50%, color-mix(in srgb, ${game.home.color} var(--mui-app-teamColorTint), var(--mui-app-colors-cardShade)))`,
-        },
-      ]}
-      className={clsx(
-        "game-card",
-        isLive && "is-live",
-        isInRedZone && "red-zone",
-      )}
-    >
-      <TableContainer
-        className="card-scoreboard-scroll"
-        sx={{ padding: "12px 18px 4px" }}
-      >
-        <Table
-          className="card-scoreboard"
-          size="small"
-          aria-label={`${game.away.name} at ${game.home.name} scores by period`}
-          sx={{
-            tableLayout: "fixed",
-            minWidth: "0",
-            "& .MuiTableCell-root": { borderBottom: "0" },
-            "& .card-status-cell": { width: "auto", padding: "0 8px 6px 0" },
-            "& .period-heading": {
-              width: "26px",
-              padding: "0 2px 6px",
-              textAlign: "center",
-              color: "var(--mui-palette-text-secondary)",
-              display: "none",
-            },
-            "& .total-heading": {
-              width: "38px",
-              padding: "0 0 6px 4px",
-              textAlign: "right",
-              color: "var(--mui-palette-text-secondary)",
-              visibility: "hidden",
-            },
-            "& .team-period": { display: "none" },
-            "@container game-grid (min-width: 1200px)": {
-              "& .period-heading": { display: "table-cell" },
-              "& .team-period": { display: "table-cell" },
-              "& .total-heading": { visibility: "visible" },
-            },
-            "& .team-row > .team-identity-cell": {
-              padding: "8px 8px 8px 0",
-              textAlign: "left",
-            },
-            "& .team-row > .team-period": {
-              textAlign: "center",
-              padding: "8px 2px",
-              color: "var(--mui-palette-text-secondary)",
-              fontVariantNumeric: "tabular-nums",
-            },
-            "& .team-row > .team-total": {
-              textAlign: "right",
-              padding: "8px 0 8px 4px",
-            },
-          }}
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell
-                component="th"
-                scope="col"
-                className="card-status-cell"
-              >
-                <Typography
-                  variant="caption"
-                  component="span"
-                  className={clsx("game-state", game.state)}
-                  sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    color: "var(--mui-app-colors-gameStatus)",
-                    "&.live": { color: "var(--mui-palette-primary-main)" },
-                    "&.final": { color: "var(--mui-app-colors-gameFinal)" },
-                  }}
-                >
-                  {isLive && (
-                    <Box component="span" className="live-dot" sx={liveDotSx} />
-                  )}
-                  {time}
-                </Typography>
-              </TableCell>
-              {periodHeaders}
-              <TableCell component="th" scope="col" className="total-heading">
-                T
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TeamRow
-              team={game.away}
-              possession={awayHasPossession}
-              scheduled={isScheduled}
-              periods={periods}
-            />
-            <TeamRow
-              team={game.home}
-              possession={homeHasPossession}
-              scheduled={isScheduled}
-              periods={periods}
-            />
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Stack
-        direction="row"
-        className="card-situation"
+    <PolymarketGameProvider game={game}>
+      <Paper
+        component="article"
         sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "10px",
-          padding: "6px 18px 12px",
-          color: "var(--mui-app-colors-situation)",
+          container: "game-card / inline-size",
+          ...(isInRedZone
+            ? { border: "2px solid", borderColor: "error.main" }
+            : {}),
         }}
       >
+        <TableContainer sx={{ pt: 1, px: 0.8 }}>
+          <Table
+            className="card-scoreboard"
+            size="small"
+            aria-label={`${game.away.name} at ${game.home.name} scores by period`}
+            sx={[
+              compactBoxScoreSx,
+              (theme) => ({
+                tableLayout: "fixed",
+                "& .MuiTableCell-root": { borderBottom: 0 },
+                "& .period-heading, & .team-period": { display: "none" },
+                "& .total-heading": { visibility: "hidden" },
+                [`@container game-card (min-width: ${theme.app.boxScoreMinWidth}px)`]:
+                  {
+                    "& .period-heading, & .team-period": {
+                      display: "table-cell",
+                    },
+                    "& .total-heading": { visibility: "visible" },
+                  },
+              }),
+            ]}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  component="th"
+                  scope="col"
+                  className="card-status-cell"
+                >
+                  <Typography
+                    component="span"
+                    className={clsx("game-state", game.state)}
+                    color="text.secondary"
+                  >
+                    {time}
+                  </Typography>
+                </TableCell>
+                {periodHeaders}
+                <TableCell
+                  component="th"
+                  scope="col"
+                  className="total-heading"
+                  align="right"
+                  sx={{ width: 56 }}
+                >
+                  T
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TeamRow
+                team={game.away}
+                possession={awayHasPossession}
+                scheduled={isScheduled}
+                periods={periods}
+              />
+              <TeamRow
+                team={game.home}
+                possession={homeHasPossession}
+                scheduled={isScheduled}
+                periods={periods}
+              />
+            </TableBody>
+          </Table>
+        </TableContainer>
         <Stack
-          className="card-broadcast-info"
-          sx={{ gap: "4px", minWidth: "0" }}
+          direction="row"
+          className="card-situation"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+            p: 2,
+          }}
         >
-          {game.broadcast && (
-            <Typography
-              variant="caption"
-              component="span"
-              className="broadcast"
-              sx={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                color: "var(--mui-app-colors-broadcast)",
-              }}
-            >
-              <Tv size={12} />
-              {game.broadcast}
-            </Typography>
-          )}
-          <Typography variant="caption" component="span">
-            {isInRedZone && (
+          <Stack
+            className="card-broadcast-info"
+            spacing={0.5}
+            sx={{ minWidth: 0 }}
+          >
+            {game.broadcast && (
               <Typography
-                variant="caption"
                 component="span"
-                className="red-zone-label"
-                sx={{ color: "var(--mui-app-colors-redZone)" }}
+                className="broadcast"
+                color="text.secondary"
+                sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}
               >
-                RED ZONE ·&nbsp;
+                <Tv size={12} />
+                {game.broadcast}
               </Typography>
             )}
-            {situation}
-          </Typography>
+            <Typography component="span">{situation}</Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: "center", minWidth: 0 }}
+          >
+            {(isLive || isScheduled) && <GameOdds />}
+            <IconButton
+              className={clsx(
+                "icon-button",
+                "favorite",
+                favorite && "selected",
+              )}
+              onClick={onFavorite}
+              title={favorite ? "Unpin game" : "Pin game"}
+              aria-label={favoriteLabel}
+              aria-pressed={favorite}
+            >
+              {favoriteIcon}
+            </IconButton>
+          </Stack>
         </Stack>
-        <Box
-          component="button"
-          className={clsx("icon-button", "favorite", favorite && "selected")}
-          onClick={onFavorite}
-          title={favorite ? "Unpin game" : "Pin game"}
-          aria-label={favoriteLabel}
-          aria-pressed={favorite}
-          sx={[
-            iconButtonSx,
-            {
-              width: "32px",
-              height: "32px",
-              background: "transparent",
-              color: "var(--mui-app-colors-favorite)",
-              "&[aria-pressed=true]": {
-                color: "var(--mui-palette-text-primary)",
-              },
-            },
-          ]}
-        >
-          {favoriteIcon}
-        </Box>
-      </Stack>
-      <GameDetails game={game} />
-    </Paper>
+        <GameDetails game={game} />
+      </Paper>
+    </PolymarketGameProvider>
   );
 };

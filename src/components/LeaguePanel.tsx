@@ -1,25 +1,24 @@
-import { SegmentedControl } from "./SegmentedControl";
+import { useEspnData } from "../context/espnDataContext";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 import Paper from "@mui/material/Paper";
+import Slide from "@mui/material/Slide";
 
-import { useMemo, useState } from "react";
-import type { Division, LeagueSource } from "../data/types";
-import { useLeagueTables, type LeagueView } from "../hooks/useLeagueTables";
+import { useMemo } from "react";
+import { useAppData } from "../context/appDataContext";
+import { TeamSchedule } from "./TeamSchedule";
 import { LeagueTable } from "./LeagueTable";
+import { TeamSchedulePicker } from "./TeamSchedulePicker";
 
-type LeaguePanelProps = { source: LeagueSource; division: Division };
+type LeaguePanelProps = Record<string, never>;
 
-export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
-  const [selectedView, setView] = useState<LeagueView>("standings");
-  const view = division === "nfl" ? "standings" : selectedView;
-  const [selectedId, setSelectedId] = useState("");
-  const { tables, loading, error, refresh } = useLeagueTables(
-    source,
-    division,
-    view,
-  );
-  const selected = tables.find((table) => table.id === selectedId) ?? tables[0];
+export const LeaguePanel = ({}: LeaguePanelProps) => {
+  const { division } = useAppData();
+  const {
+    league: { tables, loading, error, refresh, view, selected, setSelectedId },
+  } = useEspnData();
   const options = tables.map((table) => (
     <option key={table.id} value={table.id}>
       {table.title}
@@ -31,6 +30,7 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
   }, [division, view]);
 
   const content = useMemo(() => {
+    if (view === "schedule") return <TeamSchedule />;
     if (loading && !selected) {
       return (
         <Typography
@@ -38,21 +38,21 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
           component="p"
           className="league-message"
           role="status"
-          sx={{ color: "var(--mui-palette-text-secondary)" }}
+          color="text.secondary"
         >
           Loading league data…
         </Typography>
       );
     }
     if (selected?.rows.length) {
-      return <LeagueTable table={selected} view={view} />;
+      return <LeagueTable />;
     }
     return (
       <Typography
         variant="body2"
         component="p"
         className="league-message"
-        sx={{ color: "var(--mui-palette-text-secondary)" }}
+        color="text.secondary"
       >
         No league data is available for this division.
       </Typography>
@@ -60,144 +60,69 @@ export const LeaguePanel = ({ source, division }: LeaguePanelProps) => {
   }, [loading, selected, view]);
 
   const label = useMemo(() => {
+    if (view === "schedule") return "Team schedule";
     if (division === "nfl") return "NFL standings";
     return view === "rankings" ? "Top 25" : "Conference standings";
   }, [division, view]);
 
   return (
-    <Paper
-      component="aside"
-      elevation={0}
-      sx={[
-        {
-          position: "sticky",
-          gridRow: { xs: 1, md: "auto" },
-          top: "16px",
-          marginTop: "16px",
-          padding: "20px",
-          background: "var(--mui-palette-background-paper)",
-          border: "1px solid var(--mui-palette-divider)",
-          borderRadius: "24px",
-          height: "calc(100dvh - 32px)",
-          maxHeight: "calc(100dvh - 32px)",
-          minWidth: "0",
+    <Slide in direction="right" appear>
+      <Paper
+        component="aside"
+        sx={{
+          gridArea: "panel",
+          position: { xs: "static", md: "sticky" },
+          top: 16,
+          mt: 2,
+          p: 2,
+          height: { xs: "auto", md: "calc(100dvh - 32px)" },
+          maxHeight: { xs: 440, md: "calc(100dvh - 32px)" },
+          minWidth: 0,
           overflowY: "auto",
-          scrollbarWidth: "thin",
-          "& h2": {
-            color: "var(--mui-palette-text-primary)",
-            margin: "0 0 22px",
-          },
-          "@media (max-width: 899.95px)": {
-            position: "static",
-            height: "auto",
-            maxHeight: "440px",
-            marginTop: "24px",
-          },
-        },
-        { borderRadius: "24px" },
-      ]}
-      className="league-panel"
-      id="league-panel"
-      aria-label="League information"
-    >
-      {division !== "nfl" && (
-        <SegmentedControl<LeagueView>
-          label="League view"
-          className="league-view-switch"
-          value={view}
-          options={[
-            { value: "standings", label: "Standings" },
-            { value: "rankings", label: "Top 25" },
-          ]}
-          onChange={(nextView) => {
-            setView(nextView);
-            setSelectedId("");
-          }}
-          sx={{ marginBottom: "16px" }}
-        />
-      )}
-      {tables.length > 0 && (
-        <Box
-          component="label"
-          className="league-select-label"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "7px",
-            marginBottom: "16px",
-            color: "var(--mui-palette-text-secondary)",
-            "& select": {
-              width: "100%",
-              height: "var(--mui-app-controlHeight)",
-              minHeight: "var(--mui-app-controlHeight)",
-              padding: "0 12px",
-              borderRadius: "12px",
-              border: "1px solid var(--mui-palette-divider)",
-              background: "var(--mui-app-colors-inputSurface)",
-              color: "var(--mui-palette-text-primary)",
-            },
-            "& select option": {
-              background: "var(--mui-palette-background-paper)",
-              color: "var(--mui-palette-text-primary)",
-            },
-            "& select:focus-visible": {
-              outline: "2px solid var(--mui-palette-primary-main)",
-              outlineOffset: "2px",
-            },
-          }}
-        >
-          {secondaryLabel}
-          <select
+        }}
+        className="league-panel"
+        id="league-panel"
+        aria-label="League information"
+      >
+        {view === "schedule" && <TeamSchedulePicker />}
+        {view !== "schedule" && tables.length > 0 && (
+          <TextField
+            select
+            fullWidth
+            label={secondaryLabel}
             value={selected?.id ?? ""}
             onChange={(e) => setSelectedId(e.target.value)}
+            slotProps={{ select: { native: true } }}
+            sx={{ mb: 2 }}
           >
             {options}
-          </select>
-        </Box>
-      )}
-      {error && (
-        <Box
-          className="league-warning"
-          role="alert"
-          sx={{
-            padding: "12px",
-            borderRadius: "12px",
-            background: "var(--mui-app-colors-warningSurface)",
-            color: "var(--mui-app-colors-warningText)",
-            marginBottom: "12px",
-            "& button": {
-              display: "block",
-              marginTop: "8px",
-              border: "1px solid var(--mui-app-colors-warningBorder)",
-              borderRadius: "12px",
-              padding: "5px 12px",
-              background: "var(--mui-app-colors-transparent)",
-              color: "inherit",
-            },
-          }}
+          </TextField>
+        )}
+        {error && (
+          <Alert
+            severity="warning"
+            sx={{ mb: 2 }}
+            action={
+              <Button color="inherit" onClick={refresh} disabled={loading}>
+                Retry
+              </Button>
+            }
+          >
+            Unable to update league data. Any displayed records may be out of
+            date.
+          </Alert>
+        )}
+        {content}
+        <Typography
+          component="p"
+          className="league-note"
+          color="text.secondary"
+          sx={{ mt: 2 }}
         >
-          Unable to update league data. Any displayed records may be out of
-          date.
-          <button onClick={refresh} disabled={loading}>
-            Retry
-          </button>
-        </Box>
-      )}
-      {content}
-      <Typography
-        variant="caption"
-        component="p"
-        className="league-note"
-        sx={{
-          color: "var(--mui-palette-text-secondary)",
-          margin: "18px 0 0",
-          borderTop: "1px solid var(--mui-palette-divider)",
-          paddingTop: "14px",
-        }}
-      >
-        {label} · {division.toUpperCase()} · Current season. Updates every 5
-        minutes; records may lag live games.
-      </Typography>
-    </Paper>
+          {label} · {division.toUpperCase()} · Current season. Updates every 5
+          minutes; records may lag live games.
+        </Typography>
+      </Paper>
+    </Slide>
   );
 };

@@ -1,6 +1,10 @@
-import Box from "@mui/material/Box";
+import { usePolymarketGame } from "../context/polymarketGameContext";
+import { GameOddsHistory } from "./GameOddsHistory";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-
 import { ChevronDown, MapPin } from "lucide-react";
 import type { Game } from "../data/types";
 import { PeriodScores } from "./PeriodScores";
@@ -8,80 +12,63 @@ import { PeriodScores } from "./PeriodScores";
 type GameDetailsProps = { game: Game };
 
 export const GameDetails = ({ game }: GameDetailsProps) => {
+  const {
+    quote: odds,
+    historyOpen: expanded,
+    setHistoryOpen: setExpanded,
+  } = usePolymarketGame();
   const hasTimeouts =
     game.state === "live" &&
     (game.homeTimeouts !== undefined || game.awayTimeouts !== undefined);
-
-  const hasDetails =
+  const hasDetails = Boolean(
     game.lastPlay ||
     game.home.quarters.length ||
     game.away.quarters.length ||
     game.venue ||
-    hasTimeouts;
-
+    hasTimeouts,
+  );
   return (
-    <Box
-      component="details"
-      className="game-details"
-      sx={{
-        background: "var(--mui-app-colors-detailsSurface)",
-        borderTop: "1px solid var(--mui-app-colors-detailsBorder)",
-        "& summary": {
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "10px",
-          padding: "11px 19px",
-          listStyle: "none",
-          cursor: "pointer",
-          color: "var(--mui-app-colors-detailsLabel)",
-        },
-        "& summary::-webkit-details-marker": { display: "none" },
-        "&[open] summary svg": { transform: "rotate(180deg)" },
-        "& p": {
-          padding: "0 19px",
-          color: "var(--mui-app-colors-detailsText)",
-        },
-        "& strong": {
-          display: "block",
-          color: "var(--mui-palette-text-primary)",
-          marginBottom: "6px",
-        },
-      }}
-    >
-      <summary>
-        Game details <ChevronDown size={14} />
-      </summary>
-      {game.lastPlay && (
-        <p>
-          <strong>Last play</strong>
-          {game.lastPlay}
-        </p>
-      )}
-      <PeriodScores home={game.home} away={game.away} />
-      {hasTimeouts && (
-        <p className="timeout-detail">
-          Timeouts: {game.away.abbreviation} {game.awayTimeouts ?? "—"} ·{" "}
-          {game.home.abbreviation} {game.homeTimeouts ?? "—"}
-        </p>
-      )}
-      {game.venue && (
-        <Stack
-          direction="row"
-          className="venue"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            padding: "0 19px 16px",
-            color: "var(--mui-app-colors-venue)",
-          }}
-        >
-          <MapPin size={13} />
-          {game.venue}
+    <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
+      <AccordionSummary expandIcon={<ChevronDown />}>
+        <Typography>Game details</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Stack spacing={2}>
+          {expanded && odds !== undefined && <GameOddsHistory />}
+          {expanded && !odds && (
+            <Typography variant="body2" color="text.secondary">
+              Polymarket chart unavailable for this game.
+            </Typography>
+          )}
+          {game.lastPlay && (
+            <Typography component="div">
+              <Typography
+                component="span"
+                sx={{ display: "block", fontWeight: 600 }}
+              >
+                Last play
+              </Typography>
+              {game.lastPlay}
+            </Typography>
+          )}
+          <PeriodScores home={game.home} away={game.away} />
+          {hasTimeouts && (
+            <Typography>
+              Timeouts: {game.away.abbreviation} {game.awayTimeouts ?? "—"} ·{" "}
+              {game.home.abbreviation} {game.homeTimeouts ?? "—"}
+            </Typography>
+          )}
+          {game.venue && (
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <MapPin size={20} />
+              <Typography>{game.venue}</Typography>
+            </Stack>
+          )}
+          {!hasDetails && (
+            <Typography>Additional details are not available yet.</Typography>
+          )}
         </Stack>
-      )}
-      {!hasDetails && <p>Additional details are not available yet.</p>}
-    </Box>
+      </AccordionDetails>
+    </Accordion>
   );
 };

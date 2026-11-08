@@ -1,140 +1,124 @@
-import { controlHeightSx } from "../styles/shared";
+import { useEspnData } from "../context/espnDataContext";
+import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { PanelRightClose, PanelRightOpen } from "lucide-react";
-import type { ComponentProps } from "react";
-import { Toolbar } from "./Toolbar";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import Button from "@mui/material/Button";
+import { Search, X } from "lucide-react";
+import { SegmentedControl } from "./SegmentedControl";
+import { WeekSelect } from "./WeekSelect";
+import { useAppData } from "../context/appDataContext";
 
-type ScoresHeaderProps = ComponentProps<typeof Toolbar> & {
-  panelOpen: boolean;
-  onTogglePanel: () => void;
-};
+type ScoresHeaderProps = Record<string, never>;
 
-export const ScoresHeader = ({
-  date,
-  onDate,
-  division,
-  onDivision,
-  search,
-  onSearch,
-  filter,
-  onFilter,
-  counts,
-  panelOpen,
-  onTogglePanel,
-}: ScoresHeaderProps) => {
-  const day = new Date(`${date}T12:00:00`);
-  const dayLabel = new Intl.DateTimeFormat(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  }).format(day);
-  const panelLabel = panelOpen ? "Close league panel" : "Open league panel";
-  const panelIcon = panelOpen ? (
-    <PanelRightClose size={18} />
-  ) : (
-    <PanelRightOpen size={18} />
-  );
+export const ScoresHeader = ({}: ScoresHeaderProps) => {
+  const {
+    week,
+    setWeek,
+    division,
+    setDivision: onDivision,
+    search,
+    setSearch: onSearch,
+    filter,
+    setFilter: onFilter,
+  } = useAppData();
+  const { counts, weeks, currentWeekId } = useEspnData();
+
+  const filterOptions = (
+    ["all", "live", "upcoming", "final", "pinned"] as const
+  ).map((f) => {
+    const label = {
+      all: "All games",
+      live: "Live now",
+      upcoming: "Upcoming",
+      final: "Final",
+      pinned: "Pinned",
+    }[f];
+    return {
+      value: f,
+      label: (
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <span>{label}</span>
+          <span>{counts[f]}</span>
+        </Stack>
+      ),
+    };
+  });
 
   return (
     <Box
-      component="div"
       id="scores-header"
-      className="scores-header"
       sx={{
         position: "sticky",
-        top: "0",
-        zIndex: "10",
-        isolation: "isolate",
-        paddingBottom: "8px",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          inset: "0",
-          zIndex: "-1",
-          pointerEvents: "none",
-          background: "var(--mui-app-background)",
-          backgroundAttachment: "fixed",
-        },
+        top: 0,
+        zIndex: 1,
+        bgcolor: "background.default",
+        py: 2,
       }}
     >
-      <Stack
-        direction="row"
-        className="section-heading"
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "end",
-          gap: "16px",
-          padding: "16px 0 8px",
-          "& h2": { margin: "6px 0 0" },
-          "@media (max-width: 599.95px)": {
-            alignItems: "start",
-            flexDirection: "column",
-            padding: "24px 0 20px",
-            gap: "14px",
-          },
-        }}
-      >
-        <Typography variant="h5" component="h1">
-          {dayLabel}
-          <Box
-            component="span"
-            className="year"
-            sx={{
-              color: "var(--mui-app-colors-year)",
-              "@media (max-width: 599.95px)": { display: "none" },
-            }}
-          >
-            {" "}
-            {day.getFullYear()}
-          </Box>
-        </Typography>
-        <Box
-          component="button"
-          className="league-toggle"
-          type="button"
-          onClick={onTogglePanel}
-          aria-label={panelLabel}
-          title={panelLabel}
-          aria-expanded={panelOpen}
-          aria-controls="league-panel"
-          sx={[
-            controlHeightSx,
-            {
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              border: "1px solid var(--mui-palette-divider)",
-              borderRadius: "24px",
-              background: "var(--mui-app-colors-inputSurface)",
-              padding: "0 18px",
-              color: "var(--mui-palette-text-primary)",
-              "&:hover": {
-                background: "var(--mui-app-colors-buttonHoverSurface)",
-              },
-              '&[aria-expanded="true"]': {
-                background: "var(--mui-app-colors-divisionSelectedSurface)",
-              },
-              "@media (max-width: 599.95px)": { padding: "0 12px" },
-            },
-          ]}
+      <Stack spacing={2}>
+        <Stack
+          direction="row"
+          useFlexGap
+          spacing={1}
+          sx={{ alignItems: "center", flexWrap: "wrap" }}
         >
-          {panelIcon}
+          <WeekSelect
+            weeks={weeks}
+            week={week}
+            currentWeekId={currentWeekId}
+            onChange={setWeek}
+          />
+          <Button onClick={() => setWeek(null)} disabled={week === null}>
+            This week
+          </Button>
+          <SegmentedControl
+            label="Division"
+            value={division}
+            options={(["fbs", "fcs", "nfl"] as const).map((value) => ({
+              value,
+              label: value.toUpperCase(),
+            }))}
+            onChange={onDivision}
+          />
+          <TextField
+            label="Search teams"
+            placeholder="Find your team…"
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
+            sx={{ ml: { sm: "auto" }, width: { xs: "100%", sm: "auto" } }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+                endAdornment: search && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Clear search"
+                      onClick={() => onSearch("")}
+                    >
+                      <X />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Stack>
+        <Box sx={{ overflowX: "auto", width: "100%" }}>
+          <SegmentedControl
+            fullWidth
+            label="Filter games"
+            value={filter}
+            options={filterOptions}
+            onChange={onFilter}
+          />
         </Box>
       </Stack>
-      <Toolbar
-        date={date}
-        onDate={onDate}
-        division={division}
-        onDivision={onDivision}
-        search={search}
-        onSearch={onSearch}
-        filter={filter}
-        onFilter={onFilter}
-        counts={counts}
-      />
     </Box>
   );
 };

@@ -1,8 +1,7 @@
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
-import { controlHeightSx, segmentedButtonSx } from "../styles/shared";
 
 type SegmentedControlProps<Value extends string> = {
   label: string;
@@ -10,7 +9,9 @@ type SegmentedControlProps<Value extends string> = {
   options: readonly { value: Value; label: ReactNode }[];
   onChange: (value: Value) => void;
   className?: string;
+  fullWidth?: boolean;
   sx?: SxProps<Theme>;
+  buttonSx?: SxProps<Theme>;
 };
 
 export const SegmentedControl = <Value extends string>({
@@ -19,39 +20,29 @@ export const SegmentedControl = <Value extends string>({
   options,
   onChange,
   className,
-  sx = [],
+  fullWidth = false,
+  sx,
+  buttonSx,
 }: SegmentedControlProps<Value>) => {
   const buttons = options.map((option) => (
-    <Box
-      component="button"
-      key={option.value}
-      type="button"
-      aria-pressed={value === option.value}
-      onClick={() => onChange(option.value)}
-      sx={[segmentedButtonSx, { flex: 1 }]}
-    >
+    <ToggleButton key={option.value} value={option.value} sx={buttonSx}>
       {option.label}
-    </Box>
+    </ToggleButton>
   ));
-
   return (
-    <Stack
-      direction="row"
-      role="group"
+    <ToggleButtonGroup
+      exclusive
+      fullWidth={fullWidth}
+      color="primary"
+      value={value}
+      onChange={(_, next: Value | null) => {
+        if (next !== null) onChange(next);
+      }}
       aria-label={label}
       className={className}
-      sx={[
-        controlHeightSx,
-        {
-          gap: "5px",
-          borderRadius: "28px",
-          background: "var(--mui-app-colors-inputSurface)",
-          overflowX: "auto",
-        },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
+      sx={sx}
     >
       {buttons}
-    </Stack>
+    </ToggleButtonGroup>
   );
 };

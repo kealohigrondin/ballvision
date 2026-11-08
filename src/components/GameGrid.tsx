@@ -1,33 +1,26 @@
+import { useEspnData } from "../context/espnDataContext";
 import Grid from "@mui/material/Grid";
 import { getGameGridSize } from "../utils/gameGridLayout";
 
-import type { Game } from "../data/types";
+import { useAppData } from "../context/appDataContext";
 import { GameCard } from "./GameCard";
 import { EmptyState } from "./EmptyState";
 import { LoadingGrid } from "./LoadingGrid";
 import { useMemo } from "react";
 
-type GameGridProps = {
-  games: readonly Game[];
-  compact?: boolean;
-  loading: boolean;
-  hasLoaded: boolean;
-  hasError: boolean;
-  pinnedOnly: boolean;
-  favoriteIds: readonly string[];
-  onToggleFavorite: (gameId: string) => void;
-};
+type GameGridProps = Record<string, never>;
 
-export const GameGrid = ({
-  games,
-  compact = false,
-  loading,
-  hasLoaded,
-  hasError,
-  pinnedOnly,
-  favoriteIds,
-  onToggleFavorite,
-}: GameGridProps) => {
+export const GameGrid = ({}: GameGridProps) => {
+  const {
+    panelOpen: compact,
+    filter,
+    favoriteIds,
+    toggleFavorite: onToggleFavorite,
+  } = useAppData();
+  const { visibleGames: games, loading, updatedAt, error } = useEspnData();
+  const hasLoaded = updatedAt !== null;
+  const hasError = Boolean(error);
+  const pinnedOnly = filter === "pinned";
   const emptyTitle = useMemo(() => {
     if (hasError && !hasLoaded) {
       return "The feed is taking a timeout.";
@@ -45,7 +38,7 @@ export const GameGrid = ({
     if (pinnedOnly) {
       return "Use the star on a game to pin it to the top of your scoreboard.";
     }
-    return "Try another date, division, or filter.";
+    return "Try another week, division, or filter.";
   }, [hasError, hasLoaded, pinnedOnly]);
 
   if (loading && !hasLoaded) return <LoadingGrid compact={compact} />;
@@ -70,7 +63,7 @@ export const GameGrid = ({
       spacing={1.5}
       className="game-grid"
       aria-label="Football games"
-      sx={{ container: "game-grid / inline-size", alignItems: "flex-start" }}
+      sx={{ alignItems: "flex-start" }}
     >
       {cards}
     </Grid>

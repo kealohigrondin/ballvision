@@ -1,6 +1,4 @@
-import { tableCellSx } from "../styles/shared";
-import { visuallyHiddenSx } from "../styles/shared";
-import Box from "@mui/material/Box";
+import { compactBoxScoreSx } from "../styles/boxScore";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -22,14 +20,16 @@ export const PeriodScores = ({ home, away }: PeriodScoresProps) => {
   const headings = periods.map((i) => {
     const label = i < 4 ? i + 1 : `${i - 3}OT`;
     return (
-      <TableCell component="th" scope="col" key={i}>
+      <TableCell component="th" scope="col" key={i} align="right">
         {label}
       </TableCell>
     );
   });
   const rows = [away, home].map((team) => {
     const scores = periods.map((i) => (
-      <TableCell key={i}>{team.quarters[i] ?? "—"}</TableCell>
+      <TableCell key={i} align="right">
+        {team.quarters[i] ?? "—"}
+      </TableCell>
     ));
     return (
       <TableRow key={team.id}>
@@ -37,45 +37,21 @@ export const PeriodScores = ({ home, away }: PeriodScoresProps) => {
           {team.abbreviation}
         </TableCell>
         {scores}
-        <TableCell>{team.score}</TableCell>
+        <TableCell align="right">{team.score}</TableCell>
       </TableRow>
     );
   });
 
   return (
-    <TableContainer
-      className="table-scroll"
-      sx={{
-        overflow: "auto",
-        padding: "0 19px 14px",
-        "& table": {
-          width: "100%",
-          borderCollapse: "collapse",
-          color: "var(--mui-app-colors-tableText)",
-        },
-        "& th": {
-          padding: "8px 5px",
-          ...tableCellSx,
-        },
-        "& td": {
-          padding: "8px 5px",
-          ...tableCellSx,
-        },
-        "& th:first-of-type": { textAlign: "left" },
-        "& thead th": { color: "var(--mui-app-colors-tableHeading)" },
-      }}
-    >
-      <Table>
-        <Box component="caption" className="sr-only" sx={visuallyHiddenSx}>
-          Score by period
-        </Box>
+    <TableContainer>
+      <Table aria-label="Score by period" size="small" sx={compactBoxScoreSx}>
         <TableHead>
           <TableRow>
-            <TableCell component="th" scope="col">
+            <TableCell component="th" scope="col" align="right">
               Team
             </TableCell>
             {headings}
-            <TableCell component="th" scope="col">
+            <TableCell component="th" scope="col" align="right">
               T
             </TableCell>
           </TableRow>

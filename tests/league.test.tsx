@@ -1,3 +1,6 @@
+import { scheduleGame } from "./helpers/scheduleFixture";
+import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
+import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -7,13 +10,15 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
-import { AppTheme } from "../src/components/AppTheme";
+import { AppTheme } from "../src/providers/AppTheme";
 import { LeaguePanel } from "../src/components/LeaguePanel";
+import { LeagueNavRail } from "../src/components/LeagueNavRail";
 import { parseRankings, parseStandings } from "../src/data/espn";
 import type {
   LeagueSource,
   LeagueTable,
   ScoreboardSource,
+  TeamScheduleSource,
 } from "../src/data/types";
 
 const conference: LeagueTable = {
@@ -32,10 +37,13 @@ const source = (): LeagueSource => ({
   loadStandings: vi.fn().mockResolvedValue([conference]),
   loadRankings: vi.fn().mockResolvedValue([poll]),
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  localStorage.removeItem("ballvision:app-data:v1");
+});
 
 describe("league data adapters", () => {
-  it("reads overall and conference records and preserves provider ordering", () => {
+  it("reads overall and conference records", () => {
     const tables = parseStandings({
       children: [
         {
@@ -69,6 +77,33 @@ describe("league data adapters", () => {
       "https://a.espncdn.com/i/teamlogos/ncaa/500/61.png",
     );
     expect(tables[0].subtitle).toBe("2026");
+  });
+  it("sorts college standings by conference winning percentage and preserves tied ordering", () => {
+    const records = ["3-2", "4-0", "2-1", "4-1", "2-1", "0-0", undefined];
+    const payload = {
+      children: [
+        {
+          id: "conference",
+          standings: {
+            entries: records.map((record, index) => ({
+              team: { id: String(index), displayName: `Team ${index}` },
+              stats: [
+                { type: "total", summary: "8-0" },
+                { type: "vsconf", summary: record },
+              ],
+            })),
+          },
+        },
+      ],
+    };
+    for (const division of ["fbs", "fcs"] as const) {
+      expect(
+        parseStandings(payload, division)[0].rows.map((row) => row.id),
+      ).toEqual(["1", "3", "2", "4", "0", "5", "6"]);
+    }
+    expect(parseStandings(payload, "nfl")[0].rows.map((row) => row.id)).toEqual(
+      ["0", "1", "2", "3", "4", "5", "6"],
+    );
   });
   it("supports nested divisions and missing optional stats", () => {
     const tables = parseStandings({
@@ -125,37 +160,61 @@ describe("league panel", () => {
   it("uses NFL standings when switching from a college poll", async () => {
     const provider = source();
     const { rerender } = render(
-      <LeaguePanel source={provider} division="fbs" />,
+      <LeagueTestProvider source={provider} division="fbs">
+        <LeagueNavRail />
+        <LeaguePanel />
+      </LeagueTestProvider>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Top 25" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rankings" }));
     await screen.findByRole("table", { name: /AP Top 25/ });
-    rerender(<LeaguePanel source={provider} division="nfl" />);
+    rerender(
+      <LeagueTestProvider source={provider} division="nfl">
+        <LeagueNavRail />
+        <LeaguePanel />
+      </LeagueTestProvider>,
+    );
     await screen.findByRole("table", { name: /SEC/ });
-    expect(screen.queryByRole("button", { name: "Top 25" })).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Rankings" }).hasAttribute("disabled"),
+    ).toBe(true);
     expect(screen.getByLabelText("Division")).toBeTruthy();
     expect(provider.loadStandings).toHaveBeenCalledWith(
       "nfl",
       expect.any(AbortSignal),
     );
   });
-  it("opens and closes using the masthead button", async () => {
-    const scores: ScoreboardSource = { load: vi.fn().mockResolvedValue([]) };
+  it("opens and closes from the navigation rail", async () => {
+    const scores: ScoreboardSource = {
+      load: vi.fn().mockResolvedValue([]),
+      loadCalendar: vi.fn().mockResolvedValue({ weeks: [] }),
+    };
     render(
       <AppTheme>
-        <App source={scores} leagueSource={source()} />
+        <App
+          source={scores}
+          leagueSource={source()}
+          oddsSource={emptyOddsSource}
+        />
       </AppTheme>,
     );
     await screen.findByRole("table", { name: /SEC/ });
-    const close = screen.getByRole("button", { name: "Close league panel" });
-    expect(close.getAttribute("aria-expanded")).toBe("true");
-    fireEvent.click(close);
+    expect(screen.queryByRole("button", { name: /league panel/ })).toBeNull();
+    const standings = screen.getByRole("button", { name: "Standings" });
+    expect(standings.getAttribute("aria-expanded")).toBe("true");
+    fireEvent.click(standings);
     expect(
       screen.queryByRole("complementary", { name: "League information" }),
     ).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Open league panel" }));
+    expect(standings.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(screen.getByRole("button", { name: "Schedules" }));
     expect(
       screen.getByRole("complementary", { name: "League information" }),
     ).toBeTruthy();
+    expect(
+      screen
+        .getByRole("button", { name: "Schedules" })
+        .getAttribute("aria-pressed"),
+    ).toBe("true");
   });
   it("switches between conference standings and Top 25 and selects a conference", async () => {
     const provider = source();
@@ -163,16 +222,21 @@ describe("league panel", () => {
       conference,
       { ...conference, id: "acc", title: "ACC" },
     ]);
-    render(<LeaguePanel source={provider} division="fbs" />);
+    render(
+      <LeagueTestProvider source={provider} division="fbs">
+        <LeagueNavRail />
+        <LeaguePanel />
+      </LeagueTestProvider>,
+    );
     await screen.findByRole("table", { name: /SEC/ });
     fireEvent.change(screen.getByLabelText("Conference"), {
       target: { value: "acc" },
     });
     expect(screen.getByRole("table", { name: /ACC/ })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Top 25" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rankings" }));
     expect(
       screen
-        .getByRole("button", { name: "Top 25" })
+        .getByRole("button", { name: "Rankings" })
         .getAttribute("aria-pressed"),
     ).toBe("true");
     await screen.findByRole("table", { name: /AP Top 25/ });
@@ -187,10 +251,160 @@ describe("league panel", () => {
     vi.mocked(provider.loadStandings).mockRejectedValueOnce(
       new Error("offline"),
     );
-    render(<LeaguePanel source={provider} division="fcs" />);
+    render(
+      <LeagueTestProvider source={provider} division="fcs">
+        <LeagueNavRail />
+        <LeaguePanel />
+      </LeagueTestProvider>,
+    );
     await screen.findByRole("alert");
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
     await screen.findByRole("table", { name: /SEC/ });
     await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
   });
+});
+
+it("opens a team schedule from standings and Top 25 links", async () => {
+  const provider = source();
+  const load = vi
+    .fn<TeamScheduleSource["load"]>()
+    .mockResolvedValue({ season: "2026", games: [scheduleGame] });
+  render(
+    <LeagueTestProvider
+      source={provider}
+      division="fbs"
+      scheduleSource={{ load }}
+    >
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  await screen.findByRole("table", { name: /SEC/ });
+  fireEvent.click(screen.getByRole("button", { name: "Schedules" }));
+  expect(
+    screen.getByText(/Choose a conference and team to view its schedule/),
+  ).toBeTruthy();
+  expect(load).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Standings" }));
+  fireEvent.click(await screen.findByRole("link", { name: "Georgia" }));
+  await screen.findByRole("table", { name: "Georgia schedule" });
+  expect(
+    screen
+      .getByRole("button", { name: "Schedules" })
+      .getAttribute("aria-pressed"),
+  ).toBe("true");
+  expect((screen.getByLabelText("Conference") as HTMLSelectElement).value).toBe(
+    "sec",
+  );
+  expect((screen.getByLabelText("Team") as HTMLSelectElement).value).toBe("1");
+  expect(load).toHaveBeenLastCalledWith(
+    { division: "fbs", teamId: "1" },
+    expect.any(AbortSignal),
+  );
+  const opponentLink = screen.getByRole("link", { name: "Clemson" });
+  expect(opponentLink.closest("th")?.textContent).toContain("vs Clemson");
+  expect(screen.getByText("W 35–14")).toBeTruthy();
+  fireEvent.click(opponentLink);
+  await screen.findByRole("table", { name: "Clemson schedule" });
+  expect(load).toHaveBeenLastCalledWith(
+    { division: "fbs", teamId: "8" },
+    expect.any(AbortSignal),
+  );
+  expect(screen.getByRole("link", { name: "Georgia" })).toBeTruthy();
+  expect(screen.getByText("L 14–35")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Rankings" }));
+  fireEvent.click(await screen.findByRole("link", { name: "Miami" }));
+  await screen.findByRole("heading", { name: "Miami schedule" });
+  await waitFor(() =>
+    expect(load).toHaveBeenLastCalledWith(
+      { division: "fbs", teamId: "2" },
+      expect.any(AbortSignal),
+    ),
+  );
+});
+it("selects a schedule team from conference and team dropdowns", async () => {
+  const provider = source();
+  vi.mocked(provider.loadStandings).mockResolvedValue([
+    {
+      ...conference,
+      rows: [...conference.rows, { id: "3", name: "Alabama", record: "6-2" }],
+    },
+    {
+      id: "acc",
+      title: "ACC",
+      subtitle: "2026",
+      rows: [{ id: "8", name: "Clemson", record: "5-3" }],
+    },
+  ]);
+  const load = vi
+    .fn<TeamScheduleSource["load"]>()
+    .mockResolvedValue({ season: "2026", games: [] });
+  render(
+    <LeagueTestProvider
+      source={provider}
+      division="fbs"
+      scheduleSource={{ load }}
+    >
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  await screen.findByRole("table", { name: /SEC/ });
+  fireEvent.click(screen.getByRole("button", { name: "Schedules" }));
+  const team = screen.getByLabelText("Team") as HTMLSelectElement;
+  expect(team.disabled).toBe(true);
+  fireEvent.change(screen.getByLabelText("Conference"), {
+    target: { value: "sec" },
+  });
+  const teamNames = () =>
+    Array.from((screen.getByLabelText("Team") as HTMLSelectElement).options)
+      .filter((option) => option.value)
+      .map((option) => option.textContent);
+  expect(teamNames()).toEqual(["Alabama", "Georgia"]);
+  fireEvent.change(screen.getByLabelText("Conference"), {
+    target: { value: "acc" },
+  });
+  expect(teamNames()).toEqual(["Clemson"]);
+  fireEvent.change(screen.getByLabelText("Team"), {
+    target: { value: "8" },
+  });
+  await screen.findByRole("heading", { name: "Clemson schedule" });
+  expect(load).toHaveBeenLastCalledWith(
+    { division: "fbs", teamId: "8" },
+    expect.any(AbortSignal),
+  );
+  expect((screen.getByLabelText("Conference") as HTMLSelectElement).value).toBe(
+    "acc",
+  );
+});
+it("retries schedule failures and clears the selected team when switching leagues", async () => {
+  const provider = source();
+  const load = vi
+    .fn<TeamScheduleSource["load"]>()
+    .mockRejectedValueOnce(new Error("Offline"))
+    .mockResolvedValue({ season: "2026", games: [] });
+  const build = (division: "fbs" | "nfl") => (
+    <LeagueTestProvider
+      source={provider}
+      division={division}
+      scheduleSource={{ load }}
+    >
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>
+  );
+  const { rerender } = render(build("fbs"));
+  fireEvent.click(await screen.findByRole("link", { name: "Georgia" }));
+  await screen.findByRole("alert");
+  fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+  await screen.findByText(/No games are available/);
+  rerender(build("nfl"));
+  expect(
+    screen.queryByRole("heading", { name: "Georgia schedule" }),
+  ).toBeNull();
+  expect(
+    screen.getByRole("button", { name: "Rankings" }).hasAttribute("disabled"),
+  ).toBe(true);
+  expect(screen.getByRole("button", { name: "Schedules" })).toBeTruthy();
+  expect(load).toHaveBeenCalledTimes(2);
 });

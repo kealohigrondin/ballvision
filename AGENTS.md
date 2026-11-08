@@ -21,3 +21,6 @@
 - for variables that need more than one inline if statement to determine its value, use usememo to determine value
 - For new UI components, keep them general and reusable. Do not make them specific to a feature
 - For new UI components, follow [material design 3](https://m3.material.io/components) unless specified otherwise
+- for api calls, prefer storing the data in context and access via providers rather than prop drilling
+- After opening a pull request, subscribe to its activity so review comments and CI failures get addressed.
+- prefer optional props to `type | null` props. use a default value of '' for strings for example

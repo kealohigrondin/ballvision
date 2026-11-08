@@ -1,129 +1,47 @@
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Stack from "@mui/material/Stack";
-import clsx from "clsx";
-import { useState } from "react";
-import { espnSource, espnLeagueSource } from "./data/espn";
-import type { Division, LeagueSource, ScoreboardSource } from "./data/types";
-import { useScoreboard } from "./hooks/useScoreboard";
-import { useFavorites } from "./hooks/useFavorites";
-import { GameGrid } from "./components/GameGrid";
-import { ErrorBanner } from "./components/ErrorBanner";
-import { type Filter } from "./components/Toolbar";
-import { localDate } from "./utils/date";
-import MastHead from "./components/MastHead";
-import { LeaguePanel } from "./components/LeaguePanel";
-import { Footer } from "./components/Footer";
-import { ScoresHeader } from "./components/ScoresHeader";
+import { ScoreNotificationProvider } from "./providers/ScoreNotificationProvider";
+import { EspnDataProvider } from "./providers/EspnDataProvider";
+import { PolymarketDataProvider } from "./providers/PolymarketDataProvider";
+import { AppDataProvider } from "./providers/AppDataProvider";
+import { Dashboard } from "./components/Dashboard";
+import type {
+  LeagueSource,
+  ScoreboardSource,
+  OddsSource,
+  OddsHistorySource,
+  TeamScheduleSource,
+} from "./data/types";
 
 type AppProps = {
   source?: ScoreboardSource;
   leagueSource?: LeagueSource;
+  scheduleSource?: TeamScheduleSource;
+  oddsSource?: OddsSource;
+  oddsHistorySource?: OddsHistorySource;
 };
 
 const App = ({
-  source = espnSource,
-  leagueSource = espnLeagueSource,
-}: AppProps) => {
-  const [panelOpen, setPanelOpen] = useState(true);
-  const [date, setDate] = useState(localDate);
-  const [division, setDivision] = useState<Division>("fbs");
-  const [filter, setFilter] = useState<Filter>("all");
-  const [search, setSearch] = useState("");
-  const [paused, setPaused] = useState(false);
-  const { games, loading, error, updatedAt, refresh } = useScoreboard(
-    source,
-    { date, division },
-    paused,
-  );
-  const favorites = useFavorites();
-  const pinned = (id: string) => favorites.ids.includes(id);
-  const counts = {
-    all: games.length,
-    live: games.filter((g) => g.state === "live").length,
-    upcoming: games.filter((g) => g.state === "upcoming").length,
-    final: games.filter((g) => g.state === "final").length,
-    pinned: games.filter((g) => pinned(g.id)).length,
-  };
-  const visible = games
-    .filter(
-      (g) =>
-        (filter === "all" ||
-          (filter === "pinned" ? pinned(g.id) : g.state === filter)) &&
-        `${g.home.name} ${g.home.abbreviation} ${g.away.name} ${g.away.abbreviation}`
-          .toLowerCase()
-          .includes(search.toLowerCase()),
-    )
-    .sort((a, b) => Number(pinned(b.id)) - Number(pinned(a.id)));
-
-  const columns = panelOpen
-    ? {
-        xs: "minmax(0, 1fr)",
-        md: "minmax(0, 1fr) 360px",
-        lg: "minmax(0, 1fr) 380px",
-      }
-    : "minmax(0, 1fr)";
-
-  return (
-    <Container maxWidth={false} className="app-shell">
-      <MastHead
-        onTogglePause={() => setPaused((current) => !current)}
-        loading={loading}
-        paused={paused}
-        error={error}
-        updatedAt={updatedAt}
-        refresh={refresh}
-      />
-      <Box component="main">
-        <Box
-          className={clsx("dashboard-layout", panelOpen && "panel-open")}
-          sx={{
-            display: "grid",
-            gridTemplateColumns: columns,
-            gap: { xs: 2.5, lg: 3.5 },
-            alignItems: "start",
-          }}
-        >
-          <Stack className="dashboard-main" sx={{ minWidth: 0 }}>
-            <ScoresHeader
-              date={date}
-              onDate={setDate}
-              division={division}
-              onDivision={setDivision}
-              search={search}
-              onSearch={setSearch}
-              filter={filter}
-              onFilter={setFilter}
-              counts={counts}
-              panelOpen={panelOpen}
-              onTogglePanel={() => setPanelOpen((open) => !open)}
-            />
-            {error && (
-              <ErrorBanner
-                message={error}
-                loading={loading}
-                onRetry={refresh}
-              />
-            )}
-            <GameGrid
-              games={visible}
-              compact={panelOpen}
-              loading={loading}
-              hasLoaded={updatedAt !== null}
-              hasError={Boolean(error)}
-              pinnedOnly={filter === "pinned"}
-              favoriteIds={favorites.ids}
-              onToggleFavorite={favorites.toggle}
-            />
-          </Stack>
-          {panelOpen && (
-            <LeaguePanel source={leagueSource} division={division} />
-          )}
-        </Box>
-        <Footer />
-      </Box>
-    </Container>
-  );
-};
+  source,
+  leagueSource,
+  scheduleSource,
+  oddsSource,
+  oddsHistorySource,
+}: AppProps) => (
+  <AppDataProvider>
+    <EspnDataProvider
+      source={source}
+      leagueSource={leagueSource}
+      scheduleSource={scheduleSource}
+    >
+      <PolymarketDataProvider
+        source={oddsSource}
+        historySource={oddsHistorySource}
+      >
+        <ScoreNotificationProvider>
+          <Dashboard />
+        </ScoreNotificationProvider>
+      </PolymarketDataProvider>
+    </EspnDataProvider>
+  </AppDataProvider>
+);
 
 export default App;

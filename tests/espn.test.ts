@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   espnSource,
   espnLeagueSource,
+  parseCalendar,
   parseScoreboard,
 } from "../src/data/espn";
 const competitor = (id: string, homeAway: string) => ({
@@ -48,12 +49,14 @@ describe("ESPN adapter", () => {
     vi.stubGlobal("fetch", fetchMock);
     const signal = new AbortController().signal;
     const games = await espnSource.load(
-      { date: "2026-11-01", division: "nfl" },
+      { week: null, division: "nfl" },
       signal,
     );
     const scoreUrl = fetchMock.mock.calls[0][0] as URL;
     expect(scoreUrl.pathname).toContain("/nfl/scoreboard");
     expect(scoreUrl.searchParams.has("groups")).toBe(false);
+    expect(scoreUrl.searchParams.has("week")).toBe(false);
+    expect(scoreUrl.searchParams.has("dates")).toBe(false);
     expect(games[0].state).toBe("upcoming");
     await espnLeagueSource.loadStandings("nfl", signal);
     const standingsUrl = new URL(fetchMock.mock.calls[1][0]);
@@ -72,12 +75,25 @@ describe("ESPN adapter", () => {
     vi.stubGlobal("fetch", fetchMock);
     const signal = new AbortController().signal;
     const games = await espnSource.load(
-      { date: "2026-10-31", division: "fbs" },
+      {
+        week: {
+          id: "2026-2-10",
+          label: "Week 10",
+          group: "Regular Season",
+          detail: "",
+          year: 2026,
+          seasonType: 2,
+          number: 10,
+        },
+        division: "fbs",
+      },
       signal,
     );
     const [url, options] = fetchMock.mock.calls[0];
     expect(url.searchParams.get("limit")).toBe("100");
-    expect(url.searchParams.get("dates")).toBe("20261031");
+    expect(url.searchParams.get("dates")).toBe("2026");
+    expect(url.searchParams.get("seasontype")).toBe("2");
+    expect(url.searchParams.get("week")).toBe("10");
     expect(url.searchParams.get("groups")).toBe("80");
     expect(options.signal).toBe(signal);
     expect(games[0].state).toBe("upcoming");
@@ -144,5 +160,68 @@ describe("ESPN adapter", () => {
     expect(parseScoreboard({ events: [] })).toEqual([]);
     expect(() => parseScoreboard({ error: "denied" })).toThrow();
     expect(parseScoreboard({ events: [{ id: "bad" }] })).toEqual([]);
+  });
+  it("lists every calendar week grouped by season type and marks the current week", () => {
+    const calendar = parseCalendar({
+      season: { year: 2026, type: 2 },
+      week: { number: 1 },
+      leagues: [
+        {
+          calendar: [
+            {
+              label: "Regular Season",
+              value: "2",
+              entries: [
+                { label: "Week 0", value: "0", detail: "Aug 22-24" },
+                { label: "Week 1", value: "1", detail: "Aug 25-31" },
+                { label: "Broken", value: "" },
+              ],
+            },
+            {
+              label: "Postseason",
+              value: "3",
+              entries: [{ label: "Bowls", value: "1" }],
+            },
+            { label: "Off Season", value: "4" },
+          ],
+        },
+      ],
+    });
+    expect(calendar.weeks.map((w) => [w.id, w.label, w.group])).toEqual([
+      ["2026-2-0", "Week 0", "Regular Season"],
+      ["2026-2-1", "Week 1", "Regular Season"],
+      ["2026-3-1", "Bowls", "Postseason"],
+    ]);
+    expect(calendar.weeks[0].detail).toBe("Aug 22-24");
+    expect(calendar.currentWeekId).toBe("2026-2-1");
+  });
+  it("returns no weeks without a season and ignores an unknown current week", () => {
+    expect(parseCalendar({ leagues: [{ calendar: [] }] })).toEqual({
+      weeks: [],
+    });
+    const calendar = parseCalendar({
+      season: { year: 2026, type: 4 },
+      leagues: [
+        {
+          calendar: [
+            { label: "Regular Season", value: "2", entries: [{ value: "1" }] },
+          ],
+        },
+      ],
+    });
+    expect(calendar.weeks[0].label).toBe("Week 1");
+    expect(calendar.currentWeekId).toBeUndefined();
+  });
+  it("loads the calendar from a one-game college scoreboard", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await espnSource.loadCalendar("fcs", new AbortController().signal);
+    const url = fetchMock.mock.calls[0][0] as URL;
+    expect(url.pathname).toContain("/college-football/scoreboard");
+    expect(url.searchParams.get("groups")).toBe("81");
+    expect(url.searchParams.get("limit")).toBe("1");
   });
 });

@@ -6,6 +6,7 @@ import TableRow from "@mui/material/TableRow";
 
 import type { Team } from "../data/types";
 import { TeamLogo } from "./TeamLogo";
+import { TeamScheduleLink } from "./TeamScheduleLink";
 
 type TeamRowProps = {
   team: Team;
@@ -23,28 +24,45 @@ export const TeamRow = ({
   const score = scheduled ? "—" : team.score;
   const record = team.record || team.abbreviation;
   const periodCells = periods.map((period) => (
-    <TableCell className="team-period" key={period}>
+    <TableCell className="team-period" key={period} align="right">
       {team.quarters[period] ?? ""}
     </TableCell>
   ));
 
   return (
-    <TableRow
-      className="team-row"
-      sx={{
-        "& .team-logo": { width: "36px", height: "36px", flexShrink: "0" },
-      }}
-    >
+    <TableRow className="team-row">
       <TableCell component="th" scope="row" className="team-identity-cell">
         <Stack
           direction="row"
           className="team-identity"
-          sx={{ alignItems: "center", gap: "10px", minWidth: "0" }}
+          sx={{ alignItems: "center", gap: 1, minWidth: 0, width: "100%" }}
         >
-          <TeamLogo team={team} />
-          <Box className="team-info" sx={{ minWidth: "0" }}>
+          <Box
+            sx={{
+              width: "1ch",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {possession && (
+              <Typography
+                component="span"
+                className="possession"
+                title="Possession"
+                aria-label="Possession"
+                sx={{
+                  color: "primary.main",
+                }}
+              >
+                ◆
+              </Typography>
+            )}
+          </Box>
+          <TeamLogo team={team} size={36} />
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
-              variant="body2"
               component="div"
               className="team-name"
               sx={{
@@ -55,43 +73,24 @@ export const TeamRow = ({
             >
               {Boolean(team.rank) && (
                 <Typography
-                  variant="caption"
                   component="span"
                   className="rank"
                   sx={{
-                    color: "var(--mui-app-colors-rank)",
-                    marginRight: "4px",
+                    color: "text.secondary",
+                    mr: 0.5,
                   }}
                 >
                   {team.rank}
                 </Typography>
               )}
-              &nbsp;
-              {team.name}&nbsp;
-              {possession && (
-                <Typography
-                  variant="caption"
-                  component="span"
-                  className="possession"
-                  title="Possession"
-                  aria-label="Possession"
-                  sx={{
-                    color: "var(--mui-palette-primary-main)",
-                    marginLeft: "5px",
-                  }}
-                >
-                  ◆
-                </Typography>
-              )}
+              <TeamScheduleLink team={team} />
             </Typography>
             <Typography
-              variant="caption"
               component="span"
               className="record"
               sx={{
-                color: "var(--mui-app-colors-record)",
+                color: "text.secondary",
                 display: "block",
-                marginTop: "2px",
               }}
             >
               {record}
@@ -100,9 +99,9 @@ export const TeamRow = ({
         </Stack>
       </TableCell>
       {periodCells}
-      <TableCell className="team-total">
+      <TableCell className="team-total" align="right">
         <Typography
-          variant="h6"
+          variant="body1"
           component="span"
           className="score"
           sx={{ fontVariantNumeric: "tabular-nums" }}

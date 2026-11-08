@@ -8,7 +8,9 @@ import type {
   TeamSchedule,
   TeamScheduleSource,
   ScoreboardSource,
+  SeasonCalendar,
   Team,
+  Week,
 } from "./types";
 
 type Json = Record<string, unknown>;
@@ -23,6 +25,10 @@ const str = (value: unknown, fallback = "") =>
     : fallback;
 const number = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
+const integer = (value: unknown): number | undefined => {
+  const text = str(value).trim();
+  return /^\d+$/.test(text) ? Number(text) : undefined;
+};
 const image = (value: unknown) => {
   const url = str(value);
   return /^https:\/\/(?:a|a[0-9])\.espncdn\.com\//.test(url) ? url : undefined;
@@ -135,26 +141,89 @@ export const parseScoreboard = (payload: unknown): Game[] => {
     );
   });
 };
+export const parseCalendar = (payload: unknown): SeasonCalendar => {
+  const root = obj(payload);
+  const league = obj(list(root.leagues)[0]);
+  const season = obj(root.season ?? league.season);
+  const year = integer(season.year);
+  if (year === undefined) return { weeks: [] };
+  const weeks = list(league.calendar)
+    .map(obj)
+    .flatMap((seasonType): Week[] => {
+      const type = integer(seasonType.value);
+      if (type === undefined) return [];
+      return list(seasonType.entries)
+        .map(obj)
+        .flatMap((entry): Week[] => {
+          const weekNumber = integer(entry.value);
+          if (weekNumber === undefined) return [];
+          return [
+            {
+              id: `${year}-${type}-${weekNumber}`,
+              label: str(entry.label, `Week ${weekNumber}`),
+              group: str(seasonType.label),
+              detail: str(entry.detail),
+              year,
+              seasonType: type,
+              number: weekNumber,
+            },
+          ];
+        });
+    });
+  const currentWeekId = `${year}-${str(season.type)}-${str(obj(root.week).number)}`;
+  return {
+    weeks,
+    currentWeekId: weeks.some((week) => week.id === currentWeekId)
+      ? currentWeekId
+      : undefined,
+  };
+};
+
+const scoreboardUrl = (division: Division, params: Record<string, string>) => {
+  const url = new URL(
+    `https://site.api.espn.com/apis/site/v2/sports/football/${division === "nfl" ? "nfl" : "college-football"}/scoreboard`,
+  );
+  url.search = new URLSearchParams({
+    ...(division !== "nfl" && {
+      groups: division === "fbs" ? "80" : "81",
+    }),
+    ...params,
+  }).toString();
+  return url;
+};
+
+const loadScoreboardJson = async (
+  url: URL,
+  signal: AbortSignal,
+): Promise<unknown> => {
+  const response = await fetch(url, {
+    signal,
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) throw new Error(`ESPN returned HTTP ${response.status}.`);
+  return response.json();
+};
+
 export const espnSource: ScoreboardSource = {
-  load: async (query, signal) => {
-    const url = new URL(
-      `https://site.api.espn.com/apis/site/v2/sports/football/${query.division === "nfl" ? "nfl" : "college-football"}/scoreboard`,
-    );
-    url.search = new URLSearchParams({
-      ...(query.division !== "nfl" && {
-        groups: query.division === "fbs" ? "80" : "81",
-      }),
+  load: async ({ division, week }, signal) => {
+    const url = scoreboardUrl(division, {
       // Larger limits fall back to ESPN's default 25-game response.
       limit: "100",
-      dates: query.date.replaceAll("-", ""),
-    }).toString();
-    const response = await fetch(url, {
-      signal,
-      headers: { Accept: "application/json" },
+      // Without a week, ESPN returns its current week.
+      ...(week && {
+        dates: String(week.year),
+        seasontype: String(week.seasonType),
+        week: String(week.number),
+      }),
     });
-    if (!response.ok) throw new Error(`ESPN returned HTTP ${response.status}.`);
-    return parseScoreboard(await response.json());
+    return parseScoreboard(await loadScoreboardJson(url, signal));
   },
+  // Every scoreboard response carries the season calendar, so the smallest
+  // slate is enough to list the selectable weeks.
+  loadCalendar: async (division, signal) =>
+    parseCalendar(
+      await loadScoreboardJson(scoreboardUrl(division, { limit: "1" }), signal),
+    ),
 };
 
 // League context stays separate from the high-frequency scoreboard feed.

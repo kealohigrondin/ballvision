@@ -8,6 +8,16 @@ import {
   saveAppPreferences,
 } from "../src/utils/appPreferences";
 
+const week = {
+  id: "2026-2-10",
+  label: "Week 10",
+  group: "Regular Season",
+  detail: "Nov 4-10",
+  year: 2026,
+  seasonType: 2,
+  number: 10,
+};
+
 afterEach(() => {
   cleanup();
   localStorage.removeItem(APP_PREFERENCES_KEY);
@@ -18,8 +28,8 @@ it("restores all app controls after unmounting and mounting again", () => {
   const first = renderHook(() => useAppDataState());
   act(() => {
     first.result.current.setPanelOpen(false);
-    first.result.current.setDate("2026-11-08");
-    first.result.current.setDivision("nfl");
+    first.result.current.setWeek(week);
+    first.result.current.setDivision("fcs");
     first.result.current.setFilter("pinned");
     first.result.current.setSearch("Seattle");
     first.result.current.setPaused(true);
@@ -27,8 +37,8 @@ it("restores all app controls after unmounting and mounting again", () => {
   expect(JSON.parse(localStorage.getItem(APP_PREFERENCES_KEY)!)).toEqual({
     version: 1,
     panelOpen: false,
-    date: "2026-11-08",
-    division: "nfl",
+    week,
+    division: "fcs",
     filter: "pinned",
     search: "Seattle",
     paused: true,
@@ -37,20 +47,20 @@ it("restores all app controls after unmounting and mounting again", () => {
   const next = renderHook(() => useAppDataState());
   expect(next.result.current).toMatchObject({
     panelOpen: false,
-    date: "2026-11-08",
-    division: "nfl",
+    week,
+    division: "fcs",
     filter: "pinned",
     search: "Seattle",
     paused: true,
   });
 });
-it("validates restored fields independently, including impossible dates", () => {
+it("validates restored fields independently, including malformed weeks", () => {
   const storage = {
     getItem: vi.fn().mockReturnValue(
       JSON.stringify({
         version: 1,
         panelOpen: "false",
-        date: "2026-02-30",
+        week: { ...week, number: "10" },
         division: "fcs",
         filter: "bad-filter",
         search: "Montana",

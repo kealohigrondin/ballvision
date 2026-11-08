@@ -31,12 +31,30 @@ export interface Game {
   homeTimeouts?: number;
   awayTimeouts?: number;
 }
+export interface Week {
+  id: string;
+  label: string;
+  group: string;
+  detail: string;
+  year: number;
+  seasonType: number;
+  number: number;
+}
+export interface SeasonCalendar {
+  weeks: Week[];
+  currentWeekId?: string;
+}
 export interface ScoreboardQuery {
-  date: string;
   division: Division;
+  /** `null` asks the provider for its current week. */
+  week: Week | null;
 }
 export interface ScoreboardSource {
   load(query: ScoreboardQuery, signal: AbortSignal): Promise<Game[]>;
+  loadCalendar(
+    division: Division,
+    signal: AbortSignal,
+  ): Promise<SeasonCalendar>;
 }
 
 export interface LeagueRow {

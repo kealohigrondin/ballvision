@@ -3,12 +3,12 @@ import type { Game } from "../data/types";
 import {
   baselineScores,
   detectScoreChanges,
-  CELEBRATION_DURATION_MS,
-  type ScoreCelebration,
+  NOTIFICATION_DURATION_MS,
+  type ScoreNotification,
   type ScoreSnapshot,
-} from "../utils/scoreCelebrations";
+} from "../utils/scoreNotifications";
 
-export const useScoreCelebrations = (
+export const useScoreNotifications = (
   games: readonly Game[],
   key: string,
   ready: boolean,
@@ -19,7 +19,7 @@ export const useScoreCelebrations = (
     initialized: boolean;
     scores: Map<string, ScoreSnapshot>;
   }>({ key, initialized: false, scores: new Map() });
-  const [queue, setQueue] = useState<ScoreCelebration[]>([]);
+  const [queue, setQueue] = useState<ScoreNotification[]>([]);
   const previewId = useRef(0);
   useEffect(() => {
     if (tracker.current.key !== key) {
@@ -35,17 +35,17 @@ export const useScoreCelebrations = (
       };
       return;
     }
-    const { snapshots, celebrations } = detectScoreChanges(
+    const { snapshots, notifications } = detectScoreChanges(
       tracker.current.scores,
       games,
       key,
     );
     tracker.current.scores = snapshots;
-    const pinnedCelebrations = celebrations.filter((event) =>
+    const pinnedNotifications = notifications.filter((event) =>
       pinnedIds.includes(event.game.id),
     );
-    if (pinnedCelebrations.length > 0)
-      setQueue((current) => [...current, ...pinnedCelebrations]);
+    if (pinnedNotifications.length > 0)
+      setQueue((current) => [...current, ...pinnedNotifications]);
   }, [games, key, ready, pinnedIds]);
   useEffect(() => {
     if (queue.some((event) => !pinnedIds.includes(event.game.id))) {
@@ -65,7 +65,7 @@ export const useScoreCelebrations = (
   const current = tracker.current.key === key ? eligibleQueue[0] : undefined;
   useEffect(() => {
     if (!current) return;
-    const timer = setTimeout(dismiss, CELEBRATION_DURATION_MS);
+    const timer = setTimeout(dismiss, NOTIFICATION_DURATION_MS);
     return () => clearTimeout(timer);
   }, [current?.id, dismiss]);
   const preview = useCallback(() => {

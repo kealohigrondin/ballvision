@@ -1,7 +1,7 @@
 import type { Game } from "../data/types";
 
-export const CELEBRATION_DURATION_MS = 7_000;
-export type ScoreCelebration = {
+export const NOTIFICATION_DURATION_MS = 7_000;
+export type ScoreNotification = {
   id: string;
   game: Game;
   scoringTeamIds: string[];
@@ -41,7 +41,7 @@ export const detectScoreChanges = (
   key: string,
 ) => {
   const next = new Map(previous);
-  const celebrations: ScoreCelebration[] = [];
+  const notifications: ScoreNotification[] = [];
   for (const game of games) {
     const current = snapshot(game);
     const before = previous.get(game.id);
@@ -76,7 +76,7 @@ export const detectScoreChanges = (
       scoringTeamIds.push(game.away.id);
       points += (current.away ?? 0) - (before.away ?? 0);
     }
-    celebrations.push({
+    notifications.push({
       id: `${key}:${game.id}:${current.away}:${current.home}`,
       game,
       scoringTeamIds,
@@ -84,10 +84,10 @@ export const detectScoreChanges = (
       preview: false,
     });
   }
-  return { snapshots: next, celebrations };
+  return { snapshots: next, notifications };
 };
 
-export const celebrationHeadline = (event: ScoreCelebration) => {
+export const notificationHeadline = (event: ScoreNotification) => {
   if (event.preview) return "CHAOS SOUND CHECK";
   if (event.scoringTeamIds.length > 1) return "EVERYBODY'S EATING";
   if (event.points === 6 || event.points === 7) return "TUDDY ALERT";
@@ -96,7 +96,7 @@ export const celebrationHeadline = (event: ScoreCelebration) => {
   return "SCORE GO BRRRR";
 };
 
-export const celebrationSoundKind = (event: ScoreCelebration) => {
+export const notificationSoundKind = (event: ScoreNotification) => {
   if (event.preview) return "score";
   const tennesseeScored = [event.game.home, event.game.away].some(
     (team) =>

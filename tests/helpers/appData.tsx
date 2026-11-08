@@ -1,4 +1,4 @@
-import { scoreCelebrationContext } from "../../src/context/scoreCelebrationContext";
+import { scoreNotificationContext } from "../../src/context/scoreNotificationContext";
 import type { ReactNode } from "react";
 import { vi } from "vitest";
 import type { OddsSource, ScoreboardSource } from "../../src/data/types";
@@ -95,7 +95,7 @@ export const AppDataTestProvider = ({
   <appDataContext.Provider value={value}>
     <espnDataContext.Provider value={createEspnData(espn)}>
       <polymarketDataContext.Provider value={createPolymarketData(polymarket)}>
-        <scoreCelebrationContext.Provider
+        <scoreNotificationContext.Provider
           value={{
             current: undefined,
             pending: 0,
@@ -111,7 +111,7 @@ export const AppDataTestProvider = ({
           }}
         >
           {children}
-        </scoreCelebrationContext.Provider>
+        </scoreNotificationContext.Provider>
       </polymarketDataContext.Provider>
     </espnDataContext.Provider>
   </appDataContext.Provider>

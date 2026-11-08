@@ -29,6 +29,7 @@ const renderControls = (overrides: Partial<ScoreNotificationData>) =>
       <ScoreNotificationControls />
     </scoreNotificationContext.Provider>,
   );
+
 const iconClass = (name: string) =>
   screen
     .getByRole("button", { name })

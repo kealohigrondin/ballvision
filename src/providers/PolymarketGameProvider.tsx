@@ -4,6 +4,7 @@ import { polymarketGameContext } from "../context/polymarketGameContext";
 import { usePolymarketGameState } from "../hooks/usePolymarketGameState";
 
 type PolymarketGameProviderProps = { children: ReactNode; game: Game };
+
 export const PolymarketGameProvider = ({
   children,
   game,

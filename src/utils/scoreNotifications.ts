@@ -15,16 +15,19 @@ export type ScoreSnapshot = {
   awayHigh?: number;
   state: Game["state"];
 };
+
 const score = (value: string) => {
   if (!/^\d+$/.test(value)) return undefined;
   const parsed = Number(value);
   return Number.isSafeInteger(parsed) ? parsed : undefined;
 };
+
 const maximumScore = (before?: number, current?: number) => {
   if (before === undefined) return current;
   if (current === undefined) return before;
   return Math.max(before, current);
 };
+
 const snapshot = (game: Game): ScoreSnapshot => ({
   home: score(game.home.score),
   away: score(game.away.score),
@@ -32,6 +35,7 @@ const snapshot = (game: Game): ScoreSnapshot => ({
   awayHigh: score(game.away.score),
   state: game.state,
 });
+
 export const baselineScores = (games: readonly Game[]) =>
   new Map(games.map((game) => [game.id, snapshot(game)]));
 

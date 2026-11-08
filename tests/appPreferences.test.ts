@@ -90,6 +90,7 @@ it("continues without errors when browser storage is blocked", () => {
   const getItem = () => {
     throw new Error("Blocked");
   };
+
   const setItem = () => {
     throw new Error("Quota exceeded");
   };

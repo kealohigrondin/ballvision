@@ -25,6 +25,7 @@ export const useGameOdds = (
     let disposed = false;
     let request: AbortController | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
+
     const update = async () => {
       if (disposed || request || document.hidden) return;
       const controller = new AbortController();
@@ -49,6 +50,7 @@ export const useGameOdds = (
           timer = setTimeout(update, 20_000);
       }
     };
+
     const visibility = () => {
       clearTimeout(timer);
       if (document.hidden) request?.abort();

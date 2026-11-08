@@ -8,11 +8,14 @@ export type MoneylineMarket = {
   outcomes: [string, string];
   tokenIds: [string, string];
 };
+
 const obj = (value: unknown): Json =>
   value && typeof value === "object" && !Array.isArray(value)
     ? (value as Json)
     : {};
+
 const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
+
 const strings = (value: unknown): string[] => {
   try {
     const parsed: unknown =
@@ -24,11 +27,13 @@ const strings = (value: unknown): string[] => {
     return [];
   }
 };
+
 const text = (value: unknown) => (typeof value === "string" ? value : "");
 const teamNameAliases: Readonly<Record<string, string>> = {
   miamifl: "miami",
   miamiflorida: "miami",
 };
+
 const normalize = (value: string) => {
   const normalized = value
     .toLowerCase()
@@ -37,6 +42,7 @@ const normalize = (value: string) => {
     .replace(/[^a-z0-9]/g, "");
   return teamNameAliases[normalized] ?? normalized;
 };
+
 const matchesTeam = (name: string, team: Team) =>
   [team.name, team.location, team.abbreviation].some(
     (alias) => Boolean(alias) && normalize(alias ?? "") === normalize(name),
@@ -110,6 +116,7 @@ export const matchMoneyline = (
     homeToken: market.tokenIds[1 - awayIndex],
   };
 };
+
 const probability = (value: unknown): number | undefined => {
   const price =
     typeof value === "string" && value.trim() ? Number(value) : value;
@@ -129,6 +136,7 @@ export const createPolymarketSource = (
     string,
     { markets: MoneylineMarket[]; expires: number }
   >();
+
   const getJson = async (
     url: URL | string,
     signal: AbortSignal,

@@ -16,7 +16,9 @@ export const AppTheme = ({ children }: AppThemeProps) => {
       return "dark";
     }
   });
+
   const theme = useMemo(() => createAppTheme(mode), [mode]);
+
   const colorMode = useMemo(
     () => ({
       mode,

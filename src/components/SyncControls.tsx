@@ -21,6 +21,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
     minute: "2-digit",
     second: "2-digit",
   });
+
   const status = useMemo(() => {
     if (loading) {
       return "Updating…";

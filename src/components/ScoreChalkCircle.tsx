@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import chalkCircleUrl from "../assets/red-chalk-circle.png";
 
 type ScoreChalkCircleProps = Record<string, never>;
+
 export const ScoreChalkCircle = ({}: ScoreChalkCircleProps) => {
   const filterId = `score-chalk-${useId().replace(/:/g, "")}`;
   return (

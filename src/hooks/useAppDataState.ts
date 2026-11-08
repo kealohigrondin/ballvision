@@ -21,6 +21,7 @@ export const useAppDataState = () => {
   useEffect(() => {
     saveAppPreferences({ panelOpen, week, division, filter, search, paused });
   }, [panelOpen, week, division, filter, search, paused]);
+
   // FBS and FCS share the college calendar; NFL weeks mean something else.
   const setDivision = (next: Division) => {
     if ((next === "nfl") !== (division === "nfl")) setWeek(null);

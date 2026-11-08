@@ -39,6 +39,7 @@ export const createPolymarketHistorySource = (
       const cached = cache.get(key);
       if (cached && cached.expires > Date.now()) return cached.data;
       const fidelity = { "1h": "1", "6h": "2", "1d": "5" }[range];
+
       const load = async (market: string) => {
         const url = new URL("https://clob.polymarket.com/prices-history");
         url.search = new URLSearchParams({

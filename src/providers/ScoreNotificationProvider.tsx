@@ -7,6 +7,7 @@ type ScoreNotificationProviderProps = {
   children: ReactNode;
   audioFactory?: () => ChaosAudio;
 };
+
 export const ScoreNotificationProvider = ({
   children,
   audioFactory,

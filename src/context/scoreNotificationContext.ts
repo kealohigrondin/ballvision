@@ -7,6 +7,7 @@ export type ScoreNotificationData = ReturnType<
 export const scoreNotificationContext = createContext<
   ScoreNotificationData | undefined
 >(undefined);
+
 export const useScoreNotification = () => {
   const context = useContext(scoreNotificationContext);
   if (!context)

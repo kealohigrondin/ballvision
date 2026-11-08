@@ -8,6 +8,7 @@ import { TeamLogo } from "./TeamLogo";
 import { TeamScheduleLink } from "./TeamScheduleLink";
 
 type TeamScheduleRowProps = { game: TeamScheduleGame; teamId: string };
+
 export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
   const home = game.home.id === teamId;
   const opponent = home ? game.away : game.home;

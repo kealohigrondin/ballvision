@@ -41,6 +41,7 @@ export const createChaosAudio = (): ChaosAudio => {
   master.connect(limiter).connect(context.destination);
   let sounds = new Map<string, AudioBuffer>();
   let loading: Promise<void> | undefined;
+
   const loadSounds = () => {
     loading ??= Promise.all(
       alertSoundUrls.map(async ({ url }) => {
@@ -62,10 +63,12 @@ export const createChaosAudio = (): ChaosAudio => {
     return loading;
   };
   const active = new Set<AudioScheduledSourceNode>();
+
   const track = (node: AudioScheduledSourceNode) => {
     active.add(node);
     node.onended = () => active.delete(node);
   };
+
   const stop = () => {
     for (const node of active) {
       try {

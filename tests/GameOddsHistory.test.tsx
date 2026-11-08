@@ -25,6 +25,7 @@ const history = {
   ],
 };
 afterEach(cleanup);
+
 const show = (load: OddsHistorySource["load"], game: Game = oddsGame) =>
   render(
     <AppTheme>

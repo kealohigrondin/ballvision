@@ -10,6 +10,7 @@ afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
 });
+
 const flush = async () => {
   await act(async () => {
     await Promise.resolve();

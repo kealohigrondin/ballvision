@@ -133,6 +133,7 @@ it("shares week, division, panel visibility, and pause state across app features
     loadStandings: vi.fn().mockResolvedValue([]),
     loadRankings: vi.fn().mockResolvedValue([]),
   };
+
   const lastQuery = (query: object) =>
     waitFor(() =>
       expect(source.load).toHaveBeenLastCalledWith(

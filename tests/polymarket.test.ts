@@ -21,6 +21,7 @@ const event = {
   ended: false,
   markets: [market],
 };
+
 const response = (data: unknown) =>
   new Response(JSON.stringify(data), {
     headers: { "Content-Type": "application/json" },

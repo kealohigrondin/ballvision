@@ -14,25 +14,32 @@ import type {
 } from "./types";
 
 type Json = Record<string, unknown>;
+
 const obj = (value: unknown): Json =>
   value && typeof value === "object" && !Array.isArray(value)
     ? (value as Json)
     : {};
+
 const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
+
 const str = (value: unknown, fallback = "") =>
   typeof value === "string" || typeof value === "number"
     ? String(value)
     : fallback;
+
 const number = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
+
 const integer = (value: unknown): number | undefined => {
   const text = str(value).trim();
   return /^\d+$/.test(text) ? Number(text) : undefined;
 };
+
 const image = (value: unknown) => {
   const url = str(value);
   return /^https:\/\/(?:a|a[0-9])\.espncdn\.com\//.test(url) ? url : undefined;
 };
+
 const team = (raw: Json): Team => {
   const t = obj(raw.team);
   const rank = number(obj(raw.curatedRank).current);
@@ -61,6 +68,7 @@ const team = (raw: Json): Team => {
     ),
   };
 };
+
 const gameSituation = (situation: Json, competitors: Json[]): string => {
   const downDistance =
     str(situation.downDistanceText) || str(situation.shortDownDistanceText);
@@ -91,6 +99,7 @@ export const parseScoreboard = (payload: unknown): Game[] => {
     const status = obj(e.status ?? c.status),
       type = obj(status.type),
       s = obj(c.situation);
+
     const getState = (): GameState => {
       if (type.completed === true || type.state === "post") {
         return "final";
@@ -141,6 +150,7 @@ export const parseScoreboard = (payload: unknown): Game[] => {
     );
   });
 };
+
 export const parseCalendar = (payload: unknown): SeasonCalendar => {
   const root = obj(payload);
   const league = obj(list(root.leagues)[0]);
@@ -254,6 +264,7 @@ export const parseStandings = (
   const root = obj(payload);
   if (!Array.isArray(root.children))
     throw new Error("Unexpected ESPN standings response.");
+
   const collect = (raw: unknown): LeagueTable[] => {
     const group = obj(raw),
       standings = obj(group.standings);
@@ -263,6 +274,7 @@ export const parseStandings = (
         const entry = obj(rawEntry),
           t = obj(entry.team),
           stats = list(entry.stats).map(obj);
+
         const record = (type: string) => {
           const stat = stats.find((s) => s.type === type);
           return str(stat?.summary, str(stat?.displayValue, "—"));

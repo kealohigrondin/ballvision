@@ -36,6 +36,7 @@ export const useTeamSchedule = (
     if (!enabled || !teamId) return;
     let disposed = false;
     let request: AbortController | undefined;
+
     const load = async () => {
       if (disposed || request) return;
       const controller = new AbortController();

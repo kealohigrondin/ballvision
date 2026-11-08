@@ -3,6 +3,7 @@ import { appDataContext } from "../context/appDataContext";
 import { useAppDataState } from "../hooks/useAppDataState";
 
 type AppDataProviderProps = { children: ReactNode };
+
 export const AppDataProvider = ({ children }: AppDataProviderProps) => {
   const value = useAppDataState();
   return (

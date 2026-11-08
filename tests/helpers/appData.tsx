@@ -19,6 +19,7 @@ export const emptyScoreboardSource: ScoreboardSource = {
   load: vi.fn().mockResolvedValue([]),
   loadCalendar: vi.fn().mockResolvedValue({ weeks: [] }),
 };
+
 export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   panelOpen: true,
   setPanelOpen: vi.fn(),
@@ -36,6 +37,7 @@ export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   toggleFavorite: vi.fn(),
   ...overrides,
 });
+
 export const createEspnData = (
   overrides: Partial<EspnData> = {},
 ): EspnData => ({
@@ -72,6 +74,7 @@ export const createEspnData = (
   },
   ...overrides,
 });
+
 export const createPolymarketData = (
   overrides: Partial<PolymarketData> = {},
 ): PolymarketData => ({
@@ -89,6 +92,7 @@ type AppDataTestProviderProps = {
   espn?: Partial<EspnData>;
   polymarket?: Partial<PolymarketData>;
 };
+
 export const AppDataTestProvider = ({
   children,
   value,

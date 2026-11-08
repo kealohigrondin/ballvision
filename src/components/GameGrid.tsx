@@ -21,6 +21,7 @@ export const GameGrid = ({}: GameGridProps) => {
   const hasLoaded = updatedAt !== null;
   const hasError = Boolean(error);
   const pinnedOnly = filter === "pinned";
+
   const emptyTitle = useMemo(() => {
     if (hasError && !hasLoaded) {
       return "The feed is taking a timeout.";

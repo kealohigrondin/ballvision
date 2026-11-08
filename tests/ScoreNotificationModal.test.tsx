@@ -28,6 +28,7 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
     home: { ...oddsGame.home, score: "0" },
     away: { ...oddsGame.away, score: "0" },
   };
+
   const build = (games: Game[]) => (
     <AppTheme>
       <AppDataTestProvider

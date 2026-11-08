@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import { usePolymarketGame } from "../context/polymarketGameContext";
 
 type GameOddsProps = Record<string, never>;
+
 export const GameOdds = ({}: GameOddsProps) => {
   const { quote, game, loading, error: stale } = usePolymarketGame();
   const away = game.away.abbreviation;

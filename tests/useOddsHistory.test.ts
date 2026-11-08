@@ -8,6 +8,7 @@ const history: OddsHistory = {
   away: [{ timestamp: 10000, probability: 0.6 }],
   home: [{ timestamp: 10000, probability: 0.4 }],
 };
+
 const flush = async () => {
   await act(async () => {
     await Promise.resolve();

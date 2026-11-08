@@ -11,6 +11,7 @@ import { OddsHistoryChart } from "./OddsHistoryChart";
 import { SegmentedControl } from "./SegmentedControl";
 
 type GameOddsHistoryProps = Record<string, never>;
+
 export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
   const {
     quote,
@@ -21,6 +22,7 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
   const hasHistory = Boolean(
     data && (data.away.length > 0 || data.home.length > 0),
   );
+
   const content = useMemo(() => {
     if (!hasHistory && loading)
       return <LinearProgress aria-label="Loading Polymarket odds history" />;

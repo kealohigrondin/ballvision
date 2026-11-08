@@ -5,6 +5,7 @@ import {
   parseCalendar,
   parseScoreboard,
 } from "../src/data/espn";
+
 const competitor = (id: string, homeAway: string) => ({
   id,
   homeAway,
@@ -13,6 +14,7 @@ const competitor = (id: string, homeAway: string) => ({
   curatedRank: { current: 99 },
   linescores: [{ value: 7, displayValue: "7" }],
 });
+
 const event = (id: string, state: string, extra = {}) => ({
   id,
   date: "2026-10-31T19:00:00Z",

@@ -5,6 +5,7 @@ export type PolymarketGameData = ReturnType<typeof usePolymarketGameState>;
 export const polymarketGameContext = createContext<
   PolymarketGameData | undefined
 >(undefined);
+
 export const usePolymarketGame = () => {
   const context = useContext(polymarketGameContext);
   if (!context)

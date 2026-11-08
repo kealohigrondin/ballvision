@@ -12,6 +12,7 @@ type PolymarketDataProviderProps = {
   source?: OddsSource;
   historySource?: OddsHistorySource;
 };
+
 export const PolymarketDataProvider = ({
   children,
   source = polymarketSource,

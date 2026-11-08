@@ -11,6 +11,7 @@ import { historyAt } from "../utils/oddsHistory";
 import { americanOdds } from "../utils/odds";
 
 type OddsHistoryChartProps = Record<never, never>;
+
 const timeLabel = (time: number) =>
   new Date(time).toLocaleTimeString(undefined, {
     hour: "numeric",
@@ -23,6 +24,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
     quote,
     history: { data },
   } = usePolymarketGame();
+
   const history = useMemo(
     () => (data && quote ? withLiveOdds(data, quote) : { away: [], home: [] }),
     [data, quote],
@@ -35,6 +37,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
   const plotWidth = width - 60;
   const descriptionId = useId();
   const [selected, setSelected] = useState<number | null>(null);
+
   const times = useMemo(
     () =>
       [
@@ -51,12 +54,16 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
   const timestamp = times[index];
   const awayValue = historyAt(history.away, timestamp);
   const homeValue = historyAt(history.home, timestamp);
+
   const label = (value: number | undefined) =>
     value === undefined
       ? "—"
       : `${(value * 100).toFixed(1)}% (${americanOdds(value)})`;
+
   const x = (time: number) => 40 + ((time - start) / span) * plotWidth;
+
   const y = (probability: number) => 160 - probability * 144;
+
   const path = (points: OddsHistory["away"]) =>
     points
       .map(
@@ -95,6 +102,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
       </text>
     );
   });
+
   const inspect = (event: PointerEvent<SVGSVGElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     const coordinate = ((event.clientX - bounds.left) / bounds.width) * width;

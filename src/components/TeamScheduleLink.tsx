@@ -5,6 +5,7 @@ import type { LeagueRow } from "../data/types";
 type TeamScheduleLinkProps = {
   team: Pick<LeagueRow, "id" | "name"> & Partial<LeagueRow>;
 };
+
 export const TeamScheduleLink = ({ team }: TeamScheduleLinkProps) => {
   const {
     schedule: { selectTeam },

@@ -20,6 +20,7 @@ export const useLeagueTables = (
     if (!enabled) return;
     let disposed = false;
     let active: AbortController | undefined;
+
     const load = async () => {
       if (active || disposed) return;
       const controller = new AbortController();

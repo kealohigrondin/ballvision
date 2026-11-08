@@ -1,5 +1,6 @@
 import { useState } from "react";
 const KEY = "saturday:favorites:v1";
+
 export const useFavorites = () => {
   const [ids, setIds] = useState<string[]>(() => {
     try {
@@ -11,6 +12,7 @@ export const useFavorites = () => {
       return [];
     }
   });
+
   const toggle = (id: string) => {
     setIds((current) => {
       const next = current.includes(id)

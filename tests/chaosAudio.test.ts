@@ -12,6 +12,7 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
     setValueAtTime: vi.fn(),
     exponentialRampToValueAtTime: vi.fn(),
   });
+
   const node = () => {
     const result = {
       connect: vi.fn(),

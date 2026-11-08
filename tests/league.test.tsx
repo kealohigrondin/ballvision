@@ -33,6 +33,7 @@ const poll: LeagueTable = {
   subtitle: "Week 9",
   rows: [{ id: "2", name: "Miami", rank: 1, record: "7-0", points: "1500" }],
 };
+
 const source = (): LeagueSource => ({
   loadStandings: vi.fn().mockResolvedValue([conference]),
   loadRankings: vi.fn().mockResolvedValue([poll]),
@@ -356,6 +357,7 @@ it("selects a schedule team from conference and team dropdowns", async () => {
   fireEvent.change(screen.getByLabelText("Conference"), {
     target: { value: "sec" },
   });
+
   const teamNames = () =>
     Array.from((screen.getByLabelText("Team") as HTMLSelectElement).options)
       .filter((option) => option.value)
@@ -383,6 +385,7 @@ it("retries schedule failures and clears the selected team when switching league
     .fn<TeamScheduleSource["load"]>()
     .mockRejectedValueOnce(new Error("Offline"))
     .mockResolvedValue({ season: "2026", games: [] });
+
   const build = (division: "fbs" | "nfl") => (
     <LeagueTestProvider
       source={provider}

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useScoreboard } from "../src/hooks/useScoreboard";
 import type { Game, ScoreboardSource, Week } from "../src/data/types";
 const game = { id: "1" } as Game;
+
 const week = (number: number): Week => ({
   id: `2026-2-${number}`,
   label: `Week ${number}`,
@@ -14,6 +15,7 @@ const week = (number: number): Week => ({
 });
 const query = { week: week(10), division: "fbs" as const };
 const loadCalendar = vi.fn().mockResolvedValue({ weeks: [] });
+
 const flush = async () => {
   await act(async () => {
     await Promise.resolve();

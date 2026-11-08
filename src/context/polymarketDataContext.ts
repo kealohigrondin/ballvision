@@ -8,6 +8,7 @@ export type PolymarketData = ReturnType<typeof useGameOdds> & {
 export const polymarketDataContext = createContext<PolymarketData | undefined>(
   undefined,
 );
+
 export const usePolymarketData = () => {
   const context = useContext(polymarketDataContext);
   if (!context)

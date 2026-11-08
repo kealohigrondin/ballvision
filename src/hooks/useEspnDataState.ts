@@ -17,6 +17,7 @@ type EspnSources = {
   leagueSource: LeagueSource;
   scheduleSource: TeamScheduleSource;
 };
+
 export const useEspnDataState = ({
   source,
   leagueSource,
@@ -41,6 +42,7 @@ export const useEspnDataState = ({
     division,
     panelOpen && view === "schedule",
   );
+
   const selectTeam = (team: LeagueRow) => {
     schedule.selectTeam(team);
     setScheduleConferenceId("");
@@ -55,6 +57,7 @@ export const useEspnDataState = ({
   const selected: LeagueTable | undefined =
     league.tables.find((table) => table.id === selectedId) ??
     league.tables.at(0);
+
   const counts = useMemo(
     () => ({
       all: games.length,
@@ -65,6 +68,7 @@ export const useEspnDataState = ({
     }),
     [games, favoriteIds],
   );
+
   const visibleGames = useMemo(() => {
     const pinned = (id: string) => favoriteIds.includes(id);
     return games

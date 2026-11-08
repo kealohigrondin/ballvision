@@ -3,6 +3,7 @@ import { useScoreNotification } from "../context/scoreNotificationContext";
 import { MastHeadIconButton } from "./MastHeadIconButton";
 
 type ScoreNotificationControlsProps = Record<string, never>;
+
 export const ScoreNotificationControls =
   ({}: ScoreNotificationControlsProps) => {
     const {

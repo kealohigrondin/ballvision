@@ -16,6 +16,7 @@ import { ScoreAlertTime } from "./ScoreAlertTime";
 import { TeamLogo } from "./TeamLogo";
 
 type ScoreNotificationModalProps = Record<string, never>;
+
 export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
   const { current, pending, dismiss, dismissAll } = useScoreNotification();
   if (!current) return null;

@@ -2,6 +2,7 @@ import type { AppPreferences, Filter } from "../context/appDataTypes";
 import type { Week } from "../data/types";
 
 export const APP_PREFERENCES_KEY = "ballvision:app-data:v1";
+
 export const defaultAppPreferences = (): AppPreferences => ({
   panelOpen: true,
   week: null,
@@ -10,9 +11,11 @@ export const defaultAppPreferences = (): AppPreferences => ({
   search: "",
   paused: false,
 });
+
 const validFilter = (value: unknown): value is Filter =>
   typeof value === "string" &&
   ["all", "live", "upcoming", "final", "pinned"].includes(value);
+
 const validWeek = (value: unknown): value is Week => {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const week = value as Record<string, unknown>;
@@ -56,6 +59,7 @@ export const loadAppPreferences = (
     return defaults;
   }
 };
+
 export const saveAppPreferences = (
   preferences: AppPreferences,
   storage?: Pick<Storage, "setItem">,

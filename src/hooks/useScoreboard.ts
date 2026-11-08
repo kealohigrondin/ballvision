@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { Game, ScoreboardQuery, ScoreboardSource } from "../data/types";
 
 const INTERVAL = 20_000;
+
 export const useScoreboard = (
   source: ScoreboardSource,
   query: ScoreboardQuery,
@@ -28,6 +29,7 @@ export const useScoreboard = (
     let disposed = false,
       active: AbortController | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
+
     const update = async () => {
       if (disposed || active) return;
       const request = new AbortController();
@@ -68,6 +70,7 @@ export const useScoreboard = (
           timer = setTimeout(update, INTERVAL);
       }
     };
+
     const visibility = () => {
       clearTimeout(timer);
       if (!document.hidden && !paused) void update();

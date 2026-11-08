@@ -14,6 +14,7 @@ import { TeamLogo } from "./TeamLogo";
 import { TeamScheduleRow } from "./TeamScheduleRow";
 
 type TeamScheduleProps = Record<string, never>;
+
 export const TeamSchedule = ({}: TeamScheduleProps) => {
   const {
     schedule: { selectedTeam, data, loading, error, refresh },

@@ -24,6 +24,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       {table.title}
     </option>
   ));
+
   const secondaryLabel = useMemo(() => {
     if (division === "nfl") return "Division";
     return view === "standings" ? "Conference" : "Poll";

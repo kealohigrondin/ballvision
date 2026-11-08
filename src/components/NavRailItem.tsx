@@ -34,7 +34,8 @@ export const NavRailItem = ({
     sx={{
       flexDirection: "column",
       gap: 0.5,
-      width: "80%",
+      width: "100%",
+      minWidth: 0,
       py: 0.5,
       borderRadius: 2,
       color: active ? "text.primary" : "text.secondary",
@@ -67,7 +68,14 @@ export const NavRailItem = ({
     {showLabel && (
       <Typography
         component="span"
-        sx={{ fontSize: "0.75rem", fontWeight: active ? 700 : 500 }}
+        sx={{
+          maxWidth: "100%",
+          fontSize: "0.75rem",
+          fontWeight: active ? 700 : 500,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
       >
         {label}
       </Typography>

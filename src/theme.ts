@@ -8,6 +8,7 @@ declare module "@mui/material/styles" {
       paperBorderRadius: string;
       boxScoreMinWidth: number;
       periodColumnPadding: string;
+      navigationBarHeight: number;
     };
   }
   interface ThemeOptions {
@@ -17,6 +18,7 @@ declare module "@mui/material/styles" {
       paperBorderRadius: string;
       boxScoreMinWidth: number;
       periodColumnPadding: string;
+      navigationBarHeight: number;
     };
   }
 }
@@ -30,6 +32,7 @@ export const createAppTheme = (mode: "light" | "dark") =>
       paperBorderRadius: "20px",
       boxScoreMinWidth: 350,
       periodColumnPadding: "0.2rem",
+      navigationBarHeight: 80,
     },
     typography: { fontFamily: "Montserrat, sans-serif" },
     components: {

@@ -7,6 +7,7 @@ import { GameCard } from "./GameCard";
 import { EmptyState } from "./EmptyState";
 import { LoadingGrid } from "./LoadingGrid";
 import { useMemo } from "react";
+import { copy } from "../copy";
 
 type GameGridProps = Record<string, never>;
 
@@ -23,22 +24,22 @@ export const GameGrid = ({}: GameGridProps) => {
   const pinnedOnly = filter === "pinned";
   const emptyTitle = useMemo(() => {
     if (hasError && !hasLoaded) {
-      return "The feed is taking a timeout.";
+      return copy.grid.feedDown;
     }
     if (pinnedOnly) {
-      return "Your watchlist starts here.";
+      return copy.grid.watchlistEmpty;
     }
-    return "No games on this field.";
+    return copy.grid.noGames;
   }, [hasError, hasLoaded, pinnedOnly]);
 
   const emptyDetail = useMemo(() => {
     if (hasError && !hasLoaded) {
-      return "Try refreshing to reconnect to ESPN.";
+      return copy.grid.feedDownDetail;
     }
     if (pinnedOnly) {
-      return "Use the star on a game to pin it to the top of your scoreboard.";
+      return copy.grid.watchlistEmptyDetail;
     }
-    return "Try another week, division, or filter.";
+    return copy.grid.noGamesDetail;
   }, [hasError, hasLoaded, pinnedOnly]);
 
   if (loading && !hasLoaded) return <LoadingGrid compact={compact} />;
@@ -62,7 +63,7 @@ export const GameGrid = ({}: GameGridProps) => {
       component="section"
       spacing={1.5}
       className="game-grid"
-      aria-label="Football games"
+      aria-label={copy.grid.label}
       sx={{ alignItems: "flex-start" }}
     >
       {cards}

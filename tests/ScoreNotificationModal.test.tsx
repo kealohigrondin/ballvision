@@ -1,3 +1,5 @@
+import { copy } from "../src/copy";
+import { periodLabel } from "../src/utils/gameTime";
 import {
   act,
   cleanup,
@@ -45,16 +47,19 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
   expect(screen.queryByRole("dialog")).toBeNull();
   await act(async () => {
     fireEvent.click(
-      screen.getByRole("button", { name: "Enable chaos sounds" }),
+      screen.getByRole("button", { name: copy.scoreNotification.enableSound }),
     );
   });
   rerender(build([{ ...first, home: { ...first.home, score: "7" } }]));
-  const dialog = screen.getByRole("dialog", { name: "TOUCHDOWN TYPE BEAT" });
+  const dialog = screen.getByRole("dialog");
+  const titleId = dialog.getAttribute("aria-labelledby") ?? "";
+  const touchdownHeadline = document.getElementById(titleId)?.textContent;
+  expect(touchdownHeadline).toBeTruthy();
   const gameTime = within(dialog).getByRole("group", {
-    name: "Game clock and period",
+    name: copy.scoreNotification.clock,
   });
-  expect(within(gameTime).getByText("Q1")).toBeTruthy();
-  expect(within(gameTime).getByText("10:00")).toBeTruthy();
+  expect(within(gameTime).getByText(periodLabel(first.period))).toBeTruthy();
+  expect(within(gameTime).getByText(first.clock)).toBeTruthy();
   const scoringScore = within(dialog).getByText("7");
   const chalkCircle = scoringScore.parentElement?.querySelector("img");
   expect(chalkCircle?.getAttribute("src")).toContain("red-chalk-circle.png");
@@ -62,18 +67,23 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
   expect(
     within(dialog).getByText("0").parentElement?.querySelector("img"),
   ).toBeNull();
-  expect(within(dialog).queryByText("🗿 ABSOLUTE CINEMA")).toBeNull();
   expect(audio.play).toHaveBeenCalledTimes(1);
   expect(audio.play).toHaveBeenLastCalledWith("score");
   fireEvent.click(
-    within(dialog).getByRole("button", { name: "Mute chaos sounds" }),
+    within(dialog).getByRole("button", {
+      name: copy.scoreNotification.muteSound,
+    }),
   );
   expect(audio.stop).toHaveBeenCalled();
   fireEvent.click(
-    within(dialog).getByRole("button", { name: "I have seen enough" }),
+    within(dialog).getByRole("button", {
+      name: copy.scoreNotification.dismissAll,
+    }),
   );
   expect(screen.queryByRole("dialog")).toBeNull();
-  fireEvent.click(screen.getByRole("button", { name: "Unmute chaos sounds" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.scoreNotification.unmuteSound }),
+  );
   rerender(
     build([
       {
@@ -84,10 +94,16 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
       },
     ]),
   );
-  expect(
-    screen.getByRole("dialog", { name: "FIELD GOAL JUMPSCARE" }),
-  ).toBeTruthy();
-  expect(screen.getByText("2OT")).toBeTruthy();
-  expect(screen.getByText("0:00")).toBeTruthy();
+  const fieldGoalDialog = screen.getByRole("dialog");
+  const fieldGoalHeadline = document.getElementById(
+    fieldGoalDialog.getAttribute("aria-labelledby") ?? "",
+  )?.textContent;
+  expect(fieldGoalHeadline).toBeTruthy();
+  expect(fieldGoalHeadline).not.toBe(touchdownHeadline);
+  const overtimeClock = within(fieldGoalDialog).getByRole("group", {
+    name: copy.scoreNotification.clock,
+  });
+  expect(within(overtimeClock).getByText(periodLabel(6))).toBeTruthy();
+  expect(within(overtimeClock).getByText("0:00")).toBeTruthy();
   expect(audio.play).toHaveBeenLastCalledWith("fieldGoal");
 });

@@ -1,3 +1,4 @@
+import { copy } from "../src/copy";
 import type { EspnData } from "../src/context/espnDataContext";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
@@ -20,18 +21,18 @@ afterEach(cleanup);
 describe("GameGrid states", () => {
   it("shows loading placeholders only before the first successful load", () => {
     const { rerender } = render(grid({ loading: true, updatedAt: null }));
-    expect(screen.getByLabelText("Loading scores")).toBeTruthy();
-    expect(screen.queryByText("No games on this field.")).toBeNull();
+    expect(screen.getByLabelText(copy.grid.loading)).toBeTruthy();
+    expect(screen.queryByText(copy.grid.noGames)).toBeNull();
     rerender(grid({ loading: true }));
-    expect(screen.queryByLabelText("Loading scores")).toBeNull();
-    expect(screen.getByText("No games on this field.")).toBeTruthy();
+    expect(screen.queryByLabelText(copy.grid.loading)).toBeNull();
+    expect(screen.getByText(copy.grid.noGames)).toBeTruthy();
   });
   it("owns the pinned and failed-request empty messages", () => {
     const { rerender } = render(grid({ filter: "pinned" }));
-    expect(screen.getByText("Your watchlist starts here.")).toBeTruthy();
+    expect(screen.getByText(copy.grid.watchlistEmpty)).toBeTruthy();
     rerender(grid({ filter: "pinned", error: "offline", updatedAt: null }));
-    expect(screen.getByText("The feed is taking a timeout.")).toBeTruthy();
+    expect(screen.getByText(copy.grid.feedDown)).toBeTruthy();
     rerender(grid({ error: "offline" }));
-    expect(screen.getByText("No games on this field.")).toBeTruthy();
+    expect(screen.getByText(copy.grid.noGames)).toBeTruthy();
   });
 });

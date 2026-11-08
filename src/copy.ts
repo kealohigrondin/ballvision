@@ -1,0 +1,136 @@
+// User-facing UI copy. Components render these strings and tests query by
+// them, so wording can change here without breaking tests.
+
+export const copy = {
+  common: {
+    retry: "Retry",
+    tryAgain: "Try again",
+    emptyValue: "—",
+  },
+  grid: {
+    label: "Football games",
+    loading: "Loading scores",
+    feedDown: "The feed is taking a timeout.",
+    feedDownDetail: "Try refreshing to reconnect to ESPN.",
+    watchlistEmpty: "Your watchlist starts here.",
+    watchlistEmptyDetail:
+      "Use the star on a game to pin it to the top of your scoreboard.",
+    noGames: "No games on this field.",
+    noGamesDetail: "Try another week, division, or filter.",
+  },
+  gameCard: {
+    inProgress: "Game in progress",
+    final: "Final score",
+    kickoff: "Kickoff",
+    possession: "Possession",
+    scoresByPeriod: (away: string, home: string) =>
+      `${away} at ${home} scores by period`,
+    favorite: (favorite: boolean, away: string, home: string) =>
+      `${favorite ? "Unfavorite" : "Favorite"} ${away} at ${home}`,
+    pin: (favorite: boolean) => (favorite ? "Unpin game" : "Pin game"),
+  },
+  periodScores: {
+    label: "Score by period",
+    team: "Team",
+    total: "T",
+  },
+  gameDetails: {
+    toggle: "Game details",
+    chartUnavailable: "Polymarket chart unavailable for this game.",
+    lastPlay: "Last play",
+    unavailable: "Additional details are not available yet.",
+  },
+  odds: {
+    loading: "Odds…",
+    missing: "Odds —",
+    unavailable: "Odds are temporarily unavailable.",
+    noMarket: "No matching open moneyline market is available.",
+    even: "Even odds",
+    stale: "stale",
+  },
+  oddsHistory: {
+    label: "Polymarket odds history",
+    loading: "Loading Polymarket odds history",
+    loadError: "Unable to load odds history.",
+    empty: "No polymarket history is available.",
+    title: "Polymarket win probability",
+    range: "Odds history range",
+    ranges: { "1h": "1H", "6h": "6H", "1d": "1D" },
+    outdated: "History may be out of date.",
+    chart: (away: string, home: string) =>
+      `Polymarket implied win probability history for ${away} and ${home}`,
+  },
+  scoresHeader: {
+    thisWeek: "This week",
+    division: "Division",
+    divisions: { fbs: "FBS", fcs: "FCS", nfl: "NFL" },
+    search: "Search teams",
+    searchPlaceholder: "Find your team…",
+    clearSearch: "Clear search",
+    filter: "Filter games",
+    filters: {
+      all: "All games",
+      live: "Live now",
+      upcoming: "Upcoming",
+      final: "Final",
+      pinned: "Pinned",
+    },
+  },
+  week: {
+    label: "Week",
+    previous: "Previous week",
+    next: "Next week",
+  },
+  sync: {
+    pause: "Pause auto-refresh",
+    resume: "Resume auto-refresh",
+    refresh: "Refresh scores",
+    updating: "Updating…",
+    paused: "Auto-refresh paused",
+    connecting: "Connecting…",
+    connectionError: " · Connection error",
+    updated: (time: string) => `Updated ${time}`,
+  },
+  theme: {
+    toLight: "Switch to light mode",
+    toDark: "Switch to dark mode",
+  },
+  scoreNotification: {
+    enableSound: "Enable chaos sounds",
+    retrySound: "Retry chaos sounds",
+    muteSound: "Mute chaos sounds",
+    unmuteSound: "Unmute chaos sounds",
+    test: "Test score notification",
+    dismissAll: "I have seen enough",
+    clock: "Game clock and period",
+  },
+  navRail: {
+    label: "League navigation",
+    rankings: "Rankings",
+    standings: "Standings",
+    schedule: "Schedules",
+  },
+  league: {
+    panel: "League information",
+    division: "Division",
+    conference: "Conference",
+    poll: "Poll",
+    loading: "Loading league data…",
+    empty: "No league data is available for this division.",
+    error:
+      "Unable to update league data. Any displayed records may be out of date.",
+  },
+  schedule: {
+    team: "Team",
+    selectTeam: "Select a team",
+    prompt: "Choose a conference and team to view its schedule.",
+    loading: "Loading team schedule…",
+    empty: "No games are available for this team’s current season.",
+    error:
+      "Unable to update this team’s schedule. Displayed games may be out of date.",
+    currentSeason: "Current season",
+    home: "vs",
+    away: "@",
+    table: (team: string) => `${team} schedule`,
+  },
+} as const;

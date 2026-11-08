@@ -4,7 +4,9 @@ import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 
 type NavRailItemProps = {
-  label?: string;
+  /** Accessible name; also shown as a hover hint and, optionally, as text. */
+  label: string;
+  showLabel?: boolean;
   icon: ReactNode;
   active: boolean;
   disabled?: boolean;
@@ -13,7 +15,8 @@ type NavRailItemProps = {
 };
 
 export const NavRailItem = ({
-  label = "",
+  label,
+  showLabel = false,
   icon,
   active,
   disabled = false,
@@ -23,6 +26,7 @@ export const NavRailItem = ({
   <ButtonBase
     onClick={onClick}
     disabled={disabled}
+    aria-label={label}
     aria-pressed={active}
     aria-expanded={active}
     aria-controls={controls}
@@ -60,11 +64,13 @@ export const NavRailItem = ({
     >
       {icon}
     </Box>
-    <Typography
-      component="span"
-      sx={{ fontSize: "0.75rem", fontWeight: active ? 700 : 500 }}
-    >
-      {label}
-    </Typography>
+    {showLabel && (
+      <Typography
+        component="span"
+        sx={{ fontSize: "0.75rem", fontWeight: active ? 700 : 500 }}
+      >
+        {label}
+      </Typography>
+    )}
   </ButtonBase>
 );

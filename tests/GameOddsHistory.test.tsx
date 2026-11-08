@@ -1,3 +1,5 @@
+import { copy } from "../src/copy";
+import { formatProbability } from "../src/utils/odds";
 import { PolymarketGameProvider } from "../src/providers/PolymarketGameProvider";
 import {
   cleanup,
@@ -46,21 +48,28 @@ it("loads on expansion, changes history range, allows keyboard inspection, and s
   const load = vi.fn<OddsHistorySource["load"]>().mockResolvedValue(history);
   show(load);
   expect(load).not.toHaveBeenCalled();
-  const details = screen.getByRole("button", { name: "Game details" });
+  const details = screen.getByRole("button", { name: copy.gameDetails.toggle });
   fireEvent.click(details);
   const chart = await screen.findByRole("img", {
-    name: "Polymarket implied win probability history for PSU and WASH",
+    name: copy.oddsHistory.chart(
+      oddsGame.away.abbreviation,
+      oddsGame.home.abbreviation,
+    ),
   });
   expect(load).toHaveBeenCalledWith(
     { awayTokenId: "222", homeTokenId: "111", range: "1h" },
     expect.any(AbortSignal),
   );
   const section = screen.getByRole("region", {
-    name: "Polymarket odds history",
+    name: copy.oddsHistory.label,
   });
-  expect(within(section).getByText("PSU — 75.0% (-300)")).toBeTruthy();
+  expect(
+    within(section).getByText(formatProbability(0.75), { exact: false }),
+  ).toBeTruthy();
   fireEvent.keyDown(chart, { key: "Home" });
-  expect(within(section).getByText("PSU — 40.0% (+150)")).toBeTruthy();
+  expect(
+    within(section).getByText(formatProbability(0.4), { exact: false }),
+  ).toBeTruthy();
   load.mockImplementationOnce(
     (_, signal) =>
       new Promise((_, reject) => {
@@ -71,7 +80,9 @@ it("loads on expansion, changes history range, allows keyboard inspection, and s
         );
       }),
   );
-  fireEvent.click(screen.getByRole("button", { name: "6H" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.oddsHistory.ranges["6h"] }),
+  );
   await waitFor(() =>
     expect(load).toHaveBeenLastCalledWith(
       { awayTokenId: "222", homeTokenId: "111", range: "6h" },
@@ -88,11 +99,16 @@ it("shows a recoverable error and retries", async () => {
     .mockRejectedValueOnce(new Error("Offline"))
     .mockResolvedValue(history);
   show(load);
-  fireEvent.click(screen.getByRole("button", { name: "Game details" }));
-  await screen.findByText("Unable to load odds history.");
-  fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
+  await screen.findByText(copy.oddsHistory.loadError);
+  fireEvent.click(screen.getByRole("button", { name: copy.common.retry }));
   await screen.findByRole("img", {
-    name: /Polymarket implied win probability/,
+    name: copy.oddsHistory.chart(
+      oddsGame.away.abbreviation,
+      oddsGame.home.abbreviation,
+    ),
   });
 });
 it("shows an empty state instead of inventing a historical curve", async () => {
@@ -101,11 +117,11 @@ it("shows an empty state instead of inventing a historical curve", async () => {
       .fn<OddsHistorySource["load"]>()
       .mockResolvedValue({ away: [], home: [] }),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Game details" }));
-  await screen.findByText("No polymarket history is available.");
-  expect(
-    screen.queryByRole("img", { name: /Polymarket implied win probability/ }),
-  ).toBeNull();
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
+  await screen.findByText(copy.oddsHistory.empty);
+  expect(screen.queryByRole("img")).toBeNull();
 });
 
 it("renders last-play text without nesting paragraphs", () => {
@@ -113,7 +129,7 @@ it("renders last-play text without nesting paragraphs", () => {
     ...oddsGame,
     lastPlay: "Pass complete for a touchdown.",
   });
-  expect(screen.getByText("Last play")).toBeTruthy();
+  expect(screen.getByText(copy.gameDetails.lastPlay)).toBeTruthy();
   expect(screen.getByText("Pass complete for a touchdown.")).toBeTruthy();
   expect(container.querySelector("p p")).toBeNull();
 });

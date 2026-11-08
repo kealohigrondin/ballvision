@@ -6,13 +6,30 @@ import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
 import type { LeagueView } from "../hooks/useLeagueTables";
 import { NavRailItem } from "./NavRailItem";
+import { copy } from "../copy";
 
 type LeagueNavRailProps = Record<string, never>;
 
-const destinations: { view: LeagueView; label: string; icon: ReactNode }[] = [
-  { view: "rankings", label: "Rankings", icon: <Trophy size={20} /> },
-  { view: "standings", label: "Standings", icon: <ListOrdered size={20} /> },
-  { view: "schedule", label: "Schedules", icon: <CalendarDays size={20} /> },
+export const leagueNavDestinations: {
+  view: LeagueView;
+  label: string;
+  icon: ReactNode;
+}[] = [
+  {
+    view: "rankings",
+    label: copy.navRail.rankings,
+    icon: <Trophy size={20} />,
+  },
+  {
+    view: "standings",
+    label: copy.navRail.standings,
+    icon: <ListOrdered size={20} />,
+  },
+  {
+    view: "schedule",
+    label: copy.navRail.schedule,
+    icon: <CalendarDays size={20} />,
+  },
 ];
 
 export const LeagueNavRail = ({}: LeagueNavRailProps) => {
@@ -33,9 +50,10 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
     setPanelOpen(true);
   };
 
-  const items = destinations.map((destination) => (
+  const items = leagueNavDestinations.map((destination) => (
     <NavRailItem
       key={destination.view}
+      label={destination.label}
       icon={destination.icon}
       active={panelOpen && view === destination.view}
       disabled={destination.view === "rankings" && division === "nfl"}
@@ -47,7 +65,7 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
   return (
     <Box
       component="nav"
-      aria-label="League navigation"
+      aria-label={copy.navRail.label}
       sx={{
         gridArea: "rail",
         position: "sticky",

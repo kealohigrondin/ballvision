@@ -1,3 +1,6 @@
+import { copy } from "../src/copy";
+import { scheduleGameStatus } from "../src/utils/teamSchedule";
+import { navRailButton } from "./helpers/queries";
 import { scheduleGame } from "./helpers/scheduleFixture";
 import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
 import { emptyOddsSource } from "./helpers/appData";
@@ -12,7 +15,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
 import { AppTheme } from "../src/providers/AppTheme";
 import { LeaguePanel } from "../src/components/LeaguePanel";
-import { LeagueNavRail } from "../src/components/LeagueNavRail";
+import {
+  LeagueNavRail,
+  leagueNavDestinations,
+} from "../src/components/LeagueNavRail";
 import { parseRankings, parseStandings } from "../src/data/espn";
 import type {
   LeagueSource,
@@ -165,7 +171,7 @@ describe("league panel", () => {
         <LeaguePanel />
       </LeagueTestProvider>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Rankings" }));
+    fireEvent.click(navRailButton("rankings"));
     await screen.findByRole("table", { name: /AP Top 25/ });
     rerender(
       <LeagueTestProvider source={provider} division="nfl">
@@ -174,14 +180,25 @@ describe("league panel", () => {
       </LeagueTestProvider>,
     );
     await screen.findByRole("table", { name: /SEC/ });
-    expect(
-      screen.getByRole("button", { name: "Rankings" }).hasAttribute("disabled"),
-    ).toBe(true);
-    expect(screen.getByLabelText("Division")).toBeTruthy();
+    expect(navRailButton("rankings").hasAttribute("disabled")).toBe(true);
+    expect(screen.getByLabelText(copy.league.division)).toBeTruthy();
     expect(provider.loadStandings).toHaveBeenCalledWith(
       "nfl",
       expect.any(AbortSignal),
     );
+  });
+  it("names every navigation rail button without showing visible text", () => {
+    render(
+      <LeagueTestProvider source={source()} division="fbs">
+        <LeagueNavRail />
+      </LeagueTestProvider>,
+    );
+    for (const destination of leagueNavDestinations) {
+      const button = navRailButton(destination.view);
+      expect(button.getAttribute("aria-label")).toBe(destination.label);
+      expect(button.getAttribute("title")).toBe(destination.label);
+      expect(button.textContent).toBe("");
+    }
   });
   it("opens and closes from the navigation rail", async () => {
     const scores: ScoreboardSource = {
@@ -198,23 +215,18 @@ describe("league panel", () => {
       </AppTheme>,
     );
     await screen.findByRole("table", { name: /SEC/ });
-    expect(screen.queryByRole("button", { name: /league panel/ })).toBeNull();
-    const standings = screen.getByRole("button", { name: "Standings" });
+    const standings = navRailButton("standings");
     expect(standings.getAttribute("aria-expanded")).toBe("true");
     fireEvent.click(standings);
     expect(
-      screen.queryByRole("complementary", { name: "League information" }),
+      screen.queryByRole("complementary", { name: copy.league.panel }),
     ).toBeNull();
     expect(standings.getAttribute("aria-expanded")).toBe("false");
-    fireEvent.click(screen.getByRole("button", { name: "Schedules" }));
+    fireEvent.click(navRailButton("schedule"));
     expect(
-      screen.getByRole("complementary", { name: "League information" }),
+      screen.getByRole("complementary", { name: copy.league.panel }),
     ).toBeTruthy();
-    expect(
-      screen
-        .getByRole("button", { name: "Schedules" })
-        .getAttribute("aria-pressed"),
-    ).toBe("true");
+    expect(navRailButton("schedule").getAttribute("aria-pressed")).toBe("true");
   });
   it("switches between conference standings and Top 25 and selects a conference", async () => {
     const provider = source();
@@ -229,16 +241,12 @@ describe("league panel", () => {
       </LeagueTestProvider>,
     );
     await screen.findByRole("table", { name: /SEC/ });
-    fireEvent.change(screen.getByLabelText("Conference"), {
+    fireEvent.change(screen.getByLabelText(copy.league.conference), {
       target: { value: "acc" },
     });
     expect(screen.getByRole("table", { name: /ACC/ })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Rankings" }));
-    expect(
-      screen
-        .getByRole("button", { name: "Rankings" })
-        .getAttribute("aria-pressed"),
-    ).toBe("true");
+    fireEvent.click(navRailButton("rankings"));
+    expect(navRailButton("rankings").getAttribute("aria-pressed")).toBe("true");
     await screen.findByRole("table", { name: /AP Top 25/ });
     expect(screen.getByText("Miami")).toBeTruthy();
     expect(provider.loadRankings).toHaveBeenCalledWith(
@@ -258,7 +266,7 @@ describe("league panel", () => {
       </LeagueTestProvider>,
     );
     await screen.findByRole("alert");
-    fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+    fireEvent.click(screen.getByRole("button", { name: copy.common.retry }));
     await screen.findByRole("table", { name: /SEC/ });
     await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
   });
@@ -280,41 +288,39 @@ it("opens a team schedule from standings and Top 25 links", async () => {
     </LeagueTestProvider>,
   );
   await screen.findByRole("table", { name: /SEC/ });
-  fireEvent.click(screen.getByRole("button", { name: "Schedules" }));
-  expect(
-    screen.getByText(/Choose a conference and team to view its schedule/),
-  ).toBeTruthy();
+  fireEvent.click(navRailButton("schedule"));
+  expect(screen.getByText(copy.schedule.prompt)).toBeTruthy();
   expect(load).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole("button", { name: "Standings" }));
+  fireEvent.click(navRailButton("standings"));
   fireEvent.click(await screen.findByRole("link", { name: "Georgia" }));
-  await screen.findByRole("table", { name: "Georgia schedule" });
+  await screen.findByRole("table", { name: copy.schedule.table("Georgia") });
+  expect(navRailButton("schedule").getAttribute("aria-pressed")).toBe("true");
   expect(
-    screen
-      .getByRole("button", { name: "Schedules" })
-      .getAttribute("aria-pressed"),
-  ).toBe("true");
-  expect((screen.getByLabelText("Conference") as HTMLSelectElement).value).toBe(
-    "sec",
-  );
-  expect((screen.getByLabelText("Team") as HTMLSelectElement).value).toBe("1");
+    (screen.getByLabelText(copy.league.conference) as HTMLSelectElement).value,
+  ).toBe("sec");
+  expect(
+    (screen.getByLabelText(copy.schedule.team) as HTMLSelectElement).value,
+  ).toBe("1");
   expect(load).toHaveBeenLastCalledWith(
     { division: "fbs", teamId: "1" },
     expect.any(AbortSignal),
   );
   const opponentLink = screen.getByRole("link", { name: "Clemson" });
-  expect(opponentLink.closest("th")?.textContent).toContain("vs Clemson");
-  expect(screen.getByText("W 35–14")).toBeTruthy();
+  expect(opponentLink.closest("th")?.textContent).toContain(
+    `${copy.schedule.home} Clemson`,
+  );
+  expect(screen.getByText(scheduleGameStatus(scheduleGame, "1"))).toBeTruthy();
   fireEvent.click(opponentLink);
-  await screen.findByRole("table", { name: "Clemson schedule" });
+  await screen.findByRole("table", { name: copy.schedule.table("Clemson") });
   expect(load).toHaveBeenLastCalledWith(
     { division: "fbs", teamId: "8" },
     expect.any(AbortSignal),
   );
   expect(screen.getByRole("link", { name: "Georgia" })).toBeTruthy();
-  expect(screen.getByText("L 14–35")).toBeTruthy();
-  fireEvent.click(screen.getByRole("button", { name: "Rankings" }));
+  expect(screen.getByText(scheduleGameStatus(scheduleGame, "8"))).toBeTruthy();
+  fireEvent.click(navRailButton("rankings"));
   fireEvent.click(await screen.findByRole("link", { name: "Miami" }));
-  await screen.findByRole("heading", { name: "Miami schedule" });
+  await screen.findByRole("heading", { name: copy.schedule.table("Miami") });
   await waitFor(() =>
     expect(load).toHaveBeenLastCalledWith(
       { division: "fbs", teamId: "2" },
@@ -350,32 +356,34 @@ it("selects a schedule team from conference and team dropdowns", async () => {
     </LeagueTestProvider>,
   );
   await screen.findByRole("table", { name: /SEC/ });
-  fireEvent.click(screen.getByRole("button", { name: "Schedules" }));
-  const team = screen.getByLabelText("Team") as HTMLSelectElement;
+  fireEvent.click(navRailButton("schedule"));
+  const team = screen.getByLabelText(copy.schedule.team) as HTMLSelectElement;
   expect(team.disabled).toBe(true);
-  fireEvent.change(screen.getByLabelText("Conference"), {
+  fireEvent.change(screen.getByLabelText(copy.league.conference), {
     target: { value: "sec" },
   });
   const teamNames = () =>
-    Array.from((screen.getByLabelText("Team") as HTMLSelectElement).options)
+    Array.from(
+      (screen.getByLabelText(copy.schedule.team) as HTMLSelectElement).options,
+    )
       .filter((option) => option.value)
       .map((option) => option.textContent);
   expect(teamNames()).toEqual(["Alabama", "Georgia"]);
-  fireEvent.change(screen.getByLabelText("Conference"), {
+  fireEvent.change(screen.getByLabelText(copy.league.conference), {
     target: { value: "acc" },
   });
   expect(teamNames()).toEqual(["Clemson"]);
-  fireEvent.change(screen.getByLabelText("Team"), {
+  fireEvent.change(screen.getByLabelText(copy.schedule.team), {
     target: { value: "8" },
   });
-  await screen.findByRole("heading", { name: "Clemson schedule" });
+  await screen.findByRole("heading", { name: copy.schedule.table("Clemson") });
   expect(load).toHaveBeenLastCalledWith(
     { division: "fbs", teamId: "8" },
     expect.any(AbortSignal),
   );
-  expect((screen.getByLabelText("Conference") as HTMLSelectElement).value).toBe(
-    "acc",
-  );
+  expect(
+    (screen.getByLabelText(copy.league.conference) as HTMLSelectElement).value,
+  ).toBe("acc");
 });
 it("retries schedule failures and clears the selected team when switching leagues", async () => {
   const provider = source();
@@ -396,15 +404,13 @@ it("retries schedule failures and clears the selected team when switching league
   const { rerender } = render(build("fbs"));
   fireEvent.click(await screen.findByRole("link", { name: "Georgia" }));
   await screen.findByRole("alert");
-  fireEvent.click(screen.getByRole("button", { name: "Retry" }));
-  await screen.findByText(/No games are available/);
+  fireEvent.click(screen.getByRole("button", { name: copy.common.retry }));
+  await screen.findByText(copy.schedule.empty);
   rerender(build("nfl"));
   expect(
-    screen.queryByRole("heading", { name: "Georgia schedule" }),
+    screen.queryByRole("heading", { name: copy.schedule.table("Georgia") }),
   ).toBeNull();
-  expect(
-    screen.getByRole("button", { name: "Rankings" }).hasAttribute("disabled"),
-  ).toBe(true);
-  expect(screen.getByRole("button", { name: "Schedules" })).toBeTruthy();
+  expect(navRailButton("rankings").hasAttribute("disabled")).toBe(true);
+  expect(navRailButton("schedule")).toBeTruthy();
   expect(load).toHaveBeenCalledTimes(2);
 });

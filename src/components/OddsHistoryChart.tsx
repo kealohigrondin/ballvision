@@ -8,7 +8,8 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import type { OddsHistory } from "../data/types";
 import { historyAt } from "../utils/oddsHistory";
-import { americanOdds } from "../utils/odds";
+import { formatProbability } from "../utils/odds";
+import { copy } from "../copy";
 
 type OddsHistoryChartProps = Record<never, never>;
 const timeLabel = (time: number) =>
@@ -51,10 +52,6 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
   const timestamp = times[index];
   const awayValue = historyAt(history.away, timestamp);
   const homeValue = historyAt(history.home, timestamp);
-  const label = (value: number | undefined) =>
-    value === undefined
-      ? "—"
-      : `${(value * 100).toFixed(1)}% (${americanOdds(value)})`;
   const x = (time: number) => 40 + ((time - start) / span) * plotWidth;
   const y = (probability: number) => 160 - probability * 144;
   const path = (points: OddsHistory["away"]) =>
@@ -116,10 +113,10 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
         sx={{ flexWrap: "wrap", mb: 1 }}
       >
         <Typography sx={{ color: "primary.main" }}>
-          {away} — {label(awayValue)}
+          {away} — {formatProbability(awayValue)}
         </Typography>
         <Typography sx={{ color: "secondary.main" }}>
-          {home} ⋯ {label(homeValue)}
+          {home} ⋯ {formatProbability(homeValue)}
         </Typography>
       </Stack>
       <Box
@@ -127,7 +124,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
         viewBox={`0 0 ${width} 200`}
         role="img"
         tabIndex={0}
-        aria-label={`Polymarket implied win probability history for ${away} and ${home}`}
+        aria-label={copy.oddsHistory.chart(away, home)}
         aria-describedby={descriptionId}
         sx={{
           display: "block",

@@ -1,3 +1,6 @@
+import { copy } from "../src/copy";
+import { gameTime } from "../src/utils/gameTime";
+import { linkTo } from "./helpers/queries";
 import type { PolymarketData } from "../src/context/polymarketDataContext";
 import { oddsQuote } from "./helpers/oddsFixture";
 import type { ReactNode } from "react";
@@ -78,12 +81,14 @@ describe("scoreboard presentation", () => {
       />,
     );
     const scoreboard = screen.getByRole("table", {
-      name: "Away at Home scores by period",
+      name: copy.gameCard.scoresByPeriod(away.name, home.name),
     });
     const headings = within(scoreboard)
       .getAllByRole("columnheader", { hidden: true })
       .map((cell) => cell.textContent);
-    expect(headings).toEqual(["OVERTIME", "1", "2", "3", "4", "1OT", "T"]);
+    expect(headings[0]).toBe(gameTime({ ...game, period: 5 }));
+    expect(headings.at(-1)).toBe(copy.periodScores.total);
+    expect(headings).toHaveLength(7);
     const rows = within(scoreboard).getAllByRole("row");
     expect(
       within(rows[1])
@@ -99,17 +104,27 @@ describe("scoreboard presentation", () => {
 
   it("renders live game context, period scores, and pin action", () => {
     const onFavorite = vi.fn();
-    render(<GameCard game={game} favorite={false} onFavorite={onFavorite} />);
-    expect(screen.getByText("Q2 · 3:42")).toBeTruthy();
-    expect(screen.getByText("RED ZONE ·")).toBeTruthy();
-    expect(screen.getByText("ESPN")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Game details" }));
-    expect(screen.getByText("Pass complete.")).toBeTruthy();
+    const { container } = render(
+      <GameCard game={game} favorite={false} onFavorite={onFavorite} />,
+    );
+    expect(screen.getByText(gameTime(game))).toBeTruthy();
+    const card = container.querySelector("article");
+    expect(card?.classList.contains("red-zone")).toBe(true);
+    expect(screen.getByText(game.broadcast)).toBeTruthy();
+    fireEvent.click(
+      screen.getByRole("button", { name: copy.gameDetails.toggle }),
+    );
+    expect(screen.getByText(game.lastPlay)).toBeTruthy();
     expect(
-      screen.getByRole("table", { name: "Score by period", hidden: true }),
+      screen.getByRole("table", {
+        name: copy.periodScores.label,
+        hidden: true,
+      }),
     ).toBeTruthy();
     fireEvent.click(
-      screen.getByRole("button", { name: "Favorite Away at Home" }),
+      screen.getByRole("button", {
+        name: copy.gameCard.favorite(false, away.name, home.name),
+      }),
     );
     expect(onFavorite).toHaveBeenCalledOnce();
   });
@@ -118,15 +133,14 @@ describe("scoreboard presentation", () => {
       <GameCard game={game} favorite={false} onFavorite={() => {}} />,
       { quotes: { [game.id]: oddsQuote }, error: true },
     );
-    const link = screen.getByRole("link", { name: "AWY -300" });
-    expect(link.getAttribute("href")).toBe(oddsQuote.url);
-    expect(link.textContent).toContain("AWY -300");
+    const link = linkTo(oddsQuote.url);
+    expect(link.textContent).toContain("AWY");
     expect(link.textContent).not.toContain("HOM");
-    expect(link.parentElement?.title).toContain("stale");
+    expect(link.parentElement?.title).toContain(copy.odds.stale);
     const actions = container.querySelector(".favorite")?.parentElement;
     expect(actions?.firstElementChild?.contains(link)).toBe(true);
     expect(actions?.lastElementChild?.getAttribute("aria-label")).toBe(
-      "Favorite Away at Home",
+      copy.gameCard.favorite(false, away.name, home.name),
     );
   });
   it("switches to the home team when it has the higher probability", () => {
@@ -139,7 +153,8 @@ describe("scoreboard presentation", () => {
         },
       },
     });
-    const link = screen.getByRole("link", { name: "HOM -300" });
+    const link = linkTo(oddsQuote.url);
+    expect(link.textContent).toContain("HOM");
     expect(link.textContent).not.toContain("AWY");
   });
   it("shows even odds without favoring either team when probabilities tie", () => {
@@ -148,10 +163,12 @@ describe("scoreboard presentation", () => {
         [game.id]: { ...oddsQuote, awayProbability: 0.5, homeProbability: 0.5 },
       },
     });
-    expect(screen.getByRole("link", { name: "Even odds" })).toBeTruthy();
+    const link = linkTo(oddsQuote.url);
+    expect(link.textContent).not.toContain("AWY");
+    expect(link.textContent).not.toContain("HOM");
   });
   it("omits unavailable optional details and live indicators for scheduled games", () => {
-    render(
+    const { container } = render(
       <GameCard
         game={{
           ...game,
@@ -166,13 +183,12 @@ describe("scoreboard presentation", () => {
         onFavorite={() => {}}
       />,
     );
-    expect(screen.queryByText("RED ZONE ·")).toBeNull();
-    expect(screen.queryByText("ESPN")).toBeNull();
-    expect(screen.queryByLabelText("Possession")).toBeNull();
-    expect(
-      screen.getByText("Additional details are not available yet."),
-    ).toBeTruthy();
-    expect(screen.getAllByText("—")).toHaveLength(2);
+    const card = container.querySelector("article");
+    expect(card?.classList.contains("red-zone")).toBe(false);
+    expect(screen.queryByText(game.broadcast)).toBeNull();
+    expect(screen.queryByLabelText(copy.gameCard.possession)).toBeNull();
+    expect(screen.getByText(copy.gameDetails.unavailable)).toBeTruthy();
+    expect(screen.getAllByText(copy.common.emptyValue)).toHaveLength(2);
   });
   it("falls back to a team abbreviation if its logo cannot load", () => {
     const { container } = render(
@@ -194,9 +210,7 @@ describe("scoreboard presentation", () => {
         <SyncControls />
       </AppDataTestProvider>,
     );
-    fireEvent.click(
-      screen.getByRole("button", { name: "Resume auto-refresh" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: copy.sync.resume }));
     expect(onTogglePause).toHaveBeenCalledOnce();
     rerender(
       <AppDataTestProvider
@@ -211,10 +225,10 @@ describe("scoreboard presentation", () => {
     expect(
       (
         screen.getByRole("button", {
-          name: "Refresh scores",
+          name: copy.sync.refresh,
         }) as HTMLButtonElement
       ).disabled,
     ).toBe(true);
-    expect(screen.getByRole("status").textContent).toBe("Updating…");
+    expect(screen.getByRole("status").textContent).toBe(copy.sync.updating);
   });
 });

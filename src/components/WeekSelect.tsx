@@ -6,6 +6,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Week } from "../data/types";
+import { copy } from "../copy";
 
 type WeekSelectProps = {
   weeks: Week[];
@@ -45,7 +46,7 @@ export const WeekSelect = ({
   return (
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <IconButton
-        aria-label="Previous week"
+        aria-label={copy.week.previous}
         disabled={selectedIndex <= 0}
         onClick={() => onChange(weeks[selectedIndex - 1])}
       >
@@ -54,7 +55,7 @@ export const WeekSelect = ({
       <TextField
         select
         id="game-week"
-        label="Week"
+        label={copy.week.label}
         value={selectedId}
         disabled={weeks.length === 0}
         onChange={(event) => {
@@ -66,7 +67,7 @@ export const WeekSelect = ({
         {items}
       </TextField>
       <IconButton
-        aria-label="Next week"
+        aria-label={copy.week.next}
         disabled={selectedIndex < 0 || selectedIndex >= weeks.length - 1}
         onClick={() => onChange(weeks[selectedIndex + 1])}
       >

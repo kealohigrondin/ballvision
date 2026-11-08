@@ -11,6 +11,7 @@ import { useAppData } from "../context/appDataContext";
 import { TeamSchedule } from "./TeamSchedule";
 import { LeagueTable } from "./LeagueTable";
 import { TeamSchedulePicker } from "./TeamSchedulePicker";
+import { copy } from "../copy";
 
 type LeaguePanelProps = Record<string, never>;
 
@@ -25,8 +26,8 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     </option>
   ));
   const secondaryLabel = useMemo(() => {
-    if (division === "nfl") return "Division";
-    return view === "standings" ? "Conference" : "Poll";
+    if (division === "nfl") return copy.league.division;
+    return view === "standings" ? copy.league.conference : copy.league.poll;
   }, [division, view]);
 
   const content = useMemo(() => {
@@ -40,7 +41,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
           role="status"
           color="text.secondary"
         >
-          Loading league data…
+          {copy.league.loading}
         </Typography>
       );
     }
@@ -54,7 +55,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
         className="league-message"
         color="text.secondary"
       >
-        No league data is available for this division.
+        {copy.league.empty}
       </Typography>
     );
   }, [loading, selected, view]);
@@ -82,7 +83,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
         }}
         className="league-panel"
         id="league-panel"
-        aria-label="League information"
+        aria-label={copy.league.panel}
       >
         {view === "schedule" && <TeamSchedulePicker />}
         {view !== "schedule" && tables.length > 0 && (
@@ -104,12 +105,11 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
             sx={{ mb: 2 }}
             action={
               <Button color="inherit" onClick={refresh} disabled={loading}>
-                Retry
+                {copy.common.retry}
               </Button>
             }
           >
-            Unable to update league data. Any displayed records may be out of
-            date.
+            {copy.league.error}
           </Alert>
         )}
         {content}

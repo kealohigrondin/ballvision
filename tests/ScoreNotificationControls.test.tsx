@@ -1,3 +1,4 @@
+import { copy } from "../src/copy";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { ScoreNotificationControls } from "../src/components/ScoreNotificationControls";
@@ -36,9 +37,21 @@ const iconClass = (name: string) =>
     ?.getAttribute("class") ?? "";
 
 it.each([
-  [{ soundArmed: false }, "Enable chaos sounds", "lucide-bell-off"],
-  [{ soundArmed: true, muted: true }, "Unmute chaos sounds", "lucide-bell-off"],
-  [{ soundArmed: true, muted: false }, "Mute chaos sounds", "lucide-bell-ring"],
+  [
+    { soundArmed: false },
+    copy.scoreNotification.enableSound,
+    "lucide-bell-off",
+  ],
+  [
+    { soundArmed: true, muted: true },
+    copy.scoreNotification.unmuteSound,
+    "lucide-bell-off",
+  ],
+  [
+    { soundArmed: true, muted: false },
+    copy.scoreNotification.muteSound,
+    "lucide-bell-ring",
+  ],
 ])(
   "shows whether score notifications are on with a bell (%o)",
   (state, label, icon) => {

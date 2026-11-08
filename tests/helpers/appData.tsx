@@ -1,16 +1,17 @@
-import { scoreNotificationContext } from "../../src/context/scoreNotificationContext";
 import type { ReactNode } from "react";
 import { vi } from "vitest";
-import type { OddsSource, ScoreboardSource } from "../../src/data/types";
-import { appDataContext, type AppData } from "../../src/context/appDataContext";
+
+import { type AppData, appDataContext } from "../../src/context/appDataContext";
 import {
-  espnDataContext,
   type EspnData,
+  espnDataContext,
 } from "../../src/context/espnDataContext";
 import {
-  polymarketDataContext,
   type PolymarketData,
+  polymarketDataContext,
 } from "../../src/context/polymarketDataContext";
+import { scoreNotificationContext } from "../../src/context/scoreNotificationContext";
+import type { OddsSource, ScoreboardSource } from "../../src/data/types";
 
 export const emptyOddsSource: OddsSource = {
   load: vi.fn().mockResolvedValue({}),

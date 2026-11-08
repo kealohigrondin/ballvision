@@ -2,6 +2,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+
 import { getGameGridSize } from "../utils/gameGridLayout";
 
 type LoadingGridProps = { compact?: boolean };

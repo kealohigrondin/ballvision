@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+
 import type { useAppDataState } from "../hooks/useAppDataState";
 
 export type AppData = ReturnType<typeof useAppDataState>;

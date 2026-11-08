@@ -1,8 +1,8 @@
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 
 import type { Team } from "../data/types";
 import { TeamLogo } from "./TeamLogo";

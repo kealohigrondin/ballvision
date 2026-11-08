@@ -1,5 +1,6 @@
-import { useId } from "react";
 import Box from "@mui/material/Box";
+import { useId } from "react";
+
 import chalkCircleUrl from "../assets/red-chalk-circle.png";
 
 type ScoreChalkCircleProps = Record<string, never>;

@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+
 import type { usePolymarketGameState } from "../hooks/usePolymarketGameState";
 
 export type PolymarketGameData = ReturnType<typeof usePolymarketGameState>;

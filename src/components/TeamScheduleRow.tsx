@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+
 import type { TeamScheduleGame } from "../data/types";
 import { scheduleGameStatus } from "../utils/teamSchedule";
 import { TeamLogo } from "./TeamLogo";

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import type { Division, ScoreboardSource, SeasonCalendar } from "../data/types";
 
 const EMPTY: SeasonCalendar = { weeks: [] };

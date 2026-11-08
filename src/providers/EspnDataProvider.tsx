@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
+
 import { espnDataContext } from "../context/espnDataContext";
-import { useEspnDataState } from "../hooks/useEspnDataState";
 import {
-  espnSource,
   espnLeagueSource,
+  espnSource,
   espnTeamScheduleSource,
 } from "../data/espn";
 import type {
-  ScoreboardSource,
   LeagueSource,
+  ScoreboardSource,
   TeamScheduleSource,
 } from "../data/types";
+import { useEspnDataState } from "../hooks/useEspnDataState";
 
 type EspnDataProviderProps = {
   children: ReactNode;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import type { Division, LeagueSource, LeagueTable } from "../data/types";
 export type LeagueView = "standings" | "rankings" | "schedule";
 

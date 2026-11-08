@@ -1,4 +1,3 @@
-import { compactBoxScoreSx } from "../styles/boxScore";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,6 +6,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 import type { Team } from "../data/types";
+import { compactBoxScoreSx } from "../styles/boxScore";
 
 type PeriodScoresProps = { home: Team; away: Team };
 

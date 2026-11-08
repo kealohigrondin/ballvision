@@ -7,13 +7,14 @@ import {
   within,
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
-import { AppTheme } from "../src/providers/AppTheme";
-import { ScoreNotificationProvider } from "../src/providers/ScoreNotificationProvider";
+
 import { ScoreNotificationControls } from "../src/components/ScoreNotificationControls";
 import { ScoreNotificationModal } from "../src/components/ScoreNotificationModal";
+import type { Game } from "../src/data/types";
+import { AppTheme } from "../src/providers/AppTheme";
+import { ScoreNotificationProvider } from "../src/providers/ScoreNotificationProvider";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { oddsGame } from "./helpers/oddsFixture";
-import type { Game } from "../src/data/types";
 afterEach(cleanup);
 
 it("shows the real updated score, plays armed audio once, and offers immediate mute and dismissal", async () => {

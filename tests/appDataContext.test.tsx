@@ -1,4 +1,3 @@
-import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -7,14 +6,16 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import App from "../src/App";
-import { AppTheme } from "../src/providers/AppTheme";
 import type {
   Game,
   LeagueSource,
   ScoreboardSource,
   Week,
 } from "../src/data/types";
+import { AppTheme } from "../src/providers/AppTheme";
+import { emptyOddsSource } from "./helpers/appData";
 
 const week = (number: number): Week => ({
   id: `2026-2-${number}`,

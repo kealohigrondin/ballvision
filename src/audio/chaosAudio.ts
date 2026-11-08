@@ -1,11 +1,11 @@
-import airhornUrl from "./dj-airhorn-sound-effect.mp3";
-import tripleUrl from "./oh-baby-a-triple.mp3";
-import bangarangUrl from "./untitled_313.mp3";
 import anothaone from "./anothaone.mp3";
+import airhornUrl from "./dj-airhorn-sound-effect.mp3";
 import foxSports from "./fox-sports-bass-boosted-exe.mp3";
-import sixseven from "./sixseven.mp3";
-import wiiSports from "./wii_sports_sms.mp3";
+import tripleUrl from "./oh-baby-a-triple.mp3";
 import rockyTop from "./rocky-top.mp3";
+import sixseven from "./sixseven.mp3";
+import bangarangUrl from "./untitled_313.mp3";
+import wiiSports from "./wii_sports_sms.mp3";
 
 export type ScoreAlertKind =
   "score" | "fieldGoal" | "pat" | "sixSeven" | "rockyTop";

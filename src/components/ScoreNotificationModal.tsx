@@ -5,14 +5,15 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
 import { useScoreNotification } from "../context/scoreNotificationContext";
 import {
-  notificationHeadline,
   NOTIFICATION_DURATION_MS,
+  notificationHeadline,
 } from "../utils/scoreNotifications";
-import { ScoreNotificationControls } from "./ScoreNotificationControls";
-import { ScoreChalkCircle } from "./ScoreChalkCircle";
 import { ScoreAlertTime } from "./ScoreAlertTime";
+import { ScoreChalkCircle } from "./ScoreChalkCircle";
+import { ScoreNotificationControls } from "./ScoreNotificationControls";
 import { TeamLogo } from "./TeamLogo";
 
 type ScoreNotificationModalProps = Record<string, never>;

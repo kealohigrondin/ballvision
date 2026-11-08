@@ -1,16 +1,17 @@
 import { useMemo, useState } from "react";
+
 import { useAppData } from "../context/appDataContext";
 import type {
-  LeagueSource,
-  ScoreboardSource,
-  LeagueTable,
   LeagueRow,
+  LeagueSource,
+  LeagueTable,
+  ScoreboardSource,
   TeamScheduleSource,
 } from "../data/types";
-import { useTeamSchedule } from "./useTeamSchedule";
+import { type LeagueView, useLeagueTables } from "./useLeagueTables";
 import { useScoreboard } from "./useScoreboard";
 import { useSeasonCalendar } from "./useSeasonCalendar";
-import { useLeagueTables, type LeagueView } from "./useLeagueTables";
+import { useTeamSchedule } from "./useTeamSchedule";
 
 type EspnSources = {
   source: ScoreboardSource;

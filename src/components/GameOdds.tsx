@@ -1,6 +1,7 @@
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
 import { usePolymarketGame } from "../context/polymarketGameContext";
 
 type GameOddsProps = Record<string, never>;

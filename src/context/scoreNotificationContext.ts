@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+
 import type { useScoreNotificationState } from "../hooks/useScoreNotificationState";
 
 export type ScoreNotificationData = ReturnType<

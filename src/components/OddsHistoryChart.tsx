@@ -1,14 +1,15 @@
-import { usePolymarketGame } from "../context/polymarketGameContext";
-import { withLiveOdds } from "../utils/oddsHistory";
-import { useElementWidth } from "../hooks/useElementWidth";
-import { useId, useMemo, useState, type PointerEvent } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import { type PointerEvent, useId, useMemo, useState } from "react";
+
+import { usePolymarketGame } from "../context/polymarketGameContext";
 import type { OddsHistory } from "../data/types";
-import { historyAt } from "../utils/oddsHistory";
+import { useElementWidth } from "../hooks/useElementWidth";
 import { americanOdds } from "../utils/odds";
+import { withLiveOdds } from "../utils/oddsHistory";
+import { historyAt } from "../utils/oddsHistory";
 
 type OddsHistoryChartProps = Record<never, never>;
 

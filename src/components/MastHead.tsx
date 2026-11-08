@@ -1,7 +1,8 @@
-import { ScoreNotificationControls } from "./ScoreNotificationControls";
-import { Radio } from "lucide-react";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
+import { Radio } from "lucide-react";
+
+import { ScoreNotificationControls } from "./ScoreNotificationControls";
 import { SyncControls } from "./SyncControls";
 import { ThemeToggle } from "./ThemeToggle";
 

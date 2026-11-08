@@ -3,6 +3,7 @@ import tseslint from "typescript-eslint";
 import reactHooks from "eslint-plugin-react-hooks";
 import prettier from "eslint-config-prettier";
 import globals from "globals";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 import local from "./eslint-rules/index.js";
 
 export default tseslint.config(
@@ -18,9 +19,11 @@ export default tseslint.config(
       ecmaVersion: 2022,
       globals: { ...globals.browser },
     },
-    plugins: { local },
+    plugins: { local, "simple-import-sort": simpleImportSort },
     rules: {
       "local/padding-before-function": "error",
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
       "@typescript-eslint/no-explicit-any": "error",
       // Components destructure an empty props type by convention: ({}: FooProps)
       "no-empty-pattern": "off",

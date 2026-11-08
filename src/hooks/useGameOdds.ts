@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import type { GameOddsMap, OddsQuery, OddsSource } from "../data/types";
 
 export const useGameOdds = (

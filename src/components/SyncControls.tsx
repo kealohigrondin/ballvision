@@ -1,12 +1,12 @@
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
+import { useMemo } from "react";
+
+import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
 import { usePolymarketData } from "../context/polymarketDataContext";
-import { useAppData } from "../context/appDataContext";
-import { useMemo } from "react";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
 import { MastHeadIconButton } from "./MastHeadIconButton";
-
-import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
 
 type SyncControlsProps = Record<string, never>;
 

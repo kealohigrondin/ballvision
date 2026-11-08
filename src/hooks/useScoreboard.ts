@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+
 import type { Game, ScoreboardQuery, ScoreboardSource } from "../data/types";
 
 const INTERVAL = 20_000;

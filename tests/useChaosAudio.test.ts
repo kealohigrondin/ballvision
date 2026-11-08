@@ -1,5 +1,6 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+
 import { useChaosAudio } from "../src/hooks/useChaosAudio";
 
 const engine = () => ({

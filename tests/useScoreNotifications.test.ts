@@ -1,8 +1,9 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
+
 import { useScoreNotifications } from "../src/hooks/useScoreNotifications";
-import { oddsGame } from "./helpers/oddsFixture";
 import { NOTIFICATION_DURATION_MS } from "../src/utils/scoreNotifications";
+import { oddsGame } from "./helpers/oddsFixture";
 const first = { ...oddsGame, home: { ...oddsGame.home, score: "0" } };
 const scored = { ...first, home: { ...first.home, score: "7" } };
 beforeEach(() => vi.useFakeTimers());

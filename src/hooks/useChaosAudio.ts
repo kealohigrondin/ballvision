@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import {
-  createChaosAudio,
   type ChaosAudio,
+  createChaosAudio,
   type ScoreAlertKind,
 } from "../audio/chaosAudio";
 

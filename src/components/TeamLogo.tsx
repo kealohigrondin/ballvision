@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+
 import type { Team } from "../data/types";
 
 type TeamLogoProps = {

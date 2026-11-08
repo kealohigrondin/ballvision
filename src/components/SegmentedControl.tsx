@@ -1,6 +1,6 @@
+import type { SxProps, Theme } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import type { SxProps, Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
 
 type SegmentedControlProps<Value extends string> = {

@@ -1,15 +1,15 @@
-import { ScoreNotificationProvider } from "./providers/ScoreNotificationProvider";
-import { EspnDataProvider } from "./providers/EspnDataProvider";
-import { PolymarketDataProvider } from "./providers/PolymarketDataProvider";
-import { AppDataProvider } from "./providers/AppDataProvider";
 import { Dashboard } from "./components/Dashboard";
 import type {
   LeagueSource,
-  ScoreboardSource,
-  OddsSource,
   OddsHistorySource,
+  OddsSource,
+  ScoreboardSource,
   TeamScheduleSource,
 } from "./data/types";
+import { AppDataProvider } from "./providers/AppDataProvider";
+import { EspnDataProvider } from "./providers/EspnDataProvider";
+import { PolymarketDataProvider } from "./providers/PolymarketDataProvider";
+import { ScoreNotificationProvider } from "./providers/ScoreNotificationProvider";
 
 type AppProps = {
   source?: ScoreboardSource;

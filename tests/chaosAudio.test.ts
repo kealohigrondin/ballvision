@@ -1,4 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
+
 import { createChaosAudio } from "../src/audio/chaosAudio";
 
 afterEach(() => {

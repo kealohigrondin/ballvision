@@ -1,6 +1,3 @@
-import { scheduleGame } from "./helpers/scheduleFixture";
-import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
-import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -9,10 +6,10 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
 import App from "../src/App";
-import { AppTheme } from "../src/providers/AppTheme";
-import { LeaguePanel } from "../src/components/LeaguePanel";
 import { LeagueNavRail } from "../src/components/LeagueNavRail";
+import { LeaguePanel } from "../src/components/LeaguePanel";
 import { parseRankings, parseStandings } from "../src/data/espn";
 import type {
   LeagueSource,
@@ -20,6 +17,10 @@ import type {
   ScoreboardSource,
   TeamScheduleSource,
 } from "../src/data/types";
+import { AppTheme } from "../src/providers/AppTheme";
+import { emptyOddsSource } from "./helpers/appData";
+import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
+import { scheduleGame } from "./helpers/scheduleFixture";
 
 const conference: LeagueTable = {
   id: "sec",

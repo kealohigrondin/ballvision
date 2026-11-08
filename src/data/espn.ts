@@ -1,15 +1,15 @@
 import type {
   Division,
-  LeagueRow,
-  LeagueTable,
-  LeagueSource,
   Game,
   GameState,
-  TeamSchedule,
-  TeamScheduleSource,
+  LeagueRow,
+  LeagueSource,
+  LeagueTable,
   ScoreboardSource,
   SeasonCalendar,
   Team,
+  TeamSchedule,
+  TeamScheduleSource,
   Week,
 } from "./types";
 

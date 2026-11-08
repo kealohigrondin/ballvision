@@ -1,8 +1,9 @@
-import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
-import { AppTheme } from "../src/providers/AppTheme";
+
 import MastHead from "../src/components/MastHead";
+import { AppTheme } from "../src/providers/AppTheme";
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
 
 afterEach(() => {
   cleanup();

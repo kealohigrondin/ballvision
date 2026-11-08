@@ -1,7 +1,8 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { useOddsHistory } from "../src/hooks/useOddsHistory";
+
 import type { OddsHistory, OddsHistorySource } from "../src/data/types";
+import { useOddsHistory } from "../src/hooks/useOddsHistory";
 
 const query = { awayTokenId: "222", homeTokenId: "111", range: "1d" as const };
 const history: OddsHistory = {

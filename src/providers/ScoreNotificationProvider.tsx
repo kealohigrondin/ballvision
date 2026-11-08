@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import type { ChaosAudio } from "../audio/chaosAudio";
 import { scoreNotificationContext } from "../context/scoreNotificationContext";
 import { useScoreNotificationState } from "../hooks/useScoreNotificationState";

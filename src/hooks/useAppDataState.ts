@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+
+import type { Filter } from "../context/appDataTypes";
 import type { Division, Week } from "../data/types";
 import {
   loadAppPreferences,
   saveAppPreferences,
 } from "../utils/appPreferences";
-import type { Filter } from "../context/appDataTypes";
 import { useFavorites } from "./useFavorites";
 
 export type { Filter } from "../context/appDataTypes";

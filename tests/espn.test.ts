@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+
 import {
-  espnSource,
   espnLeagueSource,
+  espnSource,
   parseCalendar,
   parseScoreboard,
 } from "../src/data/espn";

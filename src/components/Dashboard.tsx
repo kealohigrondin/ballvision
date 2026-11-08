@@ -1,14 +1,15 @@
-import { ScoreNotificationModal } from "./ScoreNotificationModal";
-import { useEspnData } from "../context/espnDataContext";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import clsx from "clsx";
+
 import { useAppData } from "../context/appDataContext";
-import { GameGrid } from "./GameGrid";
+import { useEspnData } from "../context/espnDataContext";
 import { ErrorBanner } from "./ErrorBanner";
-import MastHead from "./MastHead";
-import { LeaguePanel } from "./LeaguePanel";
+import { GameGrid } from "./GameGrid";
 import { LeagueNavRail } from "./LeagueNavRail";
+import { LeaguePanel } from "./LeaguePanel";
+import MastHead from "./MastHead";
+import { ScoreNotificationModal } from "./ScoreNotificationModal";
 import { ScoresHeader } from "./ScoresHeader";
 
 type DashboardProps = Record<string, never>;

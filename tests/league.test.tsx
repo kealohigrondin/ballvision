@@ -202,6 +202,38 @@ describe("league panel", () => {
       expect(button.textContent).toBe("");
     }
   });
+  it("shows labelled destinations in a bottom navigation bar on compact windows", () => {
+    const matchMedia = vi.fn((query: string) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    vi.stubGlobal("matchMedia", matchMedia);
+
+    try {
+      render(
+        <AppTheme>
+          <LeagueTestProvider source={source()} division="fbs">
+            <LeagueNavRail />
+          </LeagueTestProvider>
+        </AppTheme>,
+      );
+      const nav = screen.getByRole("navigation", { name: copy.navRail.label });
+      expect(getComputedStyle(nav).position).toBe("fixed");
+      for (const destination of leagueNavDestinations) {
+        expect(navRailButton(destination.view).textContent).toBe(
+          destination.label,
+        );
+      }
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it("opens and closes from the navigation rail", async () => {
     const scores: ScoreboardSource = {
       load: vi.fn().mockResolvedValue([]),

@@ -37,6 +37,8 @@ export const copy = {
   gameDetails: {
     toggle: "Game details",
     chartUnavailable: "Polymarket chart unavailable for this game.",
+    oddsBlocked:
+      "Couldn't reach Polymarket. A privacy extension such as Privacy Badger may be blocking polymarket.com. Allow it for this site to see odds.",
     lastPlay: "Last play",
     unavailable: "Additional details are not available yet.",
   },

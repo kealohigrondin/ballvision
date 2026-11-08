@@ -135,3 +135,41 @@ it("renders last-play text without nesting paragraphs", () => {
   expect(screen.getByText("Pass complete for a touchdown.")).toBeTruthy();
   expect(container.querySelector("p p")).toBeNull();
 });
+
+const showWithoutOdds = (game: Game, error: boolean) =>
+  render(
+    <AppTheme>
+      <AppDataTestProvider
+        value={createAppData({ paused: true })}
+        polymarket={{ quotes: {}, error }}
+      >
+        <PolymarketGameProvider game={game}>
+          <GameDetails game={game} />
+        </PolymarketGameProvider>
+      </AppDataTestProvider>
+    </AppTheme>,
+  );
+
+it("hints that a privacy extension may be blocking Polymarket when odds fail to load", () => {
+  showWithoutOdds(oddsGame, true);
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
+  expect(screen.getByText(copy.gameDetails.oddsBlocked)).toBeTruthy();
+  expect(screen.queryByText(copy.gameDetails.chartUnavailable)).toBeNull();
+});
+
+it("keeps the plain unavailable message when no market exists or the game is final", () => {
+  showWithoutOdds(oddsGame, false);
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
+  expect(screen.getByText(copy.gameDetails.chartUnavailable)).toBeTruthy();
+  cleanup();
+  showWithoutOdds({ ...oddsGame, state: "final" }, true);
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
+  expect(screen.getByText(copy.gameDetails.chartUnavailable)).toBeTruthy();
+  expect(screen.queryByText(copy.gameDetails.oddsBlocked)).toBeNull();
+});

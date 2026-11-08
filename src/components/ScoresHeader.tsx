@@ -5,14 +5,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
-import {
-  PanelRightClose,
-  PanelRightOpen,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { SegmentedControl } from "./SegmentedControl";
 import { localDate } from "../utils/date";
 import { useAppData } from "../context/appDataContext";
@@ -29,16 +22,8 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
     setSearch: onSearch,
     filter,
     setFilter: onFilter,
-    panelOpen,
-    setPanelOpen,
   } = useAppData();
   const { counts } = useEspnData();
-  const panelLabel = panelOpen ? "Close league panel" : "Open league panel";
-  const panelIcon = panelOpen ? (
-    <PanelRightClose size={18} />
-  ) : (
-    <PanelRightOpen size={18} />
-  );
 
   const shift = (days: number) => {
     const next = new Date(`${date}T12:00:00`);
@@ -147,15 +132,6 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
               },
             }}
           />
-          <IconButton
-            onClick={() => setPanelOpen((open) => !open)}
-            aria-label={panelLabel}
-            title={panelLabel}
-            aria-expanded={panelOpen}
-            aria-controls="league-panel"
-          >
-            {panelIcon}
-          </IconButton>
         </Stack>
         <Box sx={{ overflowX: "auto", width: "100%" }}>
           <SegmentedControl

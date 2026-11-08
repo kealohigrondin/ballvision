@@ -22,7 +22,7 @@ export const TeamSchedule = ({}: TeamScheduleProps) => {
   if (!selectedTeam)
     return (
       <Typography color="text.secondary">
-        Select a team name in Standings or Top 25 to view its schedule.
+        Choose a conference and team to view its schedule.
       </Typography>
     );
 

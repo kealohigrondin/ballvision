@@ -142,11 +142,11 @@ it("shares date, division, panel visibility, and pause state across app features
       expect.any(AbortSignal),
     ),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Close league panel" }));
+  fireEvent.click(screen.getByRole("button", { name: "Standings" }));
   expect(
     screen.queryByRole("complementary", { name: "League information" }),
   ).toBeNull();
-  fireEvent.click(screen.getByRole("button", { name: "Open league panel" }));
+  fireEvent.click(screen.getByRole("button", { name: "Standings" }));
   expect(
     screen.getByRole("complementary", { name: "League information" }),
   ).toBeTruthy();

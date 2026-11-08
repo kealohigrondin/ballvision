@@ -1,0 +1,22 @@
+#!/bin/sh
+# Rejects the push if lint, typecheck or tests fail.
+# Installed by `npm install` / `npm ci` (the "prepare" script sets core.hooksPath).
+# Bypass in an emergency with: git push --no-verify
+
+set -u
+
+run() {
+  name=$1
+  shift
+  echo "pre-push: $name..."
+  if ! "$@"; then
+    echo "pre-push: $name failed. Push rejected." >&2
+    exit 1
+  fi
+}
+
+run "lint" npm run --silent lint
+run "typecheck" npm run --silent typecheck
+run "tests" npm test --silent
+
+echo "pre-push: lint, typecheck and tests passed."

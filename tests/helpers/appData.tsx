@@ -51,6 +51,9 @@ export const createEspnData = (
   schedule: {
     selectedTeam: undefined,
     selectTeam: vi.fn(),
+    conferences: [],
+    conference: undefined,
+    setConferenceId: vi.fn(),
     data: undefined,
     loading: false,
     error: false,

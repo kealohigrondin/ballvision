@@ -16,6 +16,7 @@ const MastHead = ({}: MastHeadProps) => (
       justifyContent: "space-between",
       alignItems: { xs: "start", sm: "center" },
       py: 0.5,
+      px: 0.5,
     }}
   >
     <Link

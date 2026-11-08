@@ -33,13 +33,9 @@ export const useEspnDataState = ({
       ? "standings"
       : selectedView;
   const [selectedId, setSelectedId] = useState("");
+  const [scheduleConferenceId, setScheduleConferenceId] = useState("");
   const tableView = view === "rankings" ? "rankings" : "standings";
-  const league = useLeagueTables(
-    leagueSource,
-    division,
-    tableView,
-    panelOpen && view !== "schedule",
-  );
+  const league = useLeagueTables(leagueSource, division, tableView, panelOpen);
   const schedule = useTeamSchedule(
     scheduleSource,
     division,
@@ -47,8 +43,15 @@ export const useEspnDataState = ({
   );
   const selectTeam = (team: LeagueRow) => {
     schedule.selectTeam(team);
+    setScheduleConferenceId("");
     setView("schedule");
   };
+  const scheduleConferences = tableView === "standings" ? league.tables : [];
+  const scheduleConference: LeagueTable | undefined =
+    scheduleConferences.find((table) => table.id === scheduleConferenceId) ??
+    scheduleConferences.find((table) =>
+      table.rows.some((row) => row.id === schedule.selectedTeam?.id),
+    );
   const selected: LeagueTable | undefined =
     league.tables.find((table) => table.id === selectedId) ??
     league.tables.at(0);
@@ -85,7 +88,13 @@ export const useEspnDataState = ({
     currentWeekId: calendar.currentWeekId,
     counts,
     visibleGames,
-    schedule: { ...schedule, selectTeam },
+    schedule: {
+      ...schedule,
+      selectTeam,
+      conferences: scheduleConferences,
+      conference: scheduleConference,
+      setConferenceId: setScheduleConferenceId,
+    },
     league: {
       tables: league.tables,
       loading: league.loading,

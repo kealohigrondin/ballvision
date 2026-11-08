@@ -9,6 +9,7 @@ import { GameGrid } from "./GameGrid";
 import { ErrorBanner } from "./ErrorBanner";
 import MastHead from "./MastHead";
 import { LeaguePanel } from "./LeaguePanel";
+import { LeagueNavRail } from "./LeagueNavRail";
 import { ScoresHeader } from "./ScoresHeader";
 
 type DashboardProps = Record<string, never>;
@@ -16,29 +17,46 @@ type DashboardProps = Record<string, never>;
 export const Dashboard = ({}: DashboardProps) => {
   const { panelOpen } = useAppData();
   const { error, loading, refresh } = useEspnData();
-  const columns = panelOpen
+  const layout = panelOpen
     ? {
-        xs: "minmax(0, 1fr)",
-        md: "minmax(0, 1fr) 360px",
-        lg: "minmax(0, 1fr) 380px",
+        gridTemplateColumns: {
+          xs: "72px minmax(0, 1fr)",
+          md: "80px 360px minmax(0, 1fr)",
+          lg: "80px 380px minmax(0, 1fr)",
+        },
+        gridTemplateAreas: {
+          xs: '"rail panel" "rail main"',
+          md: '"rail panel main"',
+        },
       }
-    : "minmax(0, 1fr)";
+    : {
+        gridTemplateColumns: {
+          xs: "72px minmax(0, 1fr)",
+          md: "80px minmax(0, 1fr)",
+        },
+        gridTemplateAreas: '"rail main"',
+      };
 
   return (
-    <Container maxWidth={false} className="app-shell">
-      <ScoreNotificationModal />
+    <Box sx={{ pr: 1, py: 1 }} id="root-container">
+      <ScoreCelebrationModal />
       <MastHead />
       <Box component="main">
         <Box
           className={clsx("dashboard-layout", panelOpen && "panel-open")}
           sx={{
             display: "grid",
-            gridTemplateColumns: columns,
-            gap: { xs: 2.5, lg: 3.5 },
+            ...layout,
+            gap: { xs: 1, lg: 2 },
             alignItems: "start",
           }}
         >
-          <Stack className="dashboard-main" sx={{ minWidth: 0 }}>
+          <LeagueNavRail />
+          {panelOpen && <LeaguePanel />}
+          <Stack
+            className="dashboard-main"
+            sx={{ gridArea: "main", minWidth: 0 }}
+          >
             <ScoresHeader />
             {error && (
               <ErrorBanner
@@ -49,9 +67,8 @@ export const Dashboard = ({}: DashboardProps) => {
             )}
             <GameGrid />
           </Stack>
-          {panelOpen && <LeaguePanel />}
         </Box>
       </Box>
-    </Container>
+    </Box>
   );
 };

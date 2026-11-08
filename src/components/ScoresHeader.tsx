@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
-import { PanelRightClose, PanelRightOpen, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { SegmentedControl } from "./SegmentedControl";
 import { WeekSelect } from "./WeekSelect";
 import { useAppData } from "../context/appDataContext";
@@ -22,16 +22,8 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
     setSearch: onSearch,
     filter,
     setFilter: onFilter,
-    panelOpen,
-    setPanelOpen,
   } = useAppData();
   const { counts, weeks, currentWeekId } = useEspnData();
-  const panelLabel = panelOpen ? "Close league panel" : "Open league panel";
-  const panelIcon = panelOpen ? (
-    <PanelRightClose size={18} />
-  ) : (
-    <PanelRightOpen size={18} />
-  );
 
   const filterOptions = (
     ["all", "live", "upcoming", "final", "pinned"] as const
@@ -116,15 +108,6 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
               },
             }}
           />
-          <IconButton
-            onClick={() => setPanelOpen((open) => !open)}
-            aria-label={panelLabel}
-            title={panelLabel}
-            aria-expanded={panelOpen}
-            aria-controls="league-panel"
-          >
-            {panelIcon}
-          </IconButton>
         </Stack>
         <Box sx={{ overflowX: "auto", width: "100%" }}>
           <SegmentedControl

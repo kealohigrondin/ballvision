@@ -2,21 +2,15 @@ import { screen } from "@testing-library/react";
 import { leagueNavDestinations } from "../../src/components/LeagueNavRail";
 import type { LeagueView } from "../../src/hooks/useLeagueTables";
 
-// Locate UI by structure rather than display copy so wording changes in the
-// app do not break tests.
+// Locate UI through the app's own copy constants and structure rather than
+// hardcoded display text, so wording changes in the app do not break tests.
 
 export const navRailButton = (view: LeagueView) => {
-  const buttons = screen
-    .getAllByRole("button")
-    .filter(
-      (button) => button.getAttribute("aria-controls") === "league-panel",
-    );
-  const index = leagueNavDestinations.findIndex(
-    (destination) => destination.view === view,
+  const destination = leagueNavDestinations.find(
+    (candidate) => candidate.view === view,
   );
-  const button = buttons[index];
-  if (!button) throw new Error(`No nav rail button for ${view}`);
-  return button;
+  if (!destination) throw new Error(`No nav rail destination for ${view}`);
+  return screen.getByRole("button", { name: destination.label });
 };
 
 export const linkTo = (href: string) => {

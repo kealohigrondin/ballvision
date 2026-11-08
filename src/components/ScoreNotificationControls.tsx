@@ -2,6 +2,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { BellOff, BellRing, Flame } from "lucide-react";
 import { useScoreNotification } from "../context/scoreNotificationContext";
 import { MastHeadIconButton } from "./MastHeadIconButton";
+import { copy } from "../copy";
 
 type ScoreNotificationControlsProps = Record<string, never>;
 export const ScoreNotificationControls =
@@ -16,9 +17,11 @@ export const ScoreNotificationControls =
       audioUnavailable,
     } = useScoreNotification();
     const enableLabel = audioUnavailable
-      ? "Retry chaos sounds"
-      : "Enable chaos sounds";
-    const soundLabel = muted ? "Unmute chaos sounds" : "Mute chaos sounds";
+      ? copy.scoreNotification.retrySound
+      : copy.scoreNotification.enableSound;
+    const soundLabel = muted
+      ? copy.scoreNotification.unmuteSound
+      : copy.scoreNotification.muteSound;
     return (
       <>
         {soundArmed ? (
@@ -36,7 +39,7 @@ export const ScoreNotificationControls =
         )}
         <MastHeadIconButton
           icon={Flame}
-          label="Test score notification"
+          label={copy.scoreNotification.test}
           onClick={preview}
           disabled={!previewAvailable}
         />

@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
+import { copy } from "../copy";
 
 type TeamSchedulePickerProps = Record<string, never>;
 
@@ -16,7 +17,8 @@ export const TeamSchedulePicker = ({}: TeamSchedulePickerProps) => {
       selectTeam,
     },
   } = useEspnData();
-  const groupLabel = division === "nfl" ? "Division" : "Conference";
+  const groupLabel =
+    division === "nfl" ? copy.league.division : copy.league.conference;
   const teams = conference?.rows ?? [];
   const teamId = teams.some((team) => team.id === selectedTeam?.id)
     ? (selectedTeam?.id ?? "")
@@ -54,7 +56,7 @@ export const TeamSchedulePicker = ({}: TeamSchedulePickerProps) => {
       <TextField
         select
         fullWidth
-        label="Team"
+        label={copy.schedule.team}
         value={teamId}
         disabled={teams.length === 0}
         onChange={(e) => {
@@ -67,7 +69,7 @@ export const TeamSchedulePicker = ({}: TeamSchedulePickerProps) => {
         slotProps={{ select: { native: true }, inputLabel: { shrink: true } }}
       >
         <option value="" disabled>
-          Select a team
+          {copy.schedule.selectTeam}
         </option>
         {teamOptions}
       </TextField>

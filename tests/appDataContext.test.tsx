@@ -1,3 +1,4 @@
+import { copy } from "../src/copy";
 import { linkTo, navRailButton } from "./helpers/queries";
 import { emptyOddsSource } from "./helpers/appData";
 import {
@@ -61,6 +62,11 @@ const game = (id: string, state: Game["state"]): Game => ({
   redZone: false,
 });
 
+const scoreTable = (id: string) =>
+  copy.gameCard.scoresByPeriod(`${id} Away`, `${id} Home`);
+const favoriteButton = (favorite: boolean, id: string) =>
+  copy.gameCard.favorite(favorite, `${id} Away`, `${id} Home`);
+
 afterEach(() => {
   cleanup();
   localStorage.removeItem("ballvision:app-data:v1");
@@ -88,41 +94,54 @@ it("shares search, filters, and favorites between the header and game grid", asy
     </AppTheme>,
   );
   await screen.findByRole("table", {
-    name: "Live Away at Live Home scores by period",
+    name: scoreTable("Live"),
   });
-  fireEvent.change(screen.getByRole("textbox", { name: "Search teams" }), {
-    target: { value: "Later" },
-  });
+  fireEvent.change(
+    screen.getByRole("textbox", { name: copy.scoresHeader.search }),
+    {
+      target: { value: "Later" },
+    },
+  );
   expect(
     screen.queryByRole("table", {
-      name: "Live Away at Live Home scores by period",
+      name: scoreTable("Live"),
     }),
   ).toBeNull();
   expect(
     screen.getByRole("table", {
-      name: "Later Away at Later Home scores by period",
+      name: scoreTable("Later"),
     }),
   ).toBeTruthy();
-  fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
-  fireEvent.click(screen.getByRole("button", { name: "Upcoming 1" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.scoresHeader.clearSearch }),
+  );
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: `${copy.scoresHeader.filters.upcoming} 1`,
+    }),
+  );
   expect(
     screen.queryByRole("table", {
-      name: "Live Away at Live Home scores by period",
+      name: scoreTable("Live"),
     }),
   ).toBeNull();
   fireEvent.click(
-    screen.getByRole("button", { name: "Favorite Later Away at Later Home" }),
+    screen.getByRole("button", { name: favoriteButton(false, "Later") }),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Pinned 1" }));
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: `${copy.scoresHeader.filters.pinned} 1`,
+    }),
+  );
   expect(
     screen.getByRole("table", {
-      name: "Later Away at Later Home scores by period",
+      name: scoreTable("Later"),
     }),
   ).toBeTruthy();
   fireEvent.click(
-    screen.getByRole("button", { name: "Unfavorite Later Away at Later Home" }),
+    screen.getByRole("button", { name: favoriteButton(true, "Later") }),
   );
-  expect(screen.getByText("Your watchlist starts here.")).toBeTruthy();
+  expect(screen.getByText(copy.grid.watchlistEmpty)).toBeTruthy();
 });
 
 it("shares week, division, panel visibility, and pause state across app features", async () => {
@@ -150,31 +169,39 @@ it("shares week, division, panel visibility, and pause state across app features
       />
     </AppTheme>,
   );
-  await screen.findByText("No games on this field.");
+  await screen.findByText(copy.grid.noGames);
   await lastQuery({ week: null, division: "fbs" });
-  const weekSelect = await screen.findByRole("combobox", { name: "Week" });
-  await waitFor(() => expect(weekSelect.textContent).toBe("Week 1"));
+  const weekSelect = await screen.findByRole("combobox", {
+    name: copy.week.label,
+  });
+  await waitFor(() => expect(weekSelect.textContent).toBe(week(1).label));
   fireEvent.mouseDown(weekSelect);
-  fireEvent.click(await screen.findByRole("option", { name: "Week 0" }));
+  fireEvent.click(await screen.findByRole("option", { name: week(0).label }));
   await lastQuery({ week: week(0), division: "fbs" });
   expect(
     screen
-      .getByRole("button", { name: "Previous week" })
+      .getByRole("button", { name: copy.week.previous })
       .hasAttribute("disabled"),
   ).toBe(true);
-  fireEvent.click(screen.getByRole("button", { name: "Next week" }));
+  fireEvent.click(screen.getByRole("button", { name: copy.week.next }));
   await lastQuery({ week: week(1), division: "fbs" });
-  fireEvent.click(screen.getByRole("button", { name: /^FCS$/ }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.scoresHeader.divisions.fcs }),
+  );
   await lastQuery({ week: week(1), division: "fcs" });
-  fireEvent.click(screen.getByRole("button", { name: /^NFL$/ }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.scoresHeader.divisions.nfl }),
+  );
   await lastQuery({ week: null, division: "nfl" });
   expect(source.loadCalendar).toHaveBeenLastCalledWith(
     "nfl",
     expect.any(AbortSignal),
   );
-  fireEvent.click(screen.getByRole("button", { name: "Next week" }));
+  fireEvent.click(screen.getByRole("button", { name: copy.week.next }));
   await lastQuery({ week: week(2), division: "nfl" });
-  fireEvent.click(screen.getByRole("button", { name: "This week" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.scoresHeader.thisWeek }),
+  );
   await lastQuery({ week: null, division: "nfl" });
   await waitFor(() =>
     expect(leagueSource.loadStandings).toHaveBeenLastCalledWith(
@@ -184,18 +211,16 @@ it("shares week, division, panel visibility, and pause state across app features
   );
   fireEvent.click(navRailButton("standings"));
   expect(
-    screen.queryByRole("complementary", { name: "League information" }),
+    screen.queryByRole("complementary", { name: copy.league.panel }),
   ).toBeNull();
   fireEvent.click(navRailButton("standings"));
   expect(
-    screen.getByRole("complementary", { name: "League information" }),
+    screen.getByRole("complementary", { name: copy.league.panel }),
   ).toBeTruthy();
-  fireEvent.click(screen.getByRole("button", { name: "Pause auto-refresh" }));
-  await screen.findByText("Auto-refresh paused");
-  fireEvent.click(screen.getByRole("button", { name: "Resume auto-refresh" }));
-  expect(
-    screen.getByRole("button", { name: "Pause auto-refresh" }),
-  ).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: copy.sync.pause }));
+  await screen.findByText(copy.sync.paused);
+  fireEvent.click(screen.getByRole("button", { name: copy.sync.resume }));
+  expect(screen.getByRole("button", { name: copy.sync.pause })).toBeTruthy();
 });
 
 it("shares injected ESPN and Polymarket data with nested odds views and refreshes both providers", async () => {
@@ -227,9 +252,11 @@ it("shares injected ESPN and Polymarket data with nested odds views and refreshe
     expect(linkTo(oddsQuote.url).textContent).toContain("AWY"),
   );
   expect(loadHistory).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole("button", { name: "Game details" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
   await screen.findByRole("img", {
-    name: "Polymarket implied win probability history for AWY and HOM",
+    name: copy.oddsHistory.chart("AWY", "HOM"),
   });
   expect(loadHistory).toHaveBeenCalledWith(
     { awayTokenId: "222", homeTokenId: "111", range: "1h" },
@@ -237,7 +264,7 @@ it("shares injected ESPN and Polymarket data with nested odds views and refreshe
   );
   const scoreCalls = vi.mocked(source.load).mock.calls.length;
   const oddsCalls = loadOdds.mock.calls.length;
-  fireEvent.click(screen.getByRole("button", { name: "Refresh scores" }));
+  fireEvent.click(screen.getByRole("button", { name: copy.sync.refresh }));
   await waitFor(() => {
     expect(vi.mocked(source.load).mock.calls.length).toBeGreaterThan(
       scoreCalls,

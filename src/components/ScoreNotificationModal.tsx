@@ -14,6 +14,7 @@ import { ScoreNotificationControls } from "./ScoreNotificationControls";
 import { ScoreChalkCircle } from "./ScoreChalkCircle";
 import { ScoreAlertTime } from "./ScoreAlertTime";
 import { TeamLogo } from "./TeamLogo";
+import { copy } from "../copy";
 
 type ScoreNotificationModalProps = Record<string, never>;
 export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
@@ -121,7 +122,9 @@ export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
         }}
       >
         <ScoreNotificationControls />
-        <Button onClick={dismissAll}>I have seen enough</Button>
+        <Button onClick={dismissAll}>
+          {copy.scoreNotification.dismissAll}
+        </Button>
         <Button variant="contained" onClick={dismiss}>
           LET ME WATCH 😭
         </Button>

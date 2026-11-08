@@ -1,3 +1,4 @@
+import { copy } from "../src/copy";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
@@ -18,11 +19,11 @@ it("renders every masthead button as an icon button the size of the pause button
   const header = screen.getByRole("banner");
   const buttons = within(header).getAllByRole("button");
   expect(buttons.map((button) => button.getAttribute("aria-label"))).toEqual([
-    "Pause auto-refresh",
-    "Refresh scores",
-    "Enable chaos sounds",
-    "Test score notification",
-    "Switch to light mode",
+    copy.sync.pause,
+    copy.sync.refresh,
+    copy.scoreNotification.enableSound,
+    copy.scoreNotification.test,
+    copy.theme.toLight,
   ]);
   for (const button of buttons) {
     expect(button.textContent).toBe("");

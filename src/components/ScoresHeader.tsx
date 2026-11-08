@@ -9,6 +9,7 @@ import { Search, X } from "lucide-react";
 import { SegmentedControl } from "./SegmentedControl";
 import { WeekSelect } from "./WeekSelect";
 import { useAppData } from "../context/appDataContext";
+import { copy } from "../copy";
 
 type ScoresHeaderProps = Record<string, never>;
 
@@ -28,13 +29,7 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
   const filterOptions = (
     ["all", "live", "upcoming", "final", "pinned"] as const
   ).map((f) => {
-    const label = {
-      all: "All games",
-      live: "Live now",
-      upcoming: "Upcoming",
-      final: "Final",
-      pinned: "Pinned",
-    }[f];
+    const label = copy.scoresHeader.filters[f];
     return {
       value: f,
       label: (
@@ -71,20 +66,20 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
             onChange={setWeek}
           />
           <Button onClick={() => setWeek(null)} disabled={week === null}>
-            This week
+            {copy.scoresHeader.thisWeek}
           </Button>
           <SegmentedControl
-            label="Division"
+            label={copy.scoresHeader.division}
             value={division}
             options={(["fbs", "fcs", "nfl"] as const).map((value) => ({
               value,
-              label: value.toUpperCase(),
+              label: copy.scoresHeader.divisions[value],
             }))}
             onChange={onDivision}
           />
           <TextField
-            label="Search teams"
-            placeholder="Find your team…"
+            label={copy.scoresHeader.search}
+            placeholder={copy.scoresHeader.searchPlaceholder}
             value={search}
             onChange={(e) => onSearch(e.target.value)}
             sx={{ ml: { sm: "auto" }, width: { xs: "100%", sm: "auto" } }}
@@ -98,7 +93,7 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
                 endAdornment: search && (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="Clear search"
+                      aria-label={copy.scoresHeader.clearSearch}
                       onClick={() => onSearch("")}
                     >
                       <X />
@@ -112,7 +107,7 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
         <Box sx={{ overflowX: "auto", width: "100%" }}>
           <SegmentedControl
             fullWidth
-            label="Filter games"
+            label={copy.scoresHeader.filter}
             value={filter}
             options={filterOptions}
             onChange={onFilter}

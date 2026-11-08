@@ -5,19 +5,19 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useScoreCelebration } from "../context/scoreCelebrationContext";
+import { useScoreNotification } from "../context/scoreNotificationContext";
 import {
-  celebrationHeadline,
-  CELEBRATION_DURATION_MS,
-} from "../utils/scoreCelebrations";
-import { CelebrationControls } from "./CelebrationControls";
+  notificationHeadline,
+  NOTIFICATION_DURATION_MS,
+} from "../utils/scoreNotifications";
+import { ScoreNotificationControls } from "./ScoreNotificationControls";
 import { ScoreChalkCircle } from "./ScoreChalkCircle";
 import { ScoreAlertTime } from "./ScoreAlertTime";
 import { TeamLogo } from "./TeamLogo";
 
-type ScoreCelebrationModalProps = Record<string, never>;
-export const ScoreCelebrationModal = ({}: ScoreCelebrationModalProps) => {
-  const { current, pending, dismiss, dismissAll } = useScoreCelebration();
+type ScoreNotificationModalProps = Record<string, never>;
+export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
+  const { current, pending, dismiss, dismissAll } = useScoreNotification();
   if (!current) return null;
 
   const teams = [current.game.away, current.game.home].map((team) => {
@@ -92,7 +92,7 @@ export const ScoreCelebrationModal = ({}: ScoreCelebrationModalProps) => {
             fontWeight: "fontWeightBold",
           }}
         >
-          {celebrationHeadline(current)}
+          {notificationHeadline(current)}
         </Typography>
         <Stack direction="row" spacing={2} sx={{ alignItems: "center", my: 3 }}>
           {teams[0]}
@@ -106,8 +106,8 @@ export const ScoreCelebrationModal = ({}: ScoreCelebrationModalProps) => {
         >
           {current.game.away.abbreviation} {current.game.away.score} —{" "}
           {current.game.home.abbreviation} {current.game.home.score}. {pending}{" "}
-          more score celebrations queued. Auto-dismisses after{" "}
-          {CELEBRATION_DURATION_MS / 1000} seconds.
+          more score notifications queued. Auto-dismisses after{" "}
+          {NOTIFICATION_DURATION_MS / 1000} seconds.
         </Typography>
       </DialogContent>
       <DialogActions
@@ -120,7 +120,7 @@ export const ScoreCelebrationModal = ({}: ScoreCelebrationModalProps) => {
           pb: 2,
         }}
       >
-        <CelebrationControls />
+        <ScoreNotificationControls />
         <Button onClick={dismissAll}>I have seen enough</Button>
         <Button variant="contained" onClick={dismiss}>
           LET ME WATCH 😭

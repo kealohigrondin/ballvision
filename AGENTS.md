@@ -22,3 +22,5 @@
 - use prettier formatting in all files
 - for variables that need more than one inline if statement to determine its value, use usememo to determine value
 - for api calls, prefer storing the data in context and access via providers rather than prop drilling
+- After opening a pull request, subscribe to its activity so review comments and CI failures get addressed.
+- prefer optional props to `type | null` props

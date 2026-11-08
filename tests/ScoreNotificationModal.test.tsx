@@ -8,9 +8,9 @@ import {
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { AppTheme } from "../src/providers/AppTheme";
-import { ScoreCelebrationProvider } from "../src/providers/ScoreCelebrationProvider";
-import { CelebrationControls } from "../src/components/CelebrationControls";
-import { ScoreCelebrationModal } from "../src/components/ScoreCelebrationModal";
+import { ScoreNotificationProvider } from "../src/providers/ScoreNotificationProvider";
+import { ScoreNotificationControls } from "../src/components/ScoreNotificationControls";
+import { ScoreNotificationModal } from "../src/components/ScoreNotificationModal";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { oddsGame } from "./helpers/oddsFixture";
 import type { Game } from "../src/data/types";
@@ -34,10 +34,10 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
         value={createAppData({ favoriteIds: [first.id] })}
         espn={{ games }}
       >
-        <ScoreCelebrationProvider audioFactory={() => audio}>
-          <CelebrationControls />
-          <ScoreCelebrationModal />
-        </ScoreCelebrationProvider>
+        <ScoreNotificationProvider audioFactory={() => audio}>
+          <ScoreNotificationControls />
+          <ScoreNotificationModal />
+        </ScoreNotificationProvider>
       </AppDataTestProvider>
     </AppTheme>
   );

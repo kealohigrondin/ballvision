@@ -1,4 +1,4 @@
-import { ScoreCelebrationProvider } from "./providers/ScoreCelebrationProvider";
+import { ScoreNotificationProvider } from "./providers/ScoreNotificationProvider";
 import { EspnDataProvider } from "./providers/EspnDataProvider";
 import { PolymarketDataProvider } from "./providers/PolymarketDataProvider";
 import { AppDataProvider } from "./providers/AppDataProvider";
@@ -36,9 +36,9 @@ const App = ({
         source={oddsSource}
         historySource={oddsHistorySource}
       >
-        <ScoreCelebrationProvider>
+        <ScoreNotificationProvider>
           <Dashboard />
-        </ScoreCelebrationProvider>
+        </ScoreNotificationProvider>
       </PolymarketDataProvider>
     </EspnDataProvider>
   </AppDataProvider>

@@ -1,4 +1,4 @@
-import { ScoreCelebrationModal } from "./ScoreCelebrationModal";
+import { ScoreNotificationModal } from "./ScoreNotificationModal";
 import { useEspnData } from "../context/espnDataContext";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";

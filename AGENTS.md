@@ -1,6 +1,7 @@
 # Repository standards
 
 ## Code standards
+
 - Use React with strict TypeScript; avoid `any`.
 - prefer const arrow functions over function declarations
 - Keep JSX conditional rendering to one layer; do not nest render conditions.
@@ -21,16 +22,19 @@
 - use prettier formatting in all files
 
 ## Styling
+
 - Use MUI components, theming, and styling.
 - For new UI components, follow [material design 3](https://m3.material.io/components) unless specified otherwise
 
 ## Data
+
 - Keep ESPN-specific logic in src/data/espn.ts.
 - Keep network and refresh logic out of UI components.
 - Add meaningful tests for behavior changes and bug fixes.
 - for api calls, prefer storing the data in context and access via providers rather than prop drilling
 
 ## CI
+
 - Run npm test and npm run build before completing changes.
 - For UI changes, also run `npm run test:e2e`, add or update Playwright specs in `e2e/` when user-visible behavior changes, and run `npm run screenshots` to check the result visually. Extend `e2e/screenshots.spec.ts` when a change is not visible in the existing shots. CI posts these screenshots to the PR automatically.
 - After opening a pull request, subscribe to its activity so review comments and CI failures get addressed.

@@ -179,7 +179,10 @@ describe("league panel", () => {
     );
   });
   it("opens and closes using the masthead button", async () => {
-    const scores: ScoreboardSource = { load: vi.fn().mockResolvedValue([]) };
+    const scores: ScoreboardSource = {
+      load: vi.fn().mockResolvedValue([]),
+      loadCalendar: vi.fn().mockResolvedValue({ weeks: [] }),
+    };
     render(
       <AppTheme>
         <App

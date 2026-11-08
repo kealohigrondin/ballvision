@@ -38,7 +38,7 @@ export const GameGrid = ({}: GameGridProps) => {
     if (pinnedOnly) {
       return "Use the star on a game to pin it to the top of your scoreboard.";
     }
-    return "Try another date, division, or filter.";
+    return "Try another week, division, or filter.";
   }, [hasError, hasLoaded, pinnedOnly]);
 
   if (loading && !hasLoaded) return <LoadingGrid compact={compact} />;

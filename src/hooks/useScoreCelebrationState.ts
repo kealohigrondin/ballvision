@@ -7,11 +7,11 @@ import { useChaosAudio } from "./useChaosAudio";
 import type { ChaosAudio } from "../audio/chaosAudio";
 
 export const useScoreCelebrationState = (audioFactory?: () => ChaosAudio) => {
-  const { date, division, favoriteIds } = useAppData();
+  const { week, division, favoriteIds } = useAppData();
   const { games, updatedAt, error } = useEspnData();
   const events = useScoreCelebrations(
     games,
-    `${division}:${date}`,
+    `${division}:${week?.id ?? "current"}`,
     updatedAt !== null && !error,
     favoriteIds,
   );

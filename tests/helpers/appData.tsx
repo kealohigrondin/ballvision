@@ -17,12 +17,13 @@ export const emptyOddsSource: OddsSource = {
 };
 export const emptyScoreboardSource: ScoreboardSource = {
   load: vi.fn().mockResolvedValue([]),
+  loadCalendar: vi.fn().mockResolvedValue({ weeks: [] }),
 };
 export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   panelOpen: true,
   setPanelOpen: vi.fn(),
-  date: "2026-11-07",
-  setDate: vi.fn(),
+  week: null,
+  setWeek: vi.fn(),
   division: "fbs",
   setDivision: vi.fn(),
   filter: "all",
@@ -44,6 +45,8 @@ export const createEspnData = (
   error: null,
   updatedAt: new Date(),
   refresh: vi.fn(),
+  weeks: [],
+  currentWeekId: undefined,
   counts: { all: 0, live: 0, upcoming: 0, final: 0, pinned: 0 },
   schedule: {
     selectedTeam: undefined,

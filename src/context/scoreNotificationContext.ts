@@ -11,9 +11,11 @@ export const scoreNotificationContext = createContext<
 
 export const useScoreNotification = () => {
   const context = useContext(scoreNotificationContext);
-  if (!context)
+  if (!context) {
     throw new Error(
       "useScoreNotification must be used within ScoreNotificationProvider.",
     );
+  }
+
   return context;
 };

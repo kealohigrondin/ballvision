@@ -25,14 +25,18 @@ export const useScoreboard = (
     updatedAt: null,
   });
   const [revision, setRevision] = useState(0);
+
   const refresh = useCallback(() => setRevision((r) => r + 1), []);
+
   useEffect(() => {
     let disposed = false,
       active: AbortController | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     const update = async () => {
-      if (disposed || active) return;
+      if (disposed || active) {
+        return;
+      }
       const request = new AbortController();
       active = request;
       const timeout = setTimeout(() => request.abort(), 15_000);
@@ -47,9 +51,10 @@ export const useScoreboard = (
               updatedAt: null,
             },
       );
+
       try {
         const games = await source.load(query, request.signal);
-        if (!disposed)
+        if (!disposed) {
           setState({
             key: queryKey,
             games,
@@ -57,27 +62,33 @@ export const useScoreboard = (
             updatedAt: new Date(),
             error: null,
           });
+        }
       } catch {
-        if (!disposed)
+        if (!disposed) {
           setState((s) => ({
             ...s,
             loading: false,
             error: "Unable to reach ESPN. Scores shown may be out of date.",
           }));
+        }
       } finally {
         clearTimeout(timeout);
         active = undefined;
-        if (!disposed && !paused && !document.hidden)
+        if (!disposed && !paused && !document.hidden) {
           timer = setTimeout(update, INTERVAL);
+        }
       }
     };
 
     const visibility = () => {
       clearTimeout(timer);
-      if (!document.hidden && !paused) void update();
+      if (!document.hidden && !paused) {
+        void update();
+      }
     };
     document.addEventListener("visibilitychange", visibility);
     void update();
+
     return () => {
       disposed = true;
       clearTimeout(timer);
@@ -85,6 +96,7 @@ export const useScoreboard = (
       document.removeEventListener("visibilitychange", visibility);
     };
   }, [source, weekId, query.division, paused, revision]);
+
   // Clear the previous query immediately: a different week's scores must never
   // appear under a new week while its request is in flight.
   return {

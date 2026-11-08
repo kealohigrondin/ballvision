@@ -22,6 +22,7 @@ export const PolymarketDataProvider = ({
   const { division, paused } = useAppData();
   const { games } = useEspnData();
   const odds = useGameOdds(source, { games, division }, paused);
+
   return (
     <polymarketDataContext.Provider value={{ ...odds, historySource }}>
       {children}

@@ -27,6 +27,7 @@ export const EspnDataProvider = ({
   scheduleSource = espnTeamScheduleSource,
 }: EspnDataProviderProps) => {
   const value = useEspnDataState({ source, leagueSource, scheduleSource });
+
   return (
     <espnDataContext.Provider value={value}>
       {children}

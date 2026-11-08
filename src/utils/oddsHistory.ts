@@ -6,12 +6,16 @@ export const withLiveOdds = (
 ): OddsHistory => {
   const append = (points: OddsHistoryPoint[], probability: number) => {
     const last = points.at(-1);
-    if (last && quote.updatedAt < last.timestamp) return points;
+    if (last && quote.updatedAt < last.timestamp) {
+      return points;
+    }
+
     return [
       ...points.filter((point) => point.timestamp !== quote.updatedAt),
       { timestamp: quote.updatedAt, probability },
     ];
   };
+
   return {
     away: append(history.away, quote.awayProbability),
     home: append(history.home, quote.homeProbability),
@@ -24,8 +28,11 @@ export const historyAt = (
 ) => {
   let value: number | undefined;
   for (const point of points) {
-    if (point.timestamp > timestamp) break;
+    if (point.timestamp > timestamp) {
+      break;
+    }
     value = point.probability;
   }
+
   return value;
 };

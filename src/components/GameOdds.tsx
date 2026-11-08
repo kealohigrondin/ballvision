@@ -15,6 +15,7 @@ export const GameOdds = ({}: GameOddsProps) => {
     const detail = stale
       ? "Odds are temporarily unavailable."
       : "No matching open moneyline market is available.";
+
     return (
       <Typography color="text.secondary" title={detail}>
         {label}
@@ -30,6 +31,7 @@ export const GameOdds = ({}: GameOddsProps) => {
   const status = stale ? " · stale" : "";
   const updated = new Date(quote.updatedAt).toLocaleTimeString();
   const description = `Polymarket moneyline, derived from market midpoint prices. ${away}: ${(quote.awayProbability * 100).toFixed(1)}% implied probability. ${home}: ${(quote.homeProbability * 100).toFixed(1)}%. Updated ${updated}${status}.`;
+
   return (
     <Stack sx={{ textAlign: "right", minWidth: 0 }} title={description}>
       <Link href={quote.url} target="_blank" rel="noopener noreferrer">

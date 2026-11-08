@@ -8,13 +8,21 @@ export const scheduleGameStatus = (game: TeamScheduleGame, teamId: string) => {
   if (game.state === "final") {
     const ownScore = Number(own.score);
     const otherScore = Number(opponent.score);
-    if (!Number.isFinite(ownScore) || !Number.isFinite(otherScore))
+    if (!Number.isFinite(ownScore) || !Number.isFinite(otherScore)) {
       return game.status;
-    if (ownScore === otherScore) return `T ${score}`;
+    }
+    if (ownScore === otherScore) {
+      return `T ${score}`;
+    }
+
     return `${ownScore > otherScore ? "W" : "L"} ${score}`;
   }
-  if (game.state === "live") return `${gameTime(game)} · ${score}`;
-  if (game.state === "upcoming")
+  if (game.state === "live") {
+    return `${gameTime(game)} · ${score}`;
+  }
+  if (game.state === "upcoming") {
     return game.timeConfirmed ? kickoff(game.start) : "Time TBD";
+  }
+
   return game.status;
 };

@@ -18,6 +18,7 @@ export const useScoreNotificationState = (audioFactory?: () => ChaosAudio) => {
   );
   const audio = useChaosAudio(audioFactory);
   const played = useRef<string | undefined>(undefined);
+
   useEffect(() => {
     const event = events.current;
     const id = event?.id;
@@ -25,8 +26,10 @@ export const useScoreNotificationState = (audioFactory?: () => ChaosAudio) => {
       played.current = id;
       audio.play(notificationSoundKind(event));
     }
+
     return audio.stop;
   }, [events.current?.id, audio.play, audio.stop]);
+
   return {
     ...events,
     soundArmed: audio.armed,

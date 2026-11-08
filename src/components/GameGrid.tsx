@@ -29,6 +29,7 @@ export const GameGrid = ({}: GameGridProps) => {
     if (pinnedOnly) {
       return "Your watchlist starts here.";
     }
+
     return "No games on this field.";
   }, [hasError, hasLoaded, pinnedOnly]);
 
@@ -39,12 +40,16 @@ export const GameGrid = ({}: GameGridProps) => {
     if (pinnedOnly) {
       return "Use the star on a game to pin it to the top of your scoreboard.";
     }
+
     return "Try another week, division, or filter.";
   }, [hasError, hasLoaded, pinnedOnly]);
 
-  if (loading && !hasLoaded) return <LoadingGrid compact={compact} />;
-  if (!games.length)
+  if (loading && !hasLoaded) {
+    return <LoadingGrid compact={compact} />;
+  }
+  if (!games.length) {
     return <EmptyState title={emptyTitle} detail={emptyDetail} />;
+  }
 
   const size = getGameGridSize(compact);
   const cards = games.map((game) => (

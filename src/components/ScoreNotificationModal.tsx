@@ -20,12 +20,15 @@ type ScoreNotificationModalProps = Record<string, never>;
 
 export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
   const { current, pending, dismiss, dismissAll } = useScoreNotification();
-  if (!current) return null;
+  if (!current) {
+    return null;
+  }
 
   const teams = [current.game.away, current.game.home].map((team) => {
     const scoring = current.scoringTeamIds.includes(team.id);
     const scoreColor = scoring ? "warning.main" : "text.primary";
     const scoreWeight = scoring ? "fontWeightBold" : "fontWeightRegular";
+
     return (
       <Stack
         key={team.id}
@@ -53,6 +56,7 @@ export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
       </Stack>
     );
   });
+
   return (
     <Dialog
       open

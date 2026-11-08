@@ -72,6 +72,7 @@ export const useEspnDataState = ({
 
   const visibleGames = useMemo(() => {
     const pinned = (id: string) => favoriteIds.includes(id);
+
     return games
       .filter(
         (game) =>
@@ -83,6 +84,7 @@ export const useEspnDataState = ({
       )
       .sort((a, b) => Number(pinned(b.id)) - Number(pinned(a.id)));
   }, [games, filter, search, favoriteIds]);
+
   return {
     games: scoreboard.games,
     loading: scoreboard.loading,

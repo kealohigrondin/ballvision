@@ -7,6 +7,7 @@ type ScoreChalkCircleProps = Record<string, never>;
 
 export const ScoreChalkCircle = ({}: ScoreChalkCircleProps) => {
   const filterId = `score-chalk-${useId().replace(/:/g, "")}`;
+
   return (
     <Box
       aria-hidden="true"

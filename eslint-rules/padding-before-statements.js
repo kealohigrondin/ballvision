@@ -1,7 +1,8 @@
 /**
  * Require a blank line before function declarations, function-valued
- * variable declarations (arrow or function expressions), and useMemo
- * declarations. The first statement in a block is exempt. Leading comments
+ * variable declarations (arrow or function expressions), useMemo and
+ * useCallback declarations, useEffect calls, try statements, and return
+ * statements. The first statement in a block is exempt. Leading comments
  * are treated as part of the statement.
  */
 
@@ -16,14 +17,16 @@ const isFunctionValue = (init) =>
   init?.type === "ArrowFunctionExpression" ||
   init?.type === "FunctionExpression";
 
-const isUseMemoCall = (init) => {
-  if (init?.type !== "CallExpression") return false;
-  const { callee } = init;
-  if (callee.type === "Identifier") return callee.name === "useMemo";
+const DECLARATION_HOOKS = ["useMemo", "useCallback"];
+
+const isHookCall = (node, name) => {
+  if (node?.type !== "CallExpression") return false;
+  const { callee } = node;
+  if (callee.type === "Identifier") return callee.name === name;
   return (
     callee.type === "MemberExpression" &&
     callee.property.type === "Identifier" &&
-    callee.property.name === "useMemo"
+    callee.property.name === name
   );
 };
 
@@ -40,10 +43,10 @@ const rule = {
     fixable: "whitespace",
     docs: {
       description:
-        "Require a blank line before function and useMemo declarations",
+        "Require a blank line before function, hook, try, and return statements",
     },
     messages: {
-      missing: "Expected a blank line before this {{kind}} declaration.",
+      missing: "Expected a blank line before this {{kind}} statement.",
     },
     schema: [],
   },
@@ -86,10 +89,20 @@ const rule = {
 
     return {
       FunctionDeclaration: (node) => check(node, "function"),
+      TryStatement: (node) => check(node, "try"),
+      ReturnStatement: (node) => check(node, "return"),
+      ExpressionStatement: (node) => {
+        if (isHookCall(node.expression, "useEffect")) check(node, "useEffect");
+      },
       VariableDeclaration: (node) => {
         const inits = node.declarations.map((declarator) => declarator.init);
         if (inits.some(isFunctionValue)) check(node, "function");
-        else if (inits.some(isUseMemoCall)) check(node, "useMemo");
+        else {
+          const hook = DECLARATION_HOOKS.find((name) =>
+            inits.some((init) => isHookCall(init, name)),
+          );
+          if (hook) check(node, hook);
+        }
       },
     };
   },

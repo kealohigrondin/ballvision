@@ -12,9 +12,11 @@ export const polymarketDataContext = createContext<PolymarketData | undefined>(
 
 export const usePolymarketData = () => {
   const context = useContext(polymarketDataContext);
-  if (!context)
+  if (!context) {
     throw new Error(
       "usePolymarketData must be used within PolymarketDataProvider.",
     );
+  }
+
   return context;
 };

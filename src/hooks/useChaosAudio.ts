@@ -11,6 +11,7 @@ export const useChaosAudio = (factory: () => ChaosAudio = createChaosAudio) => {
   const [armed, setArmed] = useState(false);
   const [muted, setMuted] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
+
   const enable = useCallback(async () => {
     try {
       engine.current ??= factory();
@@ -22,17 +23,24 @@ export const useChaosAudio = (factory: () => ChaosAudio = createChaosAudio) => {
       setUnavailable(true);
     }
   }, [factory]);
+
   const toggleMute = useCallback(() => {
     engine.current?.stop();
     setMuted((value) => !value);
   }, []);
+
   const play = useCallback(
     (kind: ScoreAlertKind = "score") => {
-      if (armed && !muted) engine.current?.play(kind);
+      if (armed && !muted) {
+        engine.current?.play(kind);
+      }
     },
     [armed, muted],
   );
+
   const stop = useCallback(() => engine.current?.stop(), []);
+
   useEffect(() => () => engine.current?.dispose(), []);
+
   return { armed, muted, unavailable, enable, toggleMute, play, stop };
 };

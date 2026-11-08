@@ -25,6 +25,7 @@ export const WeekSelect = ({
   // the loaded calendar render as empty rather than an unknown option.
   const selectedIndex = useMemo(() => {
     const id = week?.id ?? currentWeekId;
+
     return weeks.findIndex((option) => option.id === id);
   }, [weeks, week, currentWeekId]);
   const selectedId = weeks[selectedIndex]?.id ?? "";
@@ -60,7 +61,9 @@ export const WeekSelect = ({
         disabled={weeks.length === 0}
         onChange={(event) => {
           const next = weeks.find((option) => option.id === event.target.value);
-          if (next) onChange(next);
+          if (next) {
+            onChange(next);
+          }
         }}
         sx={{ minWidth: 180 }}
       >

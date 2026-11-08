@@ -1,5 +1,5 @@
-import paddingBeforeFunction from "./padding-before-function.js";
+import paddingBeforeStatements from "./padding-before-statements.js";
 
 export default {
-  rules: { "padding-before-function": paddingBeforeFunction },
+  rules: { "padding-before-statements": paddingBeforeStatements },
 };

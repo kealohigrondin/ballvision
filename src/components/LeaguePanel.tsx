@@ -26,12 +26,17 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   ));
 
   const secondaryLabel = useMemo(() => {
-    if (division === "nfl") return "Division";
+    if (division === "nfl") {
+      return "Division";
+    }
+
     return view === "standings" ? "Conference" : "Poll";
   }, [division, view]);
 
   const content = useMemo(() => {
-    if (view === "schedule") return <TeamSchedule />;
+    if (view === "schedule") {
+      return <TeamSchedule />;
+    }
     if (loading && !selected) {
       return (
         <Typography
@@ -48,6 +53,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     if (selected?.rows.length) {
       return <LeagueTable />;
     }
+
     return (
       <Typography
         variant="body2"
@@ -61,8 +67,13 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   }, [loading, selected, view]);
 
   const label = useMemo(() => {
-    if (view === "schedule") return "Team schedule";
-    if (division === "nfl") return "NFL standings";
+    if (view === "schedule") {
+      return "Team schedule";
+    }
+    if (division === "nfl") {
+      return "NFL standings";
+    }
+
     return view === "rankings" ? "Top 25" : "Conference standings";
   }, [division, view]);
 

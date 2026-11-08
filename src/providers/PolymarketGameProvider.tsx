@@ -11,6 +11,7 @@ export const PolymarketGameProvider = ({
   game,
 }: PolymarketGameProviderProps) => {
   const value = usePolymarketGameState(game);
+
   return (
     <polymarketGameContext.Provider value={value}>
       {children}

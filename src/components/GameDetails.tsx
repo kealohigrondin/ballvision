@@ -28,6 +28,7 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
     game.venue ||
     hasTimeouts,
   );
+
   return (
     <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
       <AccordionSummary expandIcon={<ChevronDown />}>

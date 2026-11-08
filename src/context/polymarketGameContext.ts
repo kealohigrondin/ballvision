@@ -9,9 +9,11 @@ export const polymarketGameContext = createContext<
 
 export const usePolymarketGame = () => {
   const context = useContext(polymarketGameContext);
-  if (!context)
+  if (!context) {
     throw new Error(
       "usePolymarketGame must be used within PolymarketGameProvider.",
     );
+  }
+
   return context;
 };

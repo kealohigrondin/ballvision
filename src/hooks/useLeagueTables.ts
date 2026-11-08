@@ -17,13 +17,18 @@ export const useLeagueTables = (
     loading: boolean;
     error: boolean;
   }>({ key, tables: [], loading: true, error: false });
+
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
     let disposed = false;
     let active: AbortController | undefined;
 
     const load = async () => {
-      if (active || disposed) return;
+      if (active || disposed) {
+        return;
+      }
       const controller = new AbortController();
       active = controller;
       const timeout = setTimeout(() => controller.abort(), 15_000);
@@ -33,19 +38,23 @@ export const useLeagueTables = (
         loading: true,
         error: false,
       }));
+
       try {
         const tables =
           view === "standings"
             ? await source.loadStandings(division, controller.signal)
             : await source.loadRankings(division, controller.signal);
-        if (!disposed) setState({ key, tables, loading: false, error: false });
+        if (!disposed) {
+          setState({ key, tables, loading: false, error: false });
+        }
       } catch {
-        if (!disposed)
+        if (!disposed) {
           setState((previous) => ({
             ...previous,
             loading: false,
             error: true,
           }));
+        }
       } finally {
         clearTimeout(timeout);
         active = undefined;
@@ -53,8 +62,11 @@ export const useLeagueTables = (
     };
     void load();
     const timer = setInterval(() => {
-      if (!document.hidden) void load();
+      if (!document.hidden) {
+        void load();
+      }
     }, 300_000);
+
     return () => {
       disposed = true;
       clearInterval(timer);
@@ -63,5 +75,6 @@ export const useLeagueTables = (
   }, [source, division, view, revision, enabled]);
   const current =
     state.key === key ? state : { tables: [], loading: true, error: false };
+
   return { ...current, refresh: () => setRevision((r) => r + 1) };
 };

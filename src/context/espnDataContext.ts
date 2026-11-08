@@ -7,7 +7,9 @@ export const espnDataContext = createContext<EspnData | undefined>(undefined);
 
 export const useEspnData = () => {
   const context = useContext(espnDataContext);
-  if (!context)
+  if (!context) {
     throw new Error("useEspnData must be used within EspnDataProvider.");
+  }
+
   return context;
 };

@@ -48,6 +48,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
     if (game.state === "final") {
       return "Final score";
     }
+
     return "Kickoff";
   }, [isLive, game.situation, game.state]);
 
@@ -69,6 +70,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       game.away.quarters[period]?.length ?? 1,
       game.home.quarters[period]?.length ?? 1,
     );
+
     return (
       <TableCell
         component="th"

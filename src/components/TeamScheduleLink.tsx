@@ -11,6 +11,7 @@ export const TeamScheduleLink = ({ team }: TeamScheduleLinkProps) => {
   const {
     schedule: { selectTeam },
   } = useEspnData();
+
   return (
     <Link
       href="#team-schedule"

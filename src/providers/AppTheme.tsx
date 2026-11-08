@@ -31,6 +31,7 @@ export const AppTheme = ({ children }: AppThemeProps) => {
 
   useEffect(() => {
     document.documentElement.dataset.theme = mode;
+
     try {
       localStorage.setItem("ballvision-color-mode", mode);
     } catch {

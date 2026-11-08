@@ -14,6 +14,7 @@ export const ScoreNotificationProvider = ({
   audioFactory,
 }: ScoreNotificationProviderProps) => {
   const value = useScoreNotificationState(audioFactory);
+
   return (
     <scoreNotificationContext.Provider value={value}>
       {children}

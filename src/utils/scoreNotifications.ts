@@ -17,14 +17,22 @@ export type ScoreSnapshot = {
 };
 
 const score = (value: string) => {
-  if (!/^\d+$/.test(value)) return undefined;
+  if (!/^\d+$/.test(value)) {
+    return undefined;
+  }
   const parsed = Number(value);
+
   return Number.isSafeInteger(parsed) ? parsed : undefined;
 };
 
 const maximumScore = (before?: number, current?: number) => {
-  if (before === undefined) return current;
-  if (current === undefined) return before;
+  if (before === undefined) {
+    return current;
+  }
+  if (current === undefined) {
+    return before;
+  }
+
   return Math.max(before, current);
 };
 
@@ -69,7 +77,9 @@ export const detectScoreChanges = (
     const live =
       game.state === "live" ||
       (before.state === "live" && game.state === "final");
-    if (!live || (!homeIncreased && !awayIncreased)) continue;
+    if (!live || (!homeIncreased && !awayIncreased)) {
+      continue;
+    }
     const scoringTeamIds = [];
     let points = 0;
     if (homeIncreased) {
@@ -88,33 +98,57 @@ export const detectScoreChanges = (
       preview: false,
     });
   }
+
   return { snapshots: next, notifications };
 };
 
 export const notificationHeadline = (event: ScoreNotification) => {
-  if (event.preview) return "CHAOS SOUND CHECK";
-  if (event.scoringTeamIds.length > 1) return "EVERYBODY'S EATING";
-  if (event.points === 6 || event.points === 7) return "TUDDY ALERT";
-  if (event.points === 3) return "FIELD GOAL";
-  if (event.points === 1) return "EXTRA POINT. EXTRA AURA.";
+  if (event.preview) {
+    return "CHAOS SOUND CHECK";
+  }
+  if (event.scoringTeamIds.length > 1) {
+    return "EVERYBODY'S EATING";
+  }
+  if (event.points === 6 || event.points === 7) {
+    return "TUDDY ALERT";
+  }
+  if (event.points === 3) {
+    return "FIELD GOAL";
+  }
+  if (event.points === 1) {
+    return "EXTRA POINT. EXTRA AURA.";
+  }
+
   return "SCORE GO BRRRR";
 };
 
 export const notificationSoundKind = (event: ScoreNotification) => {
-  if (event.preview) return "score";
+  if (event.preview) {
+    return "score";
+  }
   const tennesseeScored = [event.game.home, event.game.away].some(
     (team) =>
       event.scoringTeamIds.includes(team.id) &&
       (team.name.trim().toLowerCase() === "tennessee" ||
         team.abbreviation.toUpperCase() === "TENN"),
   );
-  if (tennesseeScored) return "rockyTop";
+  if (tennesseeScored) {
+    return "rockyTop";
+  }
   const home = score(event.game.home.score);
   const away = score(event.game.away.score);
-  if ((home === 6 && away === 7) || (home === 7 && away === 6))
+  if ((home === 6 && away === 7) || (home === 7 && away === 6)) {
     return "sixSeven";
-  if (event.scoringTeamIds.length !== 1) return "score";
-  if (event.points === 3) return "fieldGoal";
-  if (event.points === 1) return "pat";
+  }
+  if (event.scoringTeamIds.length !== 1) {
+    return "score";
+  }
+  if (event.points === 3) {
+    return "fieldGoal";
+  }
+  if (event.points === 1) {
+    return "pat";
+  }
+
   return "score";
 };

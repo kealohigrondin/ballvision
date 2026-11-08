@@ -21,7 +21,7 @@ export default tseslint.config(
     },
     plugins: { local, "simple-import-sort": simpleImportSort },
     rules: {
-      "local/padding-before-function": "error",
+      "local/padding-before-statements": "error",
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
       "@typescript-eslint/no-explicit-any": "error",
@@ -34,4 +34,6 @@ export default tseslint.config(
     },
   },
   prettier,
+  // After eslint-config-prettier, which turns curly off.
+  { files: ["**/*.{ts,tsx}"], rules: { curly: ["error", "all"] } },
 );

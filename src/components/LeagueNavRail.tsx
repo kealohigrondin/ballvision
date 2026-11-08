@@ -25,6 +25,7 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
   const open = (nextView: LeagueView) => {
     if (panelOpen && view === nextView) {
       setPanelOpen(false);
+
       return;
     }
     if (view !== nextView) {

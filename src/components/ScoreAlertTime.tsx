@@ -7,10 +7,13 @@ type ScoreAlertTimeProps = Record<string, never>;
 
 export const ScoreAlertTime = ({}: ScoreAlertTimeProps) => {
   const { current } = useScoreNotification();
-  if (!current) return null;
+  if (!current) {
+    return null;
+  }
   const { game } = current;
   const period = game.period > 4 ? `${game.period - 4}OT` : `Q${game.period}`;
   const label = game.period > 0 ? period : game.status;
+
   return (
     <Stack
       role="group"

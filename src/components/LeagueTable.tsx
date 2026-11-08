@@ -19,11 +19,14 @@ export const LeagueTable = ({}: LeagueTableProps) => {
   const {
     league: { selected: table, view },
   } = useEspnData();
-  if (!table) return null;
+  if (!table) {
+    return null;
+  }
   const ranked = view === "rankings";
   const column = ranked ? "PTS" : "CONF";
   const rows = table.rows.map((row) => {
     const value = ranked ? row.points : row.conferenceRecord;
+
     return (
       <TableRow key={row.id}>
         <TableCell component="th" scope="row">
@@ -50,6 +53,7 @@ export const LeagueTable = ({}: LeagueTableProps) => {
       </TableRow>
     );
   });
+
   return (
     <TableContainer className="league-table-scroll" sx={{ overflowX: "auto" }}>
       <Table size="small" className="league-table" sx={teamColumnTableSx(1)}>

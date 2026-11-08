@@ -32,17 +32,20 @@ const number = (value: unknown): number | undefined =>
 
 const integer = (value: unknown): number | undefined => {
   const text = str(value).trim();
+
   return /^\d+$/.test(text) ? Number(text) : undefined;
 };
 
 const image = (value: unknown) => {
   const url = str(value);
+
   return /^https:\/\/(?:a|a[0-9])\.espncdn\.com\//.test(url) ? url : undefined;
 };
 
 const team = (raw: Json): Team => {
   const t = obj(raw.team);
   const rank = number(obj(raw.curatedRank).current);
+
   return {
     id: str(raw.id),
     name: str(t.shortDisplayName, str(t.displayName, "Unknown team")),
@@ -72,22 +75,29 @@ const team = (raw: Json): Team => {
 const gameSituation = (situation: Json, competitors: Json[]): string => {
   const downDistance =
     str(situation.downDistanceText) || str(situation.shortDownDistanceText);
-  if (downDistance) return downDistance;
+  if (downDistance) {
+    return downDistance;
+  }
 
   const lastPlay = obj(situation.lastPlay);
   const playType = str(obj(lastPlay.type).text);
-  if (!playType) return "";
+  if (!playType) {
+    return "";
+  }
 
   const scoringTeam = competitors.find(
     (competitor) => str(competitor.id) === str(obj(lastPlay.team).id),
   );
   const abbreviation = str(obj(scoringTeam?.team).abbreviation);
+
   return abbreviation ? `${abbreviation} - ${playType}` : playType;
 };
 
 export const parseScoreboard = (payload: unknown): Game[] => {
   const root = obj(payload);
-  if (!Array.isArray(root.events)) throw new Error("Unexpected ESPN response.");
+  if (!Array.isArray(root.events)) {
+    throw new Error("Unexpected ESPN response.");
+  }
   const games: Game[] = [];
   for (const raw of root.events) {
     const e = obj(raw),
@@ -95,7 +105,9 @@ export const parseScoreboard = (payload: unknown): Game[] => {
     const teams = list(c.competitors).map(obj);
     const home = teams.find((t) => t.homeAway === "home");
     const away = teams.find((t) => t.homeAway === "away");
-    if (!e.id || !home || !away) continue;
+    if (!e.id || !home || !away) {
+      continue;
+    }
     const status = obj(e.status ?? c.status),
       type = obj(status.type),
       s = obj(c.situation);
@@ -113,6 +125,7 @@ export const parseScoreboard = (payload: unknown): Game[] => {
       ) {
         return "upcoming";
       }
+
       return "other";
     };
     const state: GameState = getState();
@@ -128,6 +141,7 @@ export const parseScoreboard = (payload: unknown): Game[] => {
       broadcast: list(c.broadcasts)
         .flatMap((b) => {
           const broadcast = obj(b);
+
           return broadcast.names ?? [obj(broadcast.media).shortName];
         })
         .map((n) => str(n))
@@ -142,8 +156,10 @@ export const parseScoreboard = (payload: unknown): Game[] => {
       awayTimeouts: number(s.awayTimeouts),
     });
   }
+
   return games.sort((a, b) => {
     const priority = { live: 0, upcoming: 1, other: 2, final: 3 };
+
     return (
       priority[a.state] - priority[b.state] ||
       (Date.parse(a.start) || 0) - (Date.parse(b.start) || 0)
@@ -156,17 +172,25 @@ export const parseCalendar = (payload: unknown): SeasonCalendar => {
   const league = obj(list(root.leagues)[0]);
   const season = obj(root.season ?? league.season);
   const year = integer(season.year);
-  if (year === undefined) return { weeks: [] };
+  if (year === undefined) {
+    return { weeks: [] };
+  }
   const weeks = list(league.calendar)
     .map(obj)
     .flatMap((seasonType): Week[] => {
       const type = integer(seasonType.value);
-      if (type === undefined) return [];
+      if (type === undefined) {
+        return [];
+      }
+
       return list(seasonType.entries)
         .map(obj)
         .flatMap((entry): Week[] => {
           const weekNumber = integer(entry.value);
-          if (weekNumber === undefined) return [];
+          if (weekNumber === undefined) {
+            return [];
+          }
+
           return [
             {
               id: `${year}-${type}-${weekNumber}`,
@@ -181,6 +205,7 @@ export const parseCalendar = (payload: unknown): SeasonCalendar => {
         });
     });
   const currentWeekId = `${year}-${str(season.type)}-${str(obj(root.week).number)}`;
+
   return {
     weeks,
     currentWeekId: weeks.some((week) => week.id === currentWeekId)
@@ -199,6 +224,7 @@ const scoreboardUrl = (division: Division, params: Record<string, string>) => {
     }),
     ...params,
   }).toString();
+
   return url;
 };
 
@@ -210,7 +236,10 @@ const loadScoreboardJson = async (
     signal,
     headers: { Accept: "application/json" },
   });
-  if (!response.ok) throw new Error(`ESPN returned HTTP ${response.status}.`);
+  if (!response.ok) {
+    throw new Error(`ESPN returned HTTP ${response.status}.`);
+  }
+
   return response.json();
 };
 
@@ -226,6 +255,7 @@ export const espnSource: ScoreboardSource = {
         week: String(week.number),
       }),
     });
+
     return parseScoreboard(await loadScoreboardJson(url, signal));
   },
   // Every scoreboard response carries the season calendar, so the smallest
@@ -249,11 +279,14 @@ const leagueTeamIdentity = (team: Json) => ({
 
 const conferenceWinPercentage = (record?: string): number => {
   const match = record?.match(/^(\d+)-(\d+)(?:-(\d+))?$/);
-  if (!match) return -1;
+  if (!match) {
+    return -1;
+  }
   const wins = Number(match[1]);
   const losses = Number(match[2]);
   const ties = Number(match[3] ?? 0);
   const games = wins + losses + ties;
+
   return games > 0 ? (wins + ties / 2) / games : 0;
 };
 
@@ -262,8 +295,9 @@ export const parseStandings = (
   division: Division = "fbs",
 ): LeagueTable[] => {
   const root = obj(payload);
-  if (!Array.isArray(root.children))
+  if (!Array.isArray(root.children)) {
     throw new Error("Unexpected ESPN standings response.");
+  }
 
   const collect = (raw: unknown): LeagueTable[] => {
     const group = obj(raw),
@@ -277,8 +311,10 @@ export const parseStandings = (
 
         const record = (type: string) => {
           const stat = stats.find((s) => s.type === type);
+
           return str(stat?.summary, str(stat?.displayValue, "—"));
         };
+
         return {
           ...leagueTeamIdentity(t),
           id: str(t.id),
@@ -296,7 +332,10 @@ export const parseStandings = (
       );
     }
     const nested = list(group.children).flatMap(collect);
-    if (!rows.length) return nested;
+    if (!rows.length) {
+      return nested;
+    }
+
     return [
       {
         id: str(group.id),
@@ -307,6 +346,7 @@ export const parseStandings = (
       ...nested,
     ];
   };
+
   return root.children.flatMap(collect);
 };
 
@@ -315,12 +355,15 @@ export const parseRankings = (
   division: Division,
 ): LeagueTable[] => {
   const root = obj(payload);
-  if (!Array.isArray(root.rankings))
+  if (!Array.isArray(root.rankings)) {
     throw new Error("Unexpected ESPN rankings response.");
+  }
+
   return root.rankings
     .map(obj)
     .filter((poll) => {
       const name = str(poll.name).toLowerCase();
+
       return division === "fcs"
         ? name.includes("fcs")
         : /ap top 25|coaches poll|playoff/.test(name) &&
@@ -339,6 +382,7 @@ export const parseRankings = (
         .map((rawRank) => {
           const r = obj(rawRank),
             t = obj(r.team);
+
           return {
             ...leagueTeamIdentity(t),
             id: str(t.id),
@@ -364,7 +408,10 @@ const loadLeagueJson = async (
     signal,
     headers: { Accept: "application/json" },
   });
-  if (!response.ok) throw new Error(`ESPN returned HTTP ${response.status}.`);
+  if (!response.ok) {
+    throw new Error(`ESPN returned HTTP ${response.status}.`);
+  }
+
   return response.json();
 };
 
@@ -378,13 +425,17 @@ export const espnLeagueSource: LeagueSource = {
       level: division === "nfl" ? "3" : "2",
       type: "0",
     }).toString();
+
     return parseStandings(
       await loadLeagueJson(url.toString(), signal),
       division,
     );
   },
   loadRankings: async (division, signal) => {
-    if (division === "nfl") return [];
+    if (division === "nfl") {
+      return [];
+    }
+
     return parseRankings(
       await loadLeagueJson(
         "https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings",
@@ -404,6 +455,7 @@ export const parseTeamSchedule = (
     list(root.events).map((raw) => {
       const event = obj(raw);
       const competition = obj(list(event.competitions)[0]);
+
       return [
         str(event.id),
         {
@@ -423,6 +475,7 @@ export const parseTeamSchedule = (
       ...metadata.get(game.id),
     }))
     .sort((a, b) => (Date.parse(a.start) || 0) - (Date.parse(b.start) || 0));
+
   return {
     season: str(
       obj(root.season).displayName,
@@ -442,7 +495,9 @@ export const espnTeamScheduleSource: TeamScheduleSource = {
     const regular = await loadLeagueJson(url.toString(), signal);
     const schedule = parseTeamSchedule(regular, teamId);
     const season = str(obj(obj(regular).season).year);
-    if (!/^\d{4}$/.test(season)) return schedule;
+    if (!/^\d{4}$/.test(season)) {
+      return schedule;
+    }
     url.searchParams.set("season", season);
     url.searchParams.set("seasontype", "3");
     const postseason = parseTeamSchedule(
@@ -454,6 +509,7 @@ export const espnTeamScheduleSource: TeamScheduleSource = {
         [...schedule.games, ...postseason.games].map((game) => [game.id, game]),
       ).values(),
     ].sort((a, b) => (Date.parse(a.start) || 0) - (Date.parse(b.start) || 0));
+
     return { ...schedule, games };
   },
 };

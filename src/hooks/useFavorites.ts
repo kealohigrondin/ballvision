@@ -5,6 +5,7 @@ export const useFavorites = () => {
   const [ids, setIds] = useState<string[]>(() => {
     try {
       const value: unknown = JSON.parse(localStorage.getItem(KEY) ?? "[]");
+
       return Array.isArray(value)
         ? value.filter((v): v is string => typeof v === "string")
         : [];
@@ -18,13 +19,16 @@ export const useFavorites = () => {
       const next = current.includes(id)
         ? current.filter((i) => i !== id)
         : [...current, id];
+
       try {
         localStorage.setItem(KEY, JSON.stringify(next));
       } catch {
         /* Storage is optional. */
       }
+
       return next;
     });
   };
+
   return { ids, toggle };
 };

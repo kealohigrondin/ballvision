@@ -26,6 +26,7 @@ export const TeamLogo = ({ team, size = 40 }: TeamLogoProps) => {
         {(team.abbreviation ?? "?").slice(0, 3)}
       </Typography>
     );
+
   return (
     <Box
       component="span"

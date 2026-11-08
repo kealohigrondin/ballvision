@@ -36,6 +36,7 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
       final: "Final",
       pinned: "Pinned",
     }[f];
+
     return {
       value: f,
       label: (

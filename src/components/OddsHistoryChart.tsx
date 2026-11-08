@@ -97,6 +97,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
           day: "numeric",
         })
       : timeLabel(time);
+
     return (
       <text key={i} x={x(time)} y="184" textAnchor={anchor}>
         {tickLabel}
@@ -116,6 +117,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
     );
     setSelected(closest);
   };
+
   return (
     <Box component="figure" ref={ref} sx={{ m: 0, minWidth: 0 }}>
       <Stack

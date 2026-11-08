@@ -25,6 +25,7 @@ export const LoadingGrid = ({ compact = false }: LoadingGridProps) => {
       </Paper>
     </Grid>
   ));
+
   return (
     <Grid
       container

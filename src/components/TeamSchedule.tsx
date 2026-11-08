@@ -21,12 +21,13 @@ export const TeamSchedule = ({}: TeamScheduleProps) => {
     schedule: { selectedTeam, data, loading, error, refresh },
   } = useEspnData();
 
-  if (!selectedTeam)
+  if (!selectedTeam) {
     return (
       <Typography color="text.secondary">
         Choose a conference and team to view its schedule.
       </Typography>
     );
+  }
 
   const rows = data?.games.map((game) => (
     <TeamScheduleRow key={game.id} game={game} teamId={selectedTeam.id} />

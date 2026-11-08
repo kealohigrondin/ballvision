@@ -15,10 +15,13 @@ export const PeriodScores = ({ home, away }: PeriodScoresProps) => {
     { length: Math.max(home.quarters.length, away.quarters.length) },
     (_, i) => i,
   );
-  if (!periods.length) return null;
+  if (!periods.length) {
+    return null;
+  }
 
   const headings = periods.map((i) => {
     const label = i < 4 ? i + 1 : `${i - 3}OT`;
+
     return (
       <TableCell component="th" scope="col" key={i} align="right">
         {label}
@@ -31,6 +34,7 @@ export const PeriodScores = ({ home, away }: PeriodScoresProps) => {
         {team.quarters[i] ?? "—"}
       </TableCell>
     ));
+
     return (
       <TableRow key={team.id}>
         <TableCell component="th" scope="row">

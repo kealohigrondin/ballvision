@@ -25,9 +25,10 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
   );
 
   const content = useMemo(() => {
-    if (!hasHistory && loading)
+    if (!hasHistory && loading) {
       return <LinearProgress aria-label="Loading Polymarket odds history" />;
-    if (!hasHistory && error)
+    }
+    if (!hasHistory && error) {
       return (
         <Alert
           severity="warning"
@@ -40,14 +41,18 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
           Unable to load odds history.
         </Alert>
       );
-    if (!hasHistory || !data || !quote)
+    }
+    if (!hasHistory || !data || !quote) {
       return (
         <Typography variant="body2" color="text.secondary">
           No polymarket history is available.
         </Typography>
       );
+    }
+
     return <OddsHistoryChart key={range} />;
   }, [hasHistory, loading, error, data, quote, refresh, range]);
+
   return (
     <Stack
       component="section"

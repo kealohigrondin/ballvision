@@ -32,6 +32,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
     if (time) {
       return `Updated ${time}`;
     }
+
     return "Connecting…";
   }, [loading, paused, time]);
 

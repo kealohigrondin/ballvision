@@ -46,10 +46,13 @@ export const createChaosAudio = (): ChaosAudio => {
     loading ??= Promise.all(
       alertSoundUrls.map(async ({ url }) => {
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Unable to load score alert audio.");
+        if (!response.ok) {
+          throw new Error("Unable to load score alert audio.");
+        }
         const buffer = await context.decodeAudioData(
           await response.arrayBuffer(),
         );
+
         return [url, buffer] as const;
       }),
     )
@@ -60,6 +63,7 @@ export const createChaosAudio = (): ChaosAudio => {
         loading = undefined;
         throw error;
       });
+
     return loading;
   };
   const active = new Set<AudioScheduledSourceNode>();
@@ -79,13 +83,18 @@ export const createChaosAudio = (): ChaosAudio => {
     }
     active.clear();
   };
+
   return {
     unlock: async () => {
       await Promise.all([context.resume(), loadSounds()]);
-      if (context.state !== "running") throw new Error("Audio is not running.");
+      if (context.state !== "running") {
+        throw new Error("Audio is not running.");
+      }
     },
     play: (kind = "score") => {
-      if (context.state !== "running" || sounds.size === 0) return;
+      if (context.state !== "running" || sounds.size === 0) {
+        return;
+      }
       stop();
       const source = context.createBufferSource();
       const candidates = alertSoundUrls.filter((sound) => sound.kind === kind);

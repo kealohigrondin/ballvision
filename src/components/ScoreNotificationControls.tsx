@@ -20,6 +20,7 @@ export const ScoreNotificationControls =
       ? "Retry chaos sounds"
       : "Enable chaos sounds";
     const soundLabel = muted ? "Unmute chaos sounds" : "Mute chaos sounds";
+
     return (
       <>
         {soundArmed ? (

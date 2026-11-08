@@ -15,6 +15,7 @@ export const usePolymarketGameState = (game: Game) => {
     ? { awayTokenId: quote.awayTokenId, homeTokenId: quote.homeTokenId, range }
     : undefined;
   const history = useOddsHistory(historySource, query, paused, historyOpen);
+
   return {
     game,
     quote,

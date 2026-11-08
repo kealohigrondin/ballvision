@@ -1,10 +1,10 @@
 import { useEspnData } from "../context/espnDataContext";
 import { usePolymarketData } from "../context/polymarketDataContext";
 import { useAppData } from "../context/appDataContext";
-import IconButton from "@mui/material/IconButton";
 import { useMemo } from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import { MastHeadIconButton } from "./MastHeadIconButton";
 
 import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
 
@@ -15,11 +15,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
   const { loading, error, updatedAt, refresh: refreshScores } = useEspnData();
   const { refresh: refreshOdds } = usePolymarketData();
   const pauseLabel = paused ? "Resume auto-refresh" : "Pause auto-refresh";
-  const pauseIcon = paused ? (
-    <CirclePlay size={17} />
-  ) : (
-    <CirclePause size={17} />
-  );
+  const pauseIcon = paused ? CirclePlay : CirclePause;
   const time = updatedAt?.toLocaleTimeString(undefined, {
     hour: "numeric",
     minute: "2-digit",
@@ -44,24 +40,20 @@ export const SyncControls = ({}: SyncControlsProps) => {
         {status}
         {error && " · Connection error"}
       </Typography>
-      <IconButton
-        title={pauseLabel}
-        aria-label={pauseLabel}
+      <MastHeadIconButton
+        icon={pauseIcon}
+        label={pauseLabel}
         onClick={() => setPaused((current) => !current)}
-      >
-        {pauseIcon}
-      </IconButton>
-      <IconButton
-        aria-label="Refresh scores"
-        title="Refresh scores"
+      />
+      <MastHeadIconButton
+        icon={RefreshCw}
+        label="Refresh scores"
         onClick={() => {
           refreshScores();
           refreshOdds();
         }}
         disabled={loading}
-      >
-        <RefreshCw />
-      </IconButton>
+      />
     </Stack>
   );
 };

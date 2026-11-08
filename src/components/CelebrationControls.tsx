@@ -1,8 +1,7 @@
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { Flame, Volume2, VolumeX } from "lucide-react";
 import { useScoreCelebration } from "../context/scoreCelebrationContext";
+import { MastHeadIconButton } from "./MastHeadIconButton";
 
 type CelebrationControlsProps = Record<string, never>;
 export const CelebrationControls = ({}: CelebrationControlsProps) => {
@@ -19,31 +18,31 @@ export const CelebrationControls = ({}: CelebrationControlsProps) => {
     ? "Retry chaos sounds"
     : "Enable chaos sounds";
   const soundLabel = muted ? "Unmute chaos sounds" : "Mute chaos sounds";
-  const soundIcon = muted ? <VolumeX size={20} /> : <Volume2 size={20} />;
   const soundControl = soundArmed ? (
-    <IconButton aria-label={soundLabel} title={soundLabel} onClick={toggleMute}>
-      {soundIcon}
-    </IconButton>
+    <MastHeadIconButton
+      icon={muted ? VolumeX : Volume2}
+      label={soundLabel}
+      onClick={toggleMute}
+    />
   ) : (
-    <Button
-      startIcon={<Volume2 size={18} />}
+    <MastHeadIconButton
+      icon={Volume2}
+      label={enableLabel}
       onClick={() => void enableSound()}
-    >
-      {enableLabel}
-    </Button>
+    />
   );
   return (
     <>
       {soundControl}
       <Tooltip title="Preview the score celebration">
         <span>
-          <IconButton
-            aria-label="Test score celebration"
+          <MastHeadIconButton
+            icon={Flame}
+            label="Test score celebration"
+            title={null}
             onClick={preview}
             disabled={!previewAvailable}
-          >
-            <Flame size={20} />
-          </IconButton>
+          />
         </span>
       </Tooltip>
     </>

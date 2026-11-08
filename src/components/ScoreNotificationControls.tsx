@@ -19,38 +19,27 @@ export const ScoreNotificationControls =
       ? "Retry chaos sounds"
       : "Enable chaos sounds";
     const soundLabel = muted ? "Unmute chaos sounds" : "Mute chaos sounds";
-    const soundControl = soundArmed ? (
-      <MastHeadIconButton
-        icon={muted ? BellOff : BellRing}
-        label={soundLabel}
-        onClick={toggleMute}
-      />
-    ) : (
-      <Tooltip title={enableLabel}>
-        <span>
+    return (
+      <>
+        {soundArmed ? (
+          <MastHeadIconButton
+            icon={muted ? BellOff : BellRing}
+            label={soundLabel}
+            onClick={toggleMute}
+          />
+        ) : (
           <MastHeadIconButton
             icon={BellOff}
             label={enableLabel}
-            title={null}
             onClick={() => void enableSound()}
           />
-        </span>
-      </Tooltip>
-    );
-    return (
-      <>
-        {soundControl}
-        <Tooltip title="Preview the score notification">
-          <span>
-            <MastHeadIconButton
-              icon={Flame}
-              label="Test score notification"
-              title={null}
-              onClick={preview}
-              disabled={!previewAvailable}
-            />
-          </span>
-        </Tooltip>
+        )}
+        <MastHeadIconButton
+          icon={Flame}
+          label="Test score notification"
+          onClick={preview}
+          disabled={!previewAvailable}
+        />
       </>
     );
   };

@@ -11,7 +11,7 @@ type MastHeadIconButtonProps = {
   onClick: () => void;
   disabled?: boolean;
   /** Defaults to the label; pass `null` when a wrapping Tooltip names it. */
-  title?: string | null;
+  title?: string;
   color?: IconButtonProps["color"];
 };
 

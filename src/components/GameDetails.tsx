@@ -4,6 +4,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ChevronDown, MapPin } from "lucide-react";
+import { useMemo } from "react";
 
 import { usePolymarketGame } from "../context/polymarketGameContext";
 import { copy } from "../copy";
@@ -18,7 +19,18 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
     quote: odds,
     historyOpen: expanded,
     setHistoryOpen: setExpanded,
+    error: oddsError,
   } = usePolymarketGame();
+
+  const oddsMessage = useMemo(() => {
+    // A failed Polymarket request on a game that should have a market usually
+    // means the browser blocked the request, e.g. a privacy extension.
+    if (oddsError && (game.state === "live" || game.state === "upcoming")) {
+      return copy.gameDetails.oddsBlocked;
+    }
+
+    return copy.gameDetails.chartUnavailable;
+  }, [oddsError, game.state]);
   const hasTimeouts =
     game.state === "live" &&
     (game.homeTimeouts !== undefined || game.awayTimeouts !== undefined);
@@ -40,7 +52,7 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
           {expanded && odds !== undefined && <GameOddsHistory />}
           {expanded && !odds && (
             <Typography variant="body2" color="text.secondary">
-              {copy.gameDetails.chartUnavailable}
+              {oddsMessage}
             </Typography>
           )}
           {game.lastPlay && (

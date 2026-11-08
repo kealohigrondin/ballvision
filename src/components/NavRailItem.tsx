@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 
 type NavRailItemProps = {
-  label: string;
+  label?: string;
   icon: ReactNode;
   active: boolean;
   disabled?: boolean;
@@ -13,7 +13,7 @@ type NavRailItemProps = {
 };
 
 export const NavRailItem = ({
-  label,
+  label = "",
   icon,
   active,
   disabled = false,
@@ -30,7 +30,7 @@ export const NavRailItem = ({
     sx={{
       flexDirection: "column",
       gap: 0.5,
-      width: "100%",
+      width: "80%",
       py: 0.5,
       borderRadius: 2,
       color: active ? "text.primary" : "text.secondary",

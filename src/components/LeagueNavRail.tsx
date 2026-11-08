@@ -36,7 +36,6 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
   const items = destinations.map((destination) => (
     <NavRailItem
       key={destination.view}
-      label={destination.label}
       icon={destination.icon}
       active={panelOpen && view === destination.view}
       disabled={destination.view === "rankings" && division === "nfl"}
@@ -56,6 +55,7 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
         mt: 2,
         py: 2,
         zIndex: 2,
+        width: 80,
       }}
     >
       <Stack spacing={1.5} sx={{ alignItems: "center" }}>

@@ -38,7 +38,7 @@ export const Dashboard = ({}: DashboardProps) => {
       };
 
   return (
-    <Container maxWidth={false} className="app-shell">
+    <Box sx={{ pr: 1, py: 1 }} id="root-container">
       <ScoreCelebrationModal />
       <MastHead />
       <Box component="main">
@@ -47,7 +47,7 @@ export const Dashboard = ({}: DashboardProps) => {
           sx={{
             display: "grid",
             ...layout,
-            gap: { xs: 2.5, lg: 3.5 },
+            gap: { xs: 1, lg: 2 },
             alignItems: "start",
           }}
         >
@@ -69,6 +69,6 @@ export const Dashboard = ({}: DashboardProps) => {
           </Stack>
         </Box>
       </Box>
-    </Container>
+    </Box>
   );
 };

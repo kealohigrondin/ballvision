@@ -14,7 +14,6 @@ type GameOddsHistoryProps = Record<string, never>;
 export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
   const {
     quote,
-    paused,
     range,
     setRange,
     history: { data, loading, error, refresh },

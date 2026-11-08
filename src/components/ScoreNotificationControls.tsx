@@ -1,4 +1,3 @@
-import Tooltip from "@mui/material/Tooltip";
 import { BellOff, BellRing, Flame } from "lucide-react";
 import { useScoreNotification } from "../context/scoreNotificationContext";
 import { MastHeadIconButton } from "./MastHeadIconButton";

@@ -2,7 +2,6 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { usePolymarketGame } from "../context/polymarketGameContext";
-import { americanOdds } from "../utils/odds";
 
 type GameOddsProps = Record<string, never>;
 export const GameOdds = ({}: GameOddsProps) => {

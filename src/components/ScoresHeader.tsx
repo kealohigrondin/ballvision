@@ -4,24 +4,19 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
-import {
-  PanelRightClose,
-  PanelRightOpen,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  X,
-} from "lucide-react";
+import { PanelRightClose, PanelRightOpen, Search, X } from "lucide-react";
 import { SegmentedControl } from "./SegmentedControl";
-import { localDate } from "../utils/date";
+import { WeekSelect } from "./WeekSelect";
 import { useAppData } from "../context/appDataContext";
 
 type ScoresHeaderProps = Record<string, never>;
 
 export const ScoresHeader = ({}: ScoresHeaderProps) => {
   const {
-    date,
-    setDate: onDate,
+    week,
+    setWeek,
+    weeks,
+    currentWeekId,
     division,
     setDivision: onDivision,
     search,
@@ -39,11 +34,6 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
     <PanelRightOpen size={18} />
   );
 
-  const shift = (days: number) => {
-    const next = new Date(`${date}T12:00:00`);
-    next.setDate(next.getDate() + days);
-    onDate(localDate(next));
-  };
   const filterOptions = (
     ["all", "live", "upcoming", "final", "pinned"] as const
   ).map((f) => {
@@ -83,34 +73,15 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
           spacing={1}
           sx={{ alignItems: "center", flexWrap: "wrap" }}
         >
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{ alignItems: "center" }}
-            className="date-control"
-          >
-            <IconButton aria-label="Previous day" onClick={() => shift(-1)}>
-              <ChevronLeft />
-            </IconButton>
-            <TextField
-              id="game-date"
-              label="Game date"
-              type="date"
-              value={date}
-              slotProps={{
-                inputLabel: { shrink: true },
-                htmlInput: { min: "2000-01-01", max: "2099-12-31" },
-              }}
-              onChange={(e) => {
-                if (/^\d{4}-\d{2}-\d{2}$/.test(e.target.value))
-                  onDate(e.target.value);
-              }}
-            />
-            <IconButton aria-label="Next day" onClick={() => shift(1)}>
-              <ChevronRight />
-            </IconButton>
-          </Stack>
-          <Button onClick={() => onDate(localDate())}>Today</Button>
+          <WeekSelect
+            weeks={weeks}
+            week={week}
+            currentWeekId={currentWeekId}
+            onChange={setWeek}
+          />
+          <Button onClick={() => setWeek(null)} disabled={week === null}>
+            This week
+          </Button>
           <SegmentedControl
             label="Division"
             value={division}

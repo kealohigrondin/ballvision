@@ -8,7 +8,26 @@ import {
 import { afterEach, expect, it, vi } from "vitest";
 import App from "../src/App";
 import { AppTheme } from "../src/components/AppTheme";
-import type { Game, LeagueSource, ScoreboardSource } from "../src/data/types";
+import type {
+  Game,
+  LeagueSource,
+  ScoreboardSource,
+  Week,
+} from "../src/data/types";
+
+const week = (number: number): Week => ({
+  id: `2026-2-${number}`,
+  label: `Week ${number}`,
+  group: "Regular Season",
+  detail: "",
+  year: 2026,
+  seasonType: 2,
+  number,
+});
+const calendar = {
+  weeks: [week(0), week(1), week(2)],
+  currentWeekId: "2026-2-1",
+};
 
 const game = (id: string, state: Game["state"]): Game => ({
   id,
@@ -50,6 +69,7 @@ it("shares search, filters, and favorites between the header and game grid", asy
     load: vi
       .fn()
       .mockResolvedValue([game("Live", "live"), game("Later", "upcoming")]),
+    loadCalendar: vi.fn().mockResolvedValue(calendar),
   };
   const leagueSource: LeagueSource = {
     loadStandings: vi.fn().mockResolvedValue([]),
@@ -98,34 +118,53 @@ it("shares search, filters, and favorites between the header and game grid", asy
   expect(screen.getByText("Your watchlist starts here.")).toBeTruthy();
 });
 
-it("shares date, division, panel visibility, and pause state across app features", async () => {
-  const source: ScoreboardSource = { load: vi.fn().mockResolvedValue([]) };
+it("shares week, division, panel visibility, and pause state across app features", async () => {
+  const source: ScoreboardSource = {
+    load: vi.fn().mockResolvedValue([]),
+    loadCalendar: vi.fn().mockResolvedValue(calendar),
+  };
   const leagueSource: LeagueSource = {
     loadStandings: vi.fn().mockResolvedValue([]),
     loadRankings: vi.fn().mockResolvedValue([]),
   };
+  const lastQuery = (query: object) =>
+    waitFor(() =>
+      expect(source.load).toHaveBeenLastCalledWith(
+        query,
+        expect.any(AbortSignal),
+      ),
+    );
   render(
     <AppTheme>
       <App source={source} leagueSource={leagueSource} />
     </AppTheme>,
   );
   await screen.findByText("No games on this field.");
-  fireEvent.change(screen.getByLabelText("Game date"), {
-    target: { value: "2026-11-08" },
-  });
-  await waitFor(() =>
-    expect(source.load).toHaveBeenLastCalledWith(
-      { date: "2026-11-08", division: "fbs" },
-      expect.any(AbortSignal),
-    ),
-  );
+  await lastQuery({ week: null, division: "fbs" });
+  const weekSelect = await screen.findByRole("combobox", { name: "Week" });
+  await waitFor(() => expect(weekSelect.textContent).toBe("Week 1"));
+  fireEvent.mouseDown(weekSelect);
+  fireEvent.click(await screen.findByRole("option", { name: "Week 0" }));
+  await lastQuery({ week: week(0), division: "fbs" });
+  expect(
+    screen
+      .getByRole("button", { name: "Previous week" })
+      .hasAttribute("disabled"),
+  ).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: "Next week" }));
+  await lastQuery({ week: week(1), division: "fbs" });
+  fireEvent.click(screen.getByRole("button", { name: /^FCS$/ }));
+  await lastQuery({ week: week(1), division: "fcs" });
   fireEvent.click(screen.getByRole("button", { name: /^NFL$/ }));
-  await waitFor(() =>
-    expect(source.load).toHaveBeenLastCalledWith(
-      { date: "2026-11-08", division: "nfl" },
-      expect.any(AbortSignal),
-    ),
+  await lastQuery({ week: null, division: "nfl" });
+  expect(source.loadCalendar).toHaveBeenLastCalledWith(
+    "nfl",
+    expect.any(AbortSignal),
   );
+  fireEvent.click(screen.getByRole("button", { name: "Next week" }));
+  await lastQuery({ week: week(2), division: "nfl" });
+  fireEvent.click(screen.getByRole("button", { name: "This week" }));
+  await lastQuery({ week: null, division: "nfl" });
   await waitFor(() =>
     expect(leagueSource.loadStandings).toHaveBeenLastCalledWith(
       "nfl",

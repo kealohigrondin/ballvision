@@ -1,7 +1,12 @@
 import { useMemo, useState } from "react";
-import type { Division, LeagueSource, ScoreboardSource } from "../data/types";
-import { localDate } from "../utils/date";
+import type {
+  Division,
+  LeagueSource,
+  ScoreboardSource,
+  Week,
+} from "../data/types";
 import { useScoreboard } from "./useScoreboard";
+import { useSeasonCalendar } from "./useSeasonCalendar";
 import { useFavorites } from "./useFavorites";
 
 export type Filter = "all" | "live" | "upcoming" | "final" | "pinned";
@@ -10,16 +15,23 @@ type AppDataSources = { source: ScoreboardSource; leagueSource: LeagueSource };
 
 export const useAppDataState = ({ source, leagueSource }: AppDataSources) => {
   const [panelOpen, setPanelOpen] = useState(true);
-  const [date, setDate] = useState(localDate);
-  const [division, setDivision] = useState<Division>("fbs");
+  const [week, setWeek] = useState<Week | null>(null);
+  const [division, setDivisionState] = useState<Division>("fbs");
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [paused, setPaused] = useState(false);
   const { games, loading, error, updatedAt, refresh } = useScoreboard(
     source,
-    { date, division },
+    { division, week },
     paused,
   );
+  const calendar = useSeasonCalendar(source, division);
+
+  // FBS and FCS share the college calendar; NFL weeks mean something else.
+  const setDivision = (next: Division) => {
+    if ((next === "nfl") !== (division === "nfl")) setWeek(null);
+    setDivisionState(next);
+  };
 
   const favorites = useFavorites();
 
@@ -51,8 +63,10 @@ export const useAppDataState = ({ source, leagueSource }: AppDataSources) => {
   return {
     panelOpen,
     setPanelOpen,
-    date,
-    setDate,
+    week,
+    setWeek,
+    weeks: calendar.weeks,
+    currentWeekId: calendar.currentWeekId,
     division,
     setDivision,
     filter,

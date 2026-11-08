@@ -5,8 +5,10 @@ import { appDataContext, type AppData } from "../../src/context/appDataContext";
 export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   panelOpen: true,
   setPanelOpen: vi.fn(),
-  date: "2026-11-07",
-  setDate: vi.fn(),
+  week: null,
+  setWeek: vi.fn(),
+  weeks: [],
+  currentWeekId: undefined,
   division: "fbs",
   setDivision: vi.fn(),
   filter: "all",

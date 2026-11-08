@@ -15,32 +15,33 @@ import { ScoresHeader } from "./ScoresHeader";
 
 type DashboardProps = Record<string, never>;
 
-export const Dashboard = ({ }: DashboardProps) => {
+export const Dashboard = ({}: DashboardProps) => {
   const theme = useTheme();
   const { panelOpen } = useAppData();
   const { error, loading, refresh } = useEspnData();
   const layout = panelOpen
     ? {
-      gridTemplateColumns: {
-        xs: "minmax(0, 1fr)",
-        sm: "80px minmax(0, 1fr)",
-        md: "80px 360px minmax(0, 1fr)",
-        lg: "80px 380px minmax(0, 1fr)",
-      },
-      gridTemplateAreas: {
-        // Compact windows show the panel as a bottom sheet, outside the grid.
-        xs: '"main"',
-        sm: '"rail panel" "rail main"',
-        md: '"rail panel main"',
-      },
-    }
+        gridTemplateColumns: {
+          xs: "minmax(0, 1fr)",
+          sm: "80px minmax(0, 1fr)",
+          md: "80px 360px minmax(0, 1fr)",
+          lg: "80px 380px minmax(0, 1fr)",
+        },
+        gridTemplateAreas: {
+          // Compact windows show the panel as a bottom sheet, outside the grid.
+          xs: '"main"',
+          sm: '"rail panel" "rail main"',
+          md: '"rail panel main"',
+        },
+      }
     : {
-      gridTemplateColumns: {
-        xs: "minmax(0, 1fr)",
-        sm: "80px minmax(0, 1fr)",
-      },
-      gridTemplateAreas: { xs: '"main"', sm: '"rail main"' },
-    };
+        gridTemplateColumns: {
+          xs: "minmax(0, 1fr)",
+          sm: "80px minmax(0, 1fr)",
+        },
+        gridTemplateAreas: { xs: '"main"', sm: '"rail main"' },
+      };
+
   return (
     <Box
       sx={{

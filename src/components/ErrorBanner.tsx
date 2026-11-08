@@ -1,6 +1,8 @@
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 
+import { copy } from "../copy";
+
 type ErrorBannerProps = {
   message: string;
   loading: boolean;
@@ -17,7 +19,7 @@ export const ErrorBanner = ({
     sx={{ my: 2 }}
     action={
       <Button color="inherit" onClick={onRetry} disabled={loading}>
-        Try again
+        {copy.common.tryAgain}
       </Button>
     }
   >

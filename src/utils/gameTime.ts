@@ -1,5 +1,8 @@
 import type { Game } from "../data/types";
 
+export const periodLabel = (period: number) =>
+  period > 4 ? `${period - 4}OT` : `Q${period}`;
+
 export const gameTime = (game: Game) => {
   if (game.state !== "live") {
     return game.status;

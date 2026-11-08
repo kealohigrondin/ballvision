@@ -5,6 +5,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
+import { copy } from "../copy";
 import type { Team } from "../data/types";
 import { compactBoxScoreSx } from "../styles/boxScore";
 
@@ -31,7 +32,7 @@ export const PeriodScores = ({ home, away }: PeriodScoresProps) => {
   const rows = [away, home].map((team) => {
     const scores = periods.map((i) => (
       <TableCell key={i} align="right">
-        {team.quarters[i] ?? "—"}
+        {team.quarters[i] ?? copy.common.emptyValue}
       </TableCell>
     ));
 
@@ -48,11 +49,15 @@ export const PeriodScores = ({ home, away }: PeriodScoresProps) => {
 
   return (
     <TableContainer>
-      <Table aria-label="Score by period" size="small" sx={compactBoxScoreSx}>
+      <Table
+        aria-label={copy.periodScores.label}
+        size="small"
+        sx={compactBoxScoreSx}
+      >
         <TableHead>
           <TableRow>
             <TableCell component="th" scope="col" align="right">
-              Team
+              {copy.periodScores.team}
             </TableCell>
             {headings}
             <TableCell component="th" scope="col" align="right">

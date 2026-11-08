@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
 import { usePolymarketData } from "../context/polymarketDataContext";
+import { copy } from "../copy";
 import { MastHeadIconButton } from "./MastHeadIconButton";
 
 type SyncControlsProps = Record<string, never>;
@@ -14,7 +15,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
   const { paused, setPaused } = useAppData();
   const { loading, error, updatedAt, refresh: refreshScores } = useEspnData();
   const { refresh: refreshOdds } = usePolymarketData();
-  const pauseLabel = paused ? "Resume auto-refresh" : "Pause auto-refresh";
+  const pauseLabel = paused ? copy.sync.resume : copy.sync.pause;
   const pauseIcon = paused ? CirclePlay : CirclePause;
   const time = updatedAt?.toLocaleTimeString(undefined, {
     hour: "numeric",
@@ -24,23 +25,23 @@ export const SyncControls = ({}: SyncControlsProps) => {
 
   const status = useMemo(() => {
     if (loading) {
-      return "Updating…";
+      return copy.sync.updating;
     }
     if (paused) {
-      return "Auto-refresh paused";
+      return copy.sync.paused;
     }
     if (time) {
-      return `Updated ${time}`;
+      return copy.sync.updated(time);
     }
 
-    return "Connecting…";
+    return copy.sync.connecting;
   }, [loading, paused, time]);
 
   return (
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <Typography component="span" role="status" color="text.secondary">
         {status}
-        {error && " · Connection error"}
+        {error && copy.sync.connectionError}
       </Typography>
       <MastHeadIconButton
         icon={pauseIcon}
@@ -49,7 +50,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
       />
       <MastHeadIconButton
         icon={RefreshCw}
-        label="Refresh scores"
+        label={copy.sync.refresh}
         onClick={() => {
           refreshScores();
           refreshOdds();

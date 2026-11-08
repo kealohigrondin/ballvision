@@ -1,14 +1,9 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  within,
-} from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 
 import MastHead from "../src/components/MastHead";
 import { MASTHEAD_ICON_SIZE } from "../src/components/MastHeadIconButton";
+import { copy } from "../src/copy";
 import { AppTheme } from "../src/providers/AppTheme";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 
@@ -25,11 +20,11 @@ it("renders every masthead button as an icon button the size of the pause button
   const header = screen.getByRole("banner");
   const buttons = within(header).getAllByRole("button");
   expect(buttons.map((button) => button.getAttribute("aria-label"))).toEqual([
-    "Pause auto-refresh",
-    "Refresh scores",
-    "Enable chaos sounds",
-    "Test score notification",
-    "Switch to light mode",
+    copy.sync.pause,
+    copy.sync.refresh,
+    copy.scoreNotification.enableSound,
+    copy.scoreNotification.test,
+    copy.theme.toLight,
   ]);
   for (const button of buttons) {
     expect(button.textContent).toBe("");
@@ -40,7 +35,7 @@ it("renders every masthead button as an icon button the size of the pause button
   }
 });
 
-it("shows the enable-sound label in a tooltip instead of a native title", async () => {
+it("gives every masthead icon button a hover hint matching its accessible name", () => {
   render(
     <AppTheme>
       <AppDataTestProvider value={createAppData()}>
@@ -48,10 +43,11 @@ it("shows the enable-sound label in a tooltip instead of a native title", async 
       </AppDataTestProvider>
     </AppTheme>,
   );
-  const enable = screen.getByRole("button", { name: "Enable chaos sounds" });
-  expect(enable.hasAttribute("title")).toBe(false);
-  fireEvent.mouseOver(enable);
-  expect((await screen.findByRole("tooltip")).textContent).toBe(
-    "Enable chaos sounds",
-  );
+  const buttons = within(screen.getByRole("banner")).getAllByRole("button");
+  expect(buttons.length).toBeGreaterThan(0);
+  for (const button of buttons) {
+    const name = button.getAttribute("aria-label");
+    expect(name).toBeTruthy();
+    expect(button.getAttribute("title")).toBe(name);
+  }
 });

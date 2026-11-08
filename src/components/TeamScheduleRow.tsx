@@ -3,6 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
+import { copy } from "../copy";
 import type { TeamScheduleGame } from "../data/types";
 import { scheduleGameStatus } from "../utils/teamSchedule";
 import { TeamLogo } from "./TeamLogo";
@@ -13,7 +14,8 @@ type TeamScheduleRowProps = { game: TeamScheduleGame; teamId: string };
 export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
   const home = game.home.id === teamId;
   const opponent = home ? game.away : game.home;
-  const prefix = !home && !game.neutralSite ? "@" : "vs";
+  const prefix =
+    !home && !game.neutralSite ? copy.schedule.away : copy.schedule.home;
   const date = new Date(game.start);
   const dateLabel = Number.isNaN(date.getTime())
     ? "TBD"

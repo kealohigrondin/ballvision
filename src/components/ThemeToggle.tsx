@@ -1,14 +1,14 @@
 import { Moon, Sun } from "lucide-react";
 
 import { useColorMode } from "../context/ColorModeContext";
+import { copy } from "../copy";
 import { MastHeadIconButton } from "./MastHeadIconButton";
 
 type ThemeToggleProps = Record<string, never>;
 
 export const ThemeToggle = ({}: ThemeToggleProps) => {
   const { mode, toggleMode } = useColorMode();
-  const label =
-    mode === "dark" ? "Switch to light mode" : "Switch to dark mode";
+  const label = mode === "dark" ? copy.theme.toLight : copy.theme.toDark;
   const icon = mode === "dark" ? Sun : Moon;
 
   return (

@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { useScoreNotification } from "../context/scoreNotificationContext";
+import { copy } from "../copy";
 import {
   NOTIFICATION_DURATION_MS,
   notificationHeadline,
@@ -127,7 +128,9 @@ export const ScoreNotificationModal = ({}: ScoreNotificationModalProps) => {
         }}
       >
         <ScoreNotificationControls />
-        <Button onClick={dismissAll}>I have seen enough</Button>
+        <Button onClick={dismissAll}>
+          {copy.scoreNotification.dismissAll}
+        </Button>
         <Button variant="contained" onClick={dismiss}>
           LET ME WATCH 😭
         </Button>

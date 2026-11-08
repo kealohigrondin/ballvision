@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
 
 import { usePolymarketGame } from "../context/polymarketGameContext";
+import { copy } from "../copy";
 import type { OddsHistoryRange } from "../data/types";
 import { OddsHistoryChart } from "./OddsHistoryChart";
 import { SegmentedControl } from "./SegmentedControl";
@@ -26,7 +27,7 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
 
   const content = useMemo(() => {
     if (!hasHistory && loading) {
-      return <LinearProgress aria-label="Loading Polymarket odds history" />;
+      return <LinearProgress aria-label={copy.oddsHistory.loading} />;
     }
     if (!hasHistory && error) {
       return (
@@ -34,18 +35,18 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
           severity="warning"
           action={
             <Button color="inherit" onClick={refresh}>
-              Retry
+              {copy.common.retry}
             </Button>
           }
         >
-          Unable to load odds history.
+          {copy.oddsHistory.loadError}
         </Alert>
       );
     }
     if (!hasHistory || !data || !quote) {
       return (
         <Typography variant="body2" color="text.secondary">
-          No polymarket history is available.
+          {copy.oddsHistory.empty}
         </Typography>
       );
     }
@@ -56,7 +57,7 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
   return (
     <Stack
       component="section"
-      aria-label="Polymarket odds history"
+      aria-label={copy.oddsHistory.label}
       spacing={1.5}
       sx={{ minWidth: 0 }}
     >
@@ -76,22 +77,21 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
           rel="noopener noreferrer"
           variant="subtitle2"
         >
-          Polymarket win probability
+          {copy.oddsHistory.title}
         </Link>
         <SegmentedControl<OddsHistoryRange>
-          label="Odds history range"
+          label={copy.oddsHistory.range}
           value={range}
           onChange={setRange}
-          options={[
-            { value: "1h", label: "1H" },
-            { value: "6h", label: "6H" },
-            { value: "1d", label: "1D" },
-          ]}
+          options={(["1h", "6h", "1d"] as const).map((value) => ({
+            value,
+            label: copy.oddsHistory.ranges[value],
+          }))}
           buttonSx={{ fontSize: "0.8rem", m: 0 }}
         />
       </Stack>
       {error && hasHistory && (
-        <Alert severity="warning">History may be out of date.</Alert>
+        <Alert severity="warning">{copy.oddsHistory.outdated}</Alert>
       )}
       {content}
     </Stack>

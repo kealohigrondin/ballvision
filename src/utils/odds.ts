@@ -8,3 +8,8 @@ export const americanOdds = (probability: number): string => {
 
   return `+${Math.round((100 * (1 - probability)) / probability)}`;
 };
+
+export const formatProbability = (probability: number | undefined): string =>
+  probability === undefined
+    ? "—"
+    : `${(probability * 100).toFixed(1)}% (${americanOdds(probability)})`;

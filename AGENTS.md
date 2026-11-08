@@ -12,6 +12,7 @@
 - each component file should have one responsibility
 - Each component should have it's own file
 - Keep ESPN-specific logic in src/data/espn.ts.
+- Put all user-facing UI copy (text, labels, aria-labels, titles, placeholders) in src/copy.ts and reference it from components. In tests, query by `copy` entries rather than hardcoded strings so wording changes do not break tests.
 - Keep network and refresh logic out of UI components.
 - Prefer low coupling and high cohesion.
 - Use MUI components, theming, and styling.

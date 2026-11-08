@@ -5,9 +5,10 @@ import Typography from "@mui/material/Typography";
 import { type PointerEvent, useId, useMemo, useState } from "react";
 
 import { usePolymarketGame } from "../context/polymarketGameContext";
+import { copy } from "../copy";
 import type { OddsHistory } from "../data/types";
 import { useElementWidth } from "../hooks/useElementWidth";
-import { americanOdds } from "../utils/odds";
+import { formatProbability } from "../utils/odds";
 import { withLiveOdds } from "../utils/oddsHistory";
 import { historyAt } from "../utils/oddsHistory";
 
@@ -55,11 +56,6 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
   const timestamp = times[index];
   const awayValue = historyAt(history.away, timestamp);
   const homeValue = historyAt(history.home, timestamp);
-
-  const label = (value: number | undefined) =>
-    value === undefined
-      ? "—"
-      : `${(value * 100).toFixed(1)}% (${americanOdds(value)})`;
 
   const x = (time: number) => 40 + ((time - start) / span) * plotWidth;
 
@@ -127,10 +123,10 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
         sx={{ flexWrap: "wrap", mb: 1 }}
       >
         <Typography sx={{ color: "primary.main" }}>
-          {away} — {label(awayValue)}
+          {away} — {formatProbability(awayValue)}
         </Typography>
         <Typography sx={{ color: "secondary.main" }}>
-          {home} ⋯ {label(homeValue)}
+          {home} ⋯ {formatProbability(homeValue)}
         </Typography>
       </Stack>
       <Box
@@ -138,7 +134,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
         viewBox={`0 0 ${width} 200`}
         role="img"
         tabIndex={0}
-        aria-label={`Polymarket implied win probability history for ${away} and ${home}`}
+        aria-label={copy.oddsHistory.chart(away, home)}
         aria-describedby={descriptionId}
         sx={{
           display: "block",

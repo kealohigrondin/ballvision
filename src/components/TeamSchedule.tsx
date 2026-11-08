@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
 import { useEspnData } from "../context/espnDataContext";
+import { copy } from "../copy";
 import { teamColumnTableSx } from "../styles/leagueTable";
 import { TeamLogo } from "./TeamLogo";
 import { TeamScheduleRow } from "./TeamScheduleRow";
@@ -23,9 +24,7 @@ export const TeamSchedule = ({}: TeamScheduleProps) => {
 
   if (!selectedTeam) {
     return (
-      <Typography color="text.secondary">
-        Choose a conference and team to view its schedule.
-      </Typography>
+      <Typography color="text.secondary">{copy.schedule.prompt}</Typography>
     );
   }
 
@@ -45,17 +44,18 @@ export const TeamSchedule = ({}: TeamScheduleProps) => {
         />
         <Stack>
           <Typography component="h2" variant="h6">
-            {selectedTeam.name} schedule
+            {copy.schedule.table(selectedTeam.name)}
           </Typography>
           <Typography color="text.secondary" variant="body2">
-            {data?.season ?? "Current season"} · {selectedTeam.record}
+            {data?.season ?? copy.schedule.currentSeason} ·{" "}
+            {selectedTeam.record}
           </Typography>
         </Stack>
       </Stack>
 
       {loading && !data && (
         <Typography role="status" color="text.secondary">
-          Loading team schedule…
+          {copy.schedule.loading}
         </Typography>
       )}
 
@@ -64,24 +64,21 @@ export const TeamSchedule = ({}: TeamScheduleProps) => {
           severity="warning"
           action={
             <Button color="inherit" disabled={loading} onClick={refresh}>
-              Retry
+              {copy.common.retry}
             </Button>
           }
         >
-          Unable to update this team’s schedule. Displayed games may be out of
-          date.
+          {copy.schedule.error}
         </Alert>
       )}
       {data && data.games.length === 0 && !loading && (
-        <Typography color="text.secondary">
-          No games are available for this team’s current season.
-        </Typography>
+        <Typography color="text.secondary">{copy.schedule.empty}</Typography>
       )}
       {data && data.games.length > 0 && (
         <TableContainer>
           <Table
             size="small"
-            aria-label={`${selectedTeam.name} schedule`}
+            aria-label={copy.schedule.table(selectedTeam.name)}
             sx={teamColumnTableSx(2)}
           >
             <TableHead>

@@ -12,6 +12,7 @@ import clsx from "clsx";
 import { Star, StarOff, Tv } from "lucide-react";
 import { useMemo } from "react";
 
+import { copy } from "../copy";
 import type { Game } from "../data/types";
 import { PolymarketGameProvider } from "../providers/PolymarketGameProvider";
 import { compactBoxScoreSx } from "../styles/boxScore";
@@ -32,7 +33,11 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   const homeHasPossession = isLive && game.possession === game.home.id;
   const isScheduled = game.state === "upcoming";
   const isInRedZone = game.redZone && isLive;
-  const favoriteLabel = `${favorite ? "Unfavorite" : "Favorite"} ${game.away.name} at ${game.home.name}`;
+  const favoriteLabel = copy.gameCard.favorite(
+    favorite,
+    game.away.name,
+    game.home.name,
+  );
 
   const favoriteIcon = favorite ? (
     <Star size={16} fill="currentColor" />
@@ -43,13 +48,13 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
 
   const situation = useMemo(() => {
     if (isLive) {
-      return game.situation || "Game in progress";
+      return game.situation || copy.gameCard.inProgress;
     }
     if (game.state === "final") {
-      return "Final score";
+      return copy.gameCard.final;
     }
 
-    return "Kickoff";
+    return copy.gameCard.kickoff;
   }, [isLive, game.situation, game.state]);
 
   const periods = Array.from(
@@ -91,6 +96,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
     <PolymarketGameProvider game={game}>
       <Paper
         component="article"
+        className={clsx(isInRedZone && "red-zone")}
         sx={{
           container: "game-card / inline-size",
           ...(isInRedZone
@@ -102,7 +108,10 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
           <Table
             className="card-scoreboard"
             size="small"
-            aria-label={`${game.away.name} at ${game.home.name} scores by period`}
+            aria-label={copy.gameCard.scoresByPeriod(
+              game.away.name,
+              game.home.name,
+            )}
             sx={[
               compactBoxScoreSx,
               (theme) => ({
@@ -143,7 +152,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
                   align="right"
                   sx={{ width: 56 }}
                 >
-                  T
+                  {copy.periodScores.total}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -204,7 +213,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
                 favorite && "selected",
               )}
               onClick={onFavorite}
-              title={favorite ? "Unpin game" : "Pin game"}
+              title={copy.gameCard.pin(favorite)}
               aria-label={favoriteLabel}
               aria-pressed={favorite}
             >

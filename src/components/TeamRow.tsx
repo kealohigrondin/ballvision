@@ -4,6 +4,7 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 
+import { copy } from "../copy";
 import type { Team } from "../data/types";
 import { TeamLogo } from "./TeamLogo";
 import { TeamScheduleLink } from "./TeamScheduleLink";
@@ -21,7 +22,7 @@ export const TeamRow = ({
   scheduled,
   periods,
 }: TeamRowProps) => {
-  const score = scheduled ? "—" : team.score;
+  const score = scheduled ? copy.common.emptyValue : team.score;
   const record = team.record || team.abbreviation;
   const periodCells = periods.map((period) => (
     <TableCell className="team-period" key={period} align="right">
@@ -50,8 +51,8 @@ export const TeamRow = ({
               <Typography
                 component="span"
                 className="possession"
-                title="Possession"
-                aria-label="Possession"
+                title={copy.gameCard.possession}
+                aria-label={copy.gameCard.possession}
                 sx={{
                   color: "primary.main",
                 }}

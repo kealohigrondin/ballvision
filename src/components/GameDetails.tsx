@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { ChevronDown, MapPin } from "lucide-react";
 
 import { usePolymarketGame } from "../context/polymarketGameContext";
+import { copy } from "../copy";
 import type { Game } from "../data/types";
 import { GameOddsHistory } from "./GameOddsHistory";
 import { PeriodScores } from "./PeriodScores";
@@ -32,14 +33,14 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
   return (
     <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
       <AccordionSummary expandIcon={<ChevronDown />}>
-        <Typography>Game details</Typography>
+        <Typography>{copy.gameDetails.toggle}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Stack spacing={2}>
           {expanded && odds !== undefined && <GameOddsHistory />}
           {expanded && !odds && (
             <Typography variant="body2" color="text.secondary">
-              Polymarket chart unavailable for this game.
+              {copy.gameDetails.chartUnavailable}
             </Typography>
           )}
           {game.lastPlay && (
@@ -48,7 +49,7 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
                 component="span"
                 sx={{ display: "block", fontWeight: 600 }}
               >
-                Last play
+                {copy.gameDetails.lastPlay}
               </Typography>
               {game.lastPlay}
             </Typography>
@@ -67,7 +68,7 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
             </Stack>
           )}
           {!hasDetails && (
-            <Typography>Additional details are not available yet.</Typography>
+            <Typography>{copy.gameDetails.unavailable}</Typography>
           )}
         </Stack>
       </AccordionDetails>

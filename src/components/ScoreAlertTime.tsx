@@ -2,6 +2,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { useScoreNotification } from "../context/scoreNotificationContext";
+import { copy } from "../copy";
+import { periodLabel } from "../utils/gameTime";
 
 type ScoreAlertTimeProps = Record<string, never>;
 
@@ -11,13 +13,12 @@ export const ScoreAlertTime = ({}: ScoreAlertTimeProps) => {
     return null;
   }
   const { game } = current;
-  const period = game.period > 4 ? `${game.period - 4}OT` : `Q${game.period}`;
-  const label = game.period > 0 ? period : game.status;
+  const label = game.period > 0 ? periodLabel(game.period) : game.status;
 
   return (
     <Stack
       role="group"
-      aria-label="Game clock and period"
+      aria-label={copy.scoreNotification.clock}
       spacing={1}
       sx={{ alignItems: "center", flexShrink: 0, textAlign: "center" }}
     >

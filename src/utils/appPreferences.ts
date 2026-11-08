@@ -4,7 +4,7 @@ import type { Week } from "../data/types";
 export const APP_PREFERENCES_KEY = "ballvision:app-data:v1";
 
 export const defaultAppPreferences = (): AppPreferences => ({
-  panelOpen: true,
+  panelOpen: false,
   week: null,
   division: "fbs",
   filter: "all",
@@ -55,8 +55,8 @@ export const loadAppPreferences = (
       week: validWeek(value.week) ? value.week : defaults.week,
       division:
         value.division === "fbs" ||
-        value.division === "fcs" ||
-        value.division === "nfl"
+          value.division === "fcs" ||
+          value.division === "nfl"
           ? value.division
           : defaults.division,
       filter: validFilter(value.filter) ? value.filter : defaults.filter,

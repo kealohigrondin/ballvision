@@ -72,7 +72,7 @@ const favoriteButton = (favorite: boolean, id: string) =>
 afterEach(() => {
   cleanup();
   localStorage.removeItem("ballvision:app-data:v1");
-  localStorage.removeItem("saturday:favorites:v1");
+  localStorage.removeItem("ballvision:favorites:v1");
 });
 
 it("shares search, filters, and favorites between the header and game grid", async () => {

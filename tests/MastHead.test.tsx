@@ -27,7 +27,7 @@ it("renders every masthead button as an icon button the size of the pause button
     "Pause auto-refresh",
     "Refresh scores",
     "Enable chaos sounds",
-    "Test score celebration",
+    "Test score notification",
     "Switch to light mode",
   ]);
   for (const button of buttons) {

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  celebrationSoundKind,
+  notificationSoundKind,
   baselineScores,
   detectScoreChanges,
-} from "../src/utils/scoreCelebrations";
+} from "../src/utils/scoreNotifications";
 import { oddsGame } from "./helpers/oddsFixture";
 import type { Game } from "../src/data/types";
 const game = (
@@ -22,10 +22,10 @@ describe("live score detection", () => {
     const initial = game("7");
     expect(
       detectScoreChanges(baselineScores([initial]), [initial], "slate")
-        .celebrations,
+        .notifications,
     ).toEqual([]);
     expect(
-      detectScoreChanges(new Map(), [initial], "slate").celebrations,
+      detectScoreChanges(new Map(), [initial], "slate").notifications,
     ).toEqual([]);
   });
   it("detects a live increase with the new score snapshot", () => {
@@ -34,7 +34,7 @@ describe("live score detection", () => {
       [game("7")],
       "slate",
     );
-    expect(result.celebrations[0]).toMatchObject({
+    expect(result.notifications[0]).toMatchObject({
       points: 7,
       scoringTeamIds: [oddsGame.home.id],
       game: { home: { score: "7" } },
@@ -47,14 +47,14 @@ describe("live score detection", () => {
       [game("0")],
       "slate",
     );
-    expect(correction.celebrations).toEqual([]);
+    expect(correction.notifications).toEqual([]);
     expect(
       detectScoreChanges(correction.snapshots, [game("7")], "slate")
-        .celebrations,
+        .notifications,
     ).toEqual([]);
     expect(
       detectScoreChanges(correction.snapshots, [game("10")], "slate")
-        .celebrations,
+        .notifications,
     ).toHaveLength(1);
   });
   it("captures scoring on the final live update but ignores revisions to already-final games", () => {
@@ -63,14 +63,14 @@ describe("live score detection", () => {
         baselineScores([game("7")]),
         [game("10", "0", "final")],
         "slate",
-      ).celebrations,
+      ).notifications,
     ).toHaveLength(1);
     expect(
       detectScoreChanges(
         baselineScores([game("7", "0", "final")]),
         [game("10", "0", "final")],
         "slate",
-      ).celebrations,
+      ).notifications,
     ).toEqual([]);
   });
   it("reports both teams if both scored between refreshes", () => {
@@ -79,7 +79,7 @@ describe("live score detection", () => {
       [game("7", "3")],
       "slate",
     );
-    expect(result.celebrations[0].scoringTeamIds).toEqual([
+    expect(result.notifications[0].scoringTeamIds).toEqual([
       oddsGame.home.id,
       oddsGame.away.id,
     ]);
@@ -91,7 +91,7 @@ describe("live score detection", () => {
       "slate",
     );
     expect(
-      detectScoreChanges(missing.snapshots, [game("7")], "slate").celebrations,
+      detectScoreChanges(missing.snapshots, [game("7")], "slate").notifications,
     ).toEqual([]);
   });
 });
@@ -111,7 +111,7 @@ describe("score sound rules", () => {
     "selects %s–%s (+%i, preview=%s, teams=%i) as %s",
     (home, away, points, preview, teams, expected) => {
       expect(
-        celebrationSoundKind({
+        notificationSoundKind({
           id: "event",
           game: game(home, away),
           points,
@@ -139,7 +139,7 @@ describe("Tennessee score sound", () => {
         abbreviation: "TENN",
       };
       expect(
-        celebrationSoundKind({
+        notificationSoundKind({
           id: "event",
           game: eventGame,
           scoringTeamIds: [eventGame[side].id],
@@ -161,9 +161,9 @@ describe("Tennessee score sound", () => {
       points: 7,
       preview: false,
     };
-    expect(celebrationSoundKind(event)).toBe("score");
+    expect(notificationSoundKind(event)).toBe("score");
     expect(
-      celebrationSoundKind({
+      notificationSoundKind({
         ...event,
         scoringTeamIds: [eventGame.home.id],
         preview: true,
@@ -174,7 +174,7 @@ describe("Tennessee score sound", () => {
       { name: "Titans", location: "Tennessee", abbreviation: "TEN" },
     ]) {
       expect(
-        celebrationSoundKind({
+        notificationSoundKind({
           ...event,
           scoringTeamIds: [eventGame.home.id],
           game: { ...eventGame, home: { ...eventGame.home, ...team } },
@@ -182,7 +182,7 @@ describe("Tennessee score sound", () => {
       ).toBe("score");
     }
     expect(
-      celebrationSoundKind({
+      notificationSoundKind({
         ...event,
         scoringTeamIds: [eventGame.home.id, eventGame.away.id],
       }),

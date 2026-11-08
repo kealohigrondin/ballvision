@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
-import { celebrationSoundKind } from "../utils/scoreCelebrations";
+import { notificationSoundKind } from "../utils/scoreNotifications";
 import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
-import { useScoreCelebrations } from "./useScoreCelebrations";
+import { useScoreNotifications } from "./useScoreNotifications";
 import { useChaosAudio } from "./useChaosAudio";
 import type { ChaosAudio } from "../audio/chaosAudio";
 
-export const useScoreCelebrationState = (audioFactory?: () => ChaosAudio) => {
+export const useScoreNotificationState = (audioFactory?: () => ChaosAudio) => {
   const { date, division, favoriteIds } = useAppData();
   const { games, updatedAt, error } = useEspnData();
-  const events = useScoreCelebrations(
+  const events = useScoreNotifications(
     games,
     `${division}:${date}`,
     updatedAt !== null && !error,
@@ -22,7 +22,7 @@ export const useScoreCelebrationState = (audioFactory?: () => ChaosAudio) => {
     const id = event?.id;
     if (event && id && played.current !== id) {
       played.current = id;
-      audio.play(celebrationSoundKind(event));
+      audio.play(notificationSoundKind(event));
     }
     return audio.stop;
   }, [events.current?.id, audio.play, audio.stop]);

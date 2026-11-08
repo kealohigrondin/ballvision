@@ -1,10 +1,10 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useScoreCelebration } from "../context/scoreCelebrationContext";
+import { useScoreNotification } from "../context/scoreNotificationContext";
 
 type ScoreAlertTimeProps = Record<string, never>;
 export const ScoreAlertTime = ({}: ScoreAlertTimeProps) => {
-  const { current } = useScoreCelebration();
+  const { current } = useScoreNotification();
   if (!current) return null;
   const { game } = current;
   const period = game.period > 4 ? `${game.period - 4}OT` : `Q${game.period}`;

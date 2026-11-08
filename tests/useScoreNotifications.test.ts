@@ -1,8 +1,8 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { useScoreCelebrations } from "../src/hooks/useScoreCelebrations";
+import { useScoreNotifications } from "../src/hooks/useScoreNotifications";
 import { oddsGame } from "./helpers/oddsFixture";
-import { CELEBRATION_DURATION_MS } from "../src/utils/scoreCelebrations";
+import { NOTIFICATION_DURATION_MS } from "../src/utils/scoreNotifications";
 const first = { ...oddsGame, home: { ...oddsGame.home, score: "0" } };
 const scored = { ...first, home: { ...first.home, score: "7" } };
 beforeEach(() => vi.useFakeTimers());
@@ -14,7 +14,7 @@ it("queues every scoring game and advances automatically", () => {
   const second = { ...first, id: "game-2" };
   const { result, rerender } = renderHook(
     ({ games }) =>
-      useScoreCelebrations(games, "slate", true, [first.id, "game-2"]),
+      useScoreNotifications(games, "slate", true, [first.id, "game-2"]),
     { initialProps: { games: [first, second] } },
   );
   expect(result.current.current).toBeUndefined();
@@ -24,7 +24,7 @@ it("queues every scoring game and advances automatically", () => {
   expect(result.current.current?.game.id).toBe(first.id);
   expect(result.current.pending).toBe(1);
   act(() => {
-    vi.advanceTimersByTime(CELEBRATION_DURATION_MS);
+    vi.advanceTimersByTime(NOTIFICATION_DURATION_MS);
   });
   expect(result.current.current?.game.id).toBe(second.id);
   act(() => result.current.dismissAll());
@@ -32,7 +32,7 @@ it("queues every scoring game and advances automatically", () => {
 });
 it("clears the queue and establishes a new baseline when the date or league changes", () => {
   const { result, rerender } = renderHook(
-    ({ games, slate }) => useScoreCelebrations(games, slate, true, [first.id]),
+    ({ games, slate }) => useScoreNotifications(games, slate, true, [first.id]),
     { initialProps: { games: [first], slate: "one" } },
   );
   rerender({ games: [scored], slate: "one" });
@@ -43,7 +43,7 @@ it("clears the queue and establishes a new baseline when the date or league chan
 it("previews the current scoreboard without inventing a live score or changing the baseline", () => {
   const { result, rerender } = renderHook(
     ({ games }) =>
-      useScoreCelebrations(games, "slate", true, [first.id, "game-2"]),
+      useScoreNotifications(games, "slate", true, [first.id, "game-2"]),
     { initialProps: { games: [first] } },
   );
   act(() => result.current.preview());
@@ -59,7 +59,7 @@ it("previews the current scoreboard without inventing a live score or changing t
 it("ignores unpinned scores and removes queued events when unpinned", () => {
   const second = { ...first, id: "unpinned" };
   const { result, rerender } = renderHook(
-    ({ games, pinned }) => useScoreCelebrations(games, "slate", true, pinned),
+    ({ games, pinned }) => useScoreNotifications(games, "slate", true, pinned),
     { initialProps: { games: [first, second], pinned: [first.id] } },
   );
   rerender({
@@ -75,9 +75,9 @@ it("ignores unpinned scores and removes queued events when unpinned", () => {
   act(() => result.current.preview());
   expect(result.current.current).toBeUndefined();
 });
-it("does not celebrate past scores when a game is pinned", () => {
+it("does not notify about past scores when a game is pinned", () => {
   const { result, rerender } = renderHook(
-    ({ games, pinned }) => useScoreCelebrations(games, "slate", true, pinned),
+    ({ games, pinned }) => useScoreNotifications(games, "slate", true, pinned),
     { initialProps: { games: [first], pinned: [] as string[] } },
   );
   rerender({ games: [scored], pinned: [] });

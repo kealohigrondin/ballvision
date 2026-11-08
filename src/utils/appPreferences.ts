@@ -1,10 +1,10 @@
 import type { AppPreferences, Filter } from "../context/appDataTypes";
-import { localDate } from "./date";
+import type { Week } from "../data/types";
 
 export const APP_PREFERENCES_KEY = "ballvision:app-data:v1";
 export const defaultAppPreferences = (): AppPreferences => ({
   panelOpen: true,
-  date: localDate(),
+  week: null,
   division: "fbs",
   filter: "all",
   search: "",
@@ -13,11 +13,15 @@ export const defaultAppPreferences = (): AppPreferences => ({
 const validFilter = (value: unknown): value is Filter =>
   typeof value === "string" &&
   ["all", "live", "upcoming", "final", "pinned"].includes(value);
-const validDate = (value: unknown): value is string => {
-  if (typeof value !== "string" || !/^(20\d{2})-\d{2}-\d{2}$/.test(value))
-    return false;
-  const date = new Date(`${value}T12:00:00`);
-  return Number.isFinite(date.getTime()) && localDate(date) === value;
+const validWeek = (value: unknown): value is Week => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const week = value as Record<string, unknown>;
+  return (
+    ["id", "label", "group", "detail"].every(
+      (key) => typeof week[key] === "string",
+    ) &&
+    ["year", "seasonType", "number"].every((key) => Number.isInteger(week[key]))
+  );
 };
 
 export const loadAppPreferences = (
@@ -36,7 +40,7 @@ export const loadAppPreferences = (
         typeof value.panelOpen === "boolean"
           ? value.panelOpen
           : defaults.panelOpen,
-      date: validDate(value.date) ? value.date : defaults.date,
+      week: validWeek(value.week) ? value.week : defaults.week,
       division:
         value.division === "fbs" ||
         value.division === "fcs" ||

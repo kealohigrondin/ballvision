@@ -9,6 +9,7 @@ import type {
 } from "../data/types";
 import { useTeamSchedule } from "./useTeamSchedule";
 import { useScoreboard } from "./useScoreboard";
+import { useSeasonCalendar } from "./useSeasonCalendar";
 import { useLeagueTables, type LeagueView } from "./useLeagueTables";
 
 type EspnSources = {
@@ -21,9 +22,10 @@ export const useEspnDataState = ({
   leagueSource,
   scheduleSource,
 }: EspnSources) => {
-  const { date, division, paused, panelOpen, filter, search, favoriteIds } =
+  const { week, division, paused, panelOpen, filter, search, favoriteIds } =
     useAppData();
-  const scoreboard = useScoreboard(source, { date, division }, paused);
+  const scoreboard = useScoreboard(source, { division, week }, paused);
+  const calendar = useSeasonCalendar(source, division);
   const { games } = scoreboard;
   const [selectedView, setView] = useState<LeagueView>("standings");
   const view =
@@ -82,6 +84,8 @@ export const useEspnDataState = ({
     error: scoreboard.error,
     updatedAt: scoreboard.updatedAt,
     refresh: scoreboard.refresh,
+    weeks: calendar.weeks,
+    currentWeekId: calendar.currentWeekId,
     counts,
     visibleGames,
     schedule: {

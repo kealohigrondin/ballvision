@@ -7,7 +7,8 @@ export const useScoreboard = (
   query: ScoreboardQuery,
   paused: boolean,
 ) => {
-  const queryKey = `${query.division}:${query.date}`;
+  const weekId = query.week?.id ?? "current";
+  const queryKey = `${query.division}:${weekId}`;
   const [state, setState] = useState<{
     key: string;
     games: Game[];
@@ -79,9 +80,9 @@ export const useScoreboard = (
       active?.abort();
       document.removeEventListener("visibilitychange", visibility);
     };
-  }, [source, query.date, query.division, paused, revision]);
-  // Clear the previous query immediately: a different day's scores must never
-  // appear under a new date while its request is in flight.
+  }, [source, weekId, query.division, paused, revision]);
+  // Clear the previous query immediately: a different week's scores must never
+  // appear under a new week while its request is in flight.
   return {
     ...(state.key === queryKey
       ? state

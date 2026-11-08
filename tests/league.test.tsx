@@ -184,7 +184,10 @@ describe("league panel", () => {
     );
   });
   it("opens and closes from the navigation rail", async () => {
-    const scores: ScoreboardSource = { load: vi.fn().mockResolvedValue([]) };
+    const scores: ScoreboardSource = {
+      load: vi.fn().mockResolvedValue([]),
+      loadCalendar: vi.fn().mockResolvedValue({ weeks: [] }),
+    };
     render(
       <AppTheme>
         <App

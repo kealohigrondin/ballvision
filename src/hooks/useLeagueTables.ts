@@ -6,6 +6,7 @@ export const useLeagueTables = (
   source: LeagueSource,
   division: Division,
   view: LeagueView,
+  enabled = true,
 ) => {
   const key = `${division}:${view}`;
   const [revision, setRevision] = useState(0);
@@ -16,6 +17,7 @@ export const useLeagueTables = (
     error: boolean;
   }>({ key, tables: [], loading: true, error: false });
   useEffect(() => {
+    if (!enabled) return;
     let disposed = false;
     let active: AbortController | undefined;
     const load = async () => {
@@ -56,7 +58,7 @@ export const useLeagueTables = (
       clearInterval(timer);
       active?.abort();
     };
-  }, [source, division, view, revision]);
+  }, [source, division, view, revision, enabled]);
   const current =
     state.key === key ? state : { tables: [], loading: true, error: false };
   return { ...current, refresh: () => setRevision((r) => r + 1) };

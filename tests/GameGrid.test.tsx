@@ -1,11 +1,17 @@
+import type { EspnData } from "../src/context/espnDataContext";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GameGrid } from "../src/components/GameGrid";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import type { AppData } from "../src/context/appDataContext";
 
-const grid = (overrides: Partial<AppData> = {}) => (
-  <AppDataTestProvider value={createAppData(overrides)}>
+const grid = (
+  overrides: Partial<EspnData> & Pick<Partial<AppData>, "filter"> = {},
+) => (
+  <AppDataTestProvider
+    value={createAppData({ filter: overrides.filter ?? "all" })}
+    espn={overrides}
+  >
     <GameGrid />
   </AppDataTestProvider>
 );

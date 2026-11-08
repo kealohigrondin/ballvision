@@ -1,3 +1,5 @@
+import { useEspnData } from "../context/espnDataContext";
+import { usePolymarketData } from "../context/polymarketDataContext";
 import { useAppData } from "../context/appDataContext";
 import IconButton from "@mui/material/IconButton";
 import { useMemo } from "react";
@@ -9,14 +11,9 @@ import { CirclePause, CirclePlay, RefreshCw } from "lucide-react";
 type SyncControlsProps = Record<string, never>;
 
 export const SyncControls = ({}: SyncControlsProps) => {
-  const {
-    loading,
-    paused,
-    error,
-    updatedAt,
-    setPaused,
-    refresh: onRefresh,
-  } = useAppData();
+  const { paused, setPaused } = useAppData();
+  const { loading, error, updatedAt, refresh: refreshScores } = useEspnData();
+  const { refresh: refreshOdds } = usePolymarketData();
   const pauseLabel = paused ? "Resume auto-refresh" : "Pause auto-refresh";
   const pauseIcon = paused ? (
     <CirclePlay size={17} />
@@ -43,12 +40,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
 
   return (
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-      <Typography
-        variant="caption"
-        component="span"
-        role="status"
-        color="text.secondary"
-      >
+      <Typography component="span" role="status" color="text.secondary">
         {status}
         {error && " · Connection error"}
       </Typography>
@@ -62,7 +54,10 @@ export const SyncControls = ({}: SyncControlsProps) => {
       <IconButton
         aria-label="Refresh scores"
         title="Refresh scores"
-        onClick={onRefresh}
+        onClick={() => {
+          refreshScores();
+          refreshOdds();
+        }}
         disabled={loading}
       >
         <RefreshCw />

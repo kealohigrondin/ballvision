@@ -10,8 +10,8 @@ export const Footer = ({}: FooterProps) => (
     spacing={2}
     sx={{ mt: 4, py: 3 }}
   >
-    <Typography variant="caption">BALLVISION</Typography>
-    <Typography variant="caption" color="text.secondary">
+    <Typography>BALLVISION</Typography>
+    <Typography color="text.secondary">
       Data from ESPN · Refreshes every 20s · Clocks reflect the latest feed
       update
     </Typography>

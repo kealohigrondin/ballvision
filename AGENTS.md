@@ -21,3 +21,4 @@
 - Run locally only. Do not publish or deploy.
 - use prettier formatting in all files
 - for variables that need more than one inline if statement to determine its value, use usememo to determine value
+- for api calls, prefer storing the data in context and access via providers rather than prop drilling

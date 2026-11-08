@@ -21,7 +21,7 @@ export const TeamLogo = ({ team, size = 40 }: TeamLogoProps) => {
         sx={{ width: "100%", height: "100%", objectFit: "contain" }}
       />
     ) : (
-      <Typography variant="caption" component="span">
+      <Typography component="span">
         {(team.abbreviation ?? "?").slice(0, 3)}
       </Typography>
     );

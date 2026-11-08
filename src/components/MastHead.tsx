@@ -1,3 +1,4 @@
+import { CelebrationControls } from "./CelebrationControls";
 import { Radio } from "lucide-react";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
@@ -28,6 +29,7 @@ const MastHead = ({}: MastHeadProps) => (
     </Link>
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <SyncControls />
+      <CelebrationControls />
       <ThemeToggle />
     </Stack>
   </Stack>

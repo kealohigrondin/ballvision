@@ -1,3 +1,5 @@
+import { usePolymarketGame } from "../context/polymarketGameContext";
+import { GameOddsHistory } from "./GameOddsHistory";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -10,6 +12,11 @@ import { PeriodScores } from "./PeriodScores";
 type GameDetailsProps = { game: Game };
 
 export const GameDetails = ({ game }: GameDetailsProps) => {
+  const {
+    quote: odds,
+    historyOpen: expanded,
+    setHistoryOpen: setExpanded,
+  } = usePolymarketGame();
   const hasTimeouts =
     game.state === "live" &&
     (game.homeTimeouts !== undefined || game.awayTimeouts !== undefined);
@@ -21,12 +28,18 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
     hasTimeouts,
   );
   return (
-    <Accordion>
+    <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
       <AccordionSummary expandIcon={<ChevronDown />}>
         <Typography>Game details</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Stack spacing={2}>
+          {expanded && odds !== undefined && <GameOddsHistory />}
+          {expanded && !odds && (
+            <Typography variant="body2" color="text.secondary">
+              Polymarket chart unavailable for this game.
+            </Typography>
+          )}
           {game.lastPlay && (
             <Typography>
               <Typography component="strong" sx={{ display: "block" }}>

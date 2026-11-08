@@ -31,6 +31,7 @@ const team = (raw: Json): Team => {
   return {
     id: str(raw.id),
     name: str(t.shortDisplayName, str(t.displayName, "Unknown team")),
+    location: str(t.location),
     abbreviation: str(t.abbreviation),
     logo: image(t.logo),
     color: /^[0-9a-f]{6}$/i.test(str(t.color)) ? `#${t.color}` : "#a6b99d",

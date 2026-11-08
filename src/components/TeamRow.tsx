@@ -39,7 +39,6 @@ export const TeamRow = ({
           <TeamLogo team={team} size={36} />
           <Box sx={{ minWidth: "0" }}>
             <Typography
-              variant="caption"
               component="div"
               className="team-name"
               sx={{
@@ -50,7 +49,6 @@ export const TeamRow = ({
             >
               {Boolean(team.rank) && (
                 <Typography
-                  variant="caption"
                   component="span"
                   className="rank"
                   sx={{
@@ -65,7 +63,6 @@ export const TeamRow = ({
               {team.name}&nbsp;
               {possession && (
                 <Typography
-                  variant="caption"
                   component="span"
                   className="possession"
                   title="Possession"
@@ -80,7 +77,6 @@ export const TeamRow = ({
               )}
             </Typography>
             <Typography
-              variant="caption"
               component="span"
               className="record"
               sx={{

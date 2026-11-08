@@ -1,3 +1,4 @@
+import { useEspnData } from "../context/espnDataContext";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -9,12 +10,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
-import type { LeagueTable as LeagueTableData } from "../data/types";
-import type { LeagueView } from "../hooks/useLeagueTables";
-
-type LeagueTableProps = { table: LeagueTableData; view: LeagueView };
-
-export const LeagueTable = ({ table, view }: LeagueTableProps) => {
+type LeagueTableProps = Record<string, never>;
+export const LeagueTable = ({}: LeagueTableProps) => {
+  const {
+    league: { selected: table, view },
+  } = useEspnData();
+  if (!table) return null;
   const ranked = view === "rankings";
   const column = ranked ? "PTS" : "CONF";
   const rows = table.rows.map((row) => {
@@ -56,11 +57,7 @@ export const LeagueTable = ({ table, view }: LeagueTableProps) => {
       <Table className="league-table">
         <caption>
           {table.title}
-          <Typography
-            variant="caption"
-            component="span"
-            sx={{ display: "block" }}
-          >
+          <Typography component="span" sx={{ display: "block" }}>
             {table.subtitle}
           </Typography>
         </caption>

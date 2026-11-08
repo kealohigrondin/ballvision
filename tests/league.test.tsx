@@ -1,4 +1,5 @@
-import { AppDataTestProvider, createAppData } from "./helpers/appData";
+import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
+import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -8,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
-import { AppTheme } from "../src/components/AppTheme";
+import { AppTheme } from "../src/providers/AppTheme";
 import { LeaguePanel } from "../src/components/LeaguePanel";
 import { parseRankings, parseStandings } from "../src/data/espn";
 import type {
@@ -33,7 +34,10 @@ const source = (): LeagueSource => ({
   loadStandings: vi.fn().mockResolvedValue([conference]),
   loadRankings: vi.fn().mockResolvedValue([poll]),
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  localStorage.removeItem("ballvision:app-data:v1");
+});
 
 describe("league data adapters", () => {
   it("reads overall and conference records", () => {
@@ -153,20 +157,16 @@ describe("league panel", () => {
   it("uses NFL standings when switching from a college poll", async () => {
     const provider = source();
     const { rerender } = render(
-      <AppDataTestProvider
-        value={createAppData({ leagueSource: provider, division: "fbs" })}
-      >
+      <LeagueTestProvider source={provider} division="fbs">
         <LeaguePanel />
-      </AppDataTestProvider>,
+      </LeagueTestProvider>,
     );
     fireEvent.click(screen.getByRole("button", { name: "Top 25" }));
     await screen.findByRole("table", { name: /AP Top 25/ });
     rerender(
-      <AppDataTestProvider
-        value={createAppData({ leagueSource: provider, division: "nfl" })}
-      >
+      <LeagueTestProvider source={provider} division="nfl">
         <LeaguePanel />
-      </AppDataTestProvider>,
+      </LeagueTestProvider>,
     );
     await screen.findByRole("table", { name: /SEC/ });
     expect(screen.queryByRole("button", { name: "Top 25" })).toBeNull();
@@ -180,7 +180,11 @@ describe("league panel", () => {
     const scores: ScoreboardSource = { load: vi.fn().mockResolvedValue([]) };
     render(
       <AppTheme>
-        <App source={scores} leagueSource={source()} />
+        <App
+          source={scores}
+          leagueSource={source()}
+          oddsSource={emptyOddsSource}
+        />
       </AppTheme>,
     );
     await screen.findByRole("table", { name: /SEC/ });
@@ -202,11 +206,9 @@ describe("league panel", () => {
       { ...conference, id: "acc", title: "ACC" },
     ]);
     render(
-      <AppDataTestProvider
-        value={createAppData({ leagueSource: provider, division: "fbs" })}
-      >
+      <LeagueTestProvider source={provider} division="fbs">
         <LeaguePanel />
-      </AppDataTestProvider>,
+      </LeagueTestProvider>,
     );
     await screen.findByRole("table", { name: /SEC/ });
     fireEvent.change(screen.getByLabelText("Conference"), {
@@ -232,11 +234,9 @@ describe("league panel", () => {
       new Error("offline"),
     );
     render(
-      <AppDataTestProvider
-        value={createAppData({ leagueSource: provider, division: "fcs" })}
-      >
+      <LeagueTestProvider source={provider} division="fcs">
         <LeaguePanel />
-      </AppDataTestProvider>,
+      </LeagueTestProvider>,
     );
     await screen.findByRole("alert");
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));

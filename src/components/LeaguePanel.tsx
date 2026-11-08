@@ -1,3 +1,4 @@
+import { useEspnData } from "../context/espnDataContext";
 import { SegmentedControl } from "./SegmentedControl";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -5,24 +6,27 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import Paper from "@mui/material/Paper";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useAppData } from "../context/appDataContext";
-import { useLeagueTables, type LeagueView } from "../hooks/useLeagueTables";
+import type { LeagueView } from "../hooks/useLeagueTables";
 import { LeagueTable } from "./LeagueTable";
 
 type LeaguePanelProps = Record<string, never>;
 
 export const LeaguePanel = ({}: LeaguePanelProps) => {
-  const { leagueSource: source, division } = useAppData();
-  const [selectedView, setView] = useState<LeagueView>("standings");
-  const view = division === "nfl" ? "standings" : selectedView;
-  const [selectedId, setSelectedId] = useState("");
-  const { tables, loading, error, refresh } = useLeagueTables(
-    source,
-    division,
-    view,
-  );
-  const selected = tables.find((table) => table.id === selectedId) ?? tables[0];
+  const { division } = useAppData();
+  const {
+    league: {
+      tables,
+      loading,
+      error,
+      refresh,
+      view,
+      setView,
+      selected,
+      setSelectedId,
+    },
+  } = useEspnData();
   const options = tables.map((table) => (
     <option key={table.id} value={table.id}>
       {table.title}
@@ -48,7 +52,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       );
     }
     if (selected?.rows.length) {
-      return <LeagueTable table={selected} view={view} />;
+      return <LeagueTable />;
     }
     return (
       <Typography
@@ -130,7 +134,6 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       )}
       {content}
       <Typography
-        variant="caption"
         component="p"
         className="league-note"
         color="text.secondary"

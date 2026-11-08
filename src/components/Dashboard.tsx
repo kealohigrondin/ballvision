@@ -1,3 +1,5 @@
+import { ScoreCelebrationModal } from "./ScoreCelebrationModal";
+import { useEspnData } from "../context/espnDataContext";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
@@ -12,7 +14,8 @@ import { ScoresHeader } from "./ScoresHeader";
 type DashboardProps = Record<string, never>;
 
 export const Dashboard = ({}: DashboardProps) => {
-  const { panelOpen, error, loading, refresh } = useAppData();
+  const { panelOpen } = useAppData();
+  const { error, loading, refresh } = useEspnData();
   const columns = panelOpen
     ? {
         xs: "minmax(0, 1fr)",
@@ -23,6 +26,7 @@ export const Dashboard = ({}: DashboardProps) => {
 
   return (
     <Container maxWidth={false} className="app-shell">
+      <ScoreCelebrationModal />
       <MastHead />
       <Box component="main">
         <Box

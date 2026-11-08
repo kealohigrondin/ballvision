@@ -30,6 +30,13 @@ export const createAppTheme = (mode: "light" | "dark") =>
     },
     typography: { fontFamily: "Montserrat, sans-serif" },
     components: {
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            fontSize: "0.8rem",
+          },
+        },
+      },
       MuiPaper: {
         styleOverrides: {
           root: {

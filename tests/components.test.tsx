@@ -1,5 +1,7 @@
+import type { PolymarketData } from "../src/context/polymarketDataContext";
+import { oddsQuote } from "./helpers/oddsFixture";
 import type { ReactNode } from "react";
-import { AppTheme } from "../src/components/AppTheme";
+import { AppTheme } from "../src/providers/AppTheme";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import {
   cleanup,
@@ -14,7 +16,16 @@ import { TeamLogo } from "../src/components/TeamLogo";
 import { SyncControls } from "../src/components/SyncControls";
 import type { Game, Team } from "../src/data/types";
 
-const render = (ui: ReactNode) => renderWithoutTheme(ui, { wrapper: AppTheme });
+const render = (ui: ReactNode, polymarket?: Partial<PolymarketData>) =>
+  renderWithoutTheme(ui, {
+    wrapper: ({ children }) => (
+      <AppTheme>
+        <AppDataTestProvider value={createAppData()} polymarket={polymarket}>
+          {children}
+        </AppDataTestProvider>
+      </AppTheme>
+    ),
+  });
 
 const home: Team = {
   id: "home",
@@ -102,6 +113,43 @@ describe("scoreboard presentation", () => {
     );
     expect(onFavorite).toHaveBeenCalledOnce();
   });
+  it("displays only the favored team odds before the pin button and labels stale quotes", () => {
+    const { container } = render(
+      <GameCard game={game} favorite={false} onFavorite={() => {}} />,
+      { quotes: { [game.id]: oddsQuote }, error: true },
+    );
+    const link = screen.getByRole("link", { name: "AWY -300" });
+    expect(link.getAttribute("href")).toBe(oddsQuote.url);
+    expect(link.textContent).toContain("AWY -300");
+    expect(link.textContent).not.toContain("HOM");
+    expect(link.parentElement?.title).toContain("stale");
+    const actions = container.querySelector(".favorite")?.parentElement;
+    expect(actions?.firstElementChild?.contains(link)).toBe(true);
+    expect(actions?.lastElementChild?.getAttribute("aria-label")).toBe(
+      "Favorite Away at Home",
+    );
+  });
+  it("switches to the home team when it has the higher probability", () => {
+    render(<GameCard game={game} favorite={false} onFavorite={() => {}} />, {
+      quotes: {
+        [game.id]: {
+          ...oddsQuote,
+          awayProbability: 0.25,
+          homeProbability: 0.75,
+        },
+      },
+    });
+    const link = screen.getByRole("link", { name: "HOM -300" });
+    expect(link.textContent).not.toContain("AWY");
+  });
+  it("shows even odds without favoring either team when probabilities tie", () => {
+    render(<GameCard game={game} favorite={false} onFavorite={() => {}} />, {
+      quotes: {
+        [game.id]: { ...oddsQuote, awayProbability: 0.5, homeProbability: 0.5 },
+      },
+    });
+    expect(screen.getByRole("link", { name: "Even odds" })).toBeTruthy();
+  });
   it("omits unavailable optional details and live indicators for scheduled games", () => {
     render(
       <GameCard
@@ -139,9 +187,9 @@ describe("scoreboard presentation", () => {
       <AppDataTestProvider
         value={createAppData({
           paused: true,
-          updatedAt: null,
           setPaused: onTogglePause,
         })}
+        espn={{ updatedAt: null }}
       >
         <SyncControls />
       </AppDataTestProvider>,
@@ -153,10 +201,9 @@ describe("scoreboard presentation", () => {
     rerender(
       <AppDataTestProvider
         value={createAppData({
-          loading: true,
-          updatedAt: null,
           setPaused: onTogglePause,
         })}
+        espn={{ loading: true, updatedAt: null }}
       >
         <SyncControls />
       </AppDataTestProvider>,

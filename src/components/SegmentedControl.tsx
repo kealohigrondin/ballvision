@@ -11,6 +11,7 @@ type SegmentedControlProps<Value extends string> = {
   className?: string;
   fullWidth?: boolean;
   sx?: SxProps<Theme>;
+  buttonSx?: SxProps<Theme>;
 };
 
 export const SegmentedControl = <Value extends string>({
@@ -21,9 +22,10 @@ export const SegmentedControl = <Value extends string>({
   className,
   fullWidth = false,
   sx,
+  buttonSx,
 }: SegmentedControlProps<Value>) => {
   const buttons = options.map((option) => (
-    <ToggleButton key={option.value} value={option.value}>
+    <ToggleButton key={option.value} value={option.value} sx={buttonSx}>
       {option.label}
     </ToggleButton>
   ));

@@ -132,8 +132,17 @@ export const notificationSoundKind = (event: ScoreNotification) => {
       (team.name.trim().toLowerCase() === "tennessee" ||
         team.abbreviation.toUpperCase() === "TENN"),
   );
+  const seahawksScored = [event.game.home, event.game.away].some(
+    (team) =>
+      event.scoringTeamIds.includes(team.id) &&
+      (team.name.trim().toLowerCase() === "seahawks" ||
+        team.abbreviation.toUpperCase() === "SEA"),
+  );
   if (tennesseeScored) {
-    return "rockyTop";
+    return "tennessee_td";
+  }
+  if (seahawksScored) {
+    return "seahawks_td";
   }
   const home = score(event.game.home.score);
   const away = score(event.game.away.score);

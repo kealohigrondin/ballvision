@@ -97,15 +97,15 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
     }
   }
   for (const [index, kind] of (
-    ["rockyTop", "fieldGoal", "sixSeven", "pat"] as const
+    ["tennessee_td", "seahawks_td", "fieldGoal", "sixSeven", "pat"] as const
   ).entries()) {
     audio.play(kind);
     expect(sources[index + 4].buffer).toBe(decoded[index]);
     expect(sources[index + 4].start).toHaveBeenCalled();
   }
-  expect(sources).toHaveLength(8);
+  expect(sources).toHaveLength(9);
   audio.stop();
-  expect(sources[7].stop).toHaveBeenCalled();
+  expect(sources[8].stop).toHaveBeenCalled();
   audio.dispose();
   expect(context.close).toHaveBeenCalled();
 });

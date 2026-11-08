@@ -25,11 +25,16 @@ export const CelebrationControls = ({}: CelebrationControlsProps) => {
       onClick={toggleMute}
     />
   ) : (
-    <MastHeadIconButton
-      icon={Volume2}
-      label={enableLabel}
-      onClick={() => void enableSound()}
-    />
+    <Tooltip title={enableLabel}>
+      <span>
+        <MastHeadIconButton
+          icon={Volume2}
+          label={enableLabel}
+          title={null}
+          onClick={() => void enableSound()}
+        />
+      </span>
+    </Tooltip>
   );
   return (
     <>

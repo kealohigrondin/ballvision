@@ -1,4 +1,10 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { AppTheme } from "../src/providers/AppTheme";
@@ -31,4 +37,20 @@ it("renders every masthead button as an icon button the size of the pause button
     expect(icons[0].getAttribute("width")).toBe(String(MASTHEAD_ICON_SIZE));
     expect(icons[0].getAttribute("height")).toBe(String(MASTHEAD_ICON_SIZE));
   }
+});
+
+it("shows the enable-sound label in a tooltip instead of a native title", async () => {
+  render(
+    <AppTheme>
+      <AppDataTestProvider value={createAppData()}>
+        <MastHead />
+      </AppDataTestProvider>
+    </AppTheme>,
+  );
+  const enable = screen.getByRole("button", { name: "Enable chaos sounds" });
+  expect(enable.hasAttribute("title")).toBe(false);
+  fireEvent.mouseOver(enable);
+  expect((await screen.findByRole("tooltip")).textContent).toBe(
+    "Enable chaos sounds",
+  );
 });

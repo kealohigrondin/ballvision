@@ -37,8 +37,8 @@ export const copy = {
   gameDetails: {
     toggle: "Game details",
     chartUnavailable: "Polymarket chart unavailable for this game.",
-    oddsBlocked:
-      "Couldn't reach Polymarket. Disable adblock for this site.",
+    oddsBlocked: "Couldn't reach Polymarket. Disable adblock for this site.",
+    lastPlay: "Last play",
     unavailable: "Additional details are not available yet.",
   },
   odds: {

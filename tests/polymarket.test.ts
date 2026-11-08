@@ -179,6 +179,103 @@ describe("Polymarket moneylines", () => {
     ).toBe(0.6);
     expect(fetcher).toHaveBeenCalledTimes(5);
   });
+  it("loads NFL moneylines from the NFL series by team nickname", async () => {
+    const team = (name: string, location: string, abbreviation: string) => ({
+      ...oddsGame.home,
+      id: abbreviation,
+      name,
+      location,
+      abbreviation,
+    });
+    const ramsGame = {
+      ...oddsGame,
+      id: "rams-commanders",
+      start: "2026-11-08T18:00:00Z",
+      away: team("Rams", "Los Angeles", "LAR"),
+      home: team("Commanders", "Washington", "WSH"),
+    };
+    const chargersGame = {
+      ...oddsGame,
+      id: "texans-chargers",
+      state: "upcoming" as const,
+      start: "2026-11-08T21:05:00Z",
+      away: team("Texans", "Houston", "HOU"),
+      home: team("Chargers", "Los Angeles", "LAC"),
+    };
+
+    const nflEvent = (
+      slug: string,
+      startTime: string,
+      outcomes: [string, string],
+      tokens: [string, string],
+    ) => ({
+      slug,
+      startTime,
+      ended: false,
+      closed: false,
+      markets: [
+        {
+          ...market,
+          id: slug,
+          outcomes: JSON.stringify(outcomes),
+          clobTokenIds: JSON.stringify(tokens),
+        },
+      ],
+    });
+    // Polymarket omits next_cursor on the final page of NFL events.
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        response([
+          { sport: "cfb", series: "999" },
+          { sport: "nfl", series: "12185" },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        response({
+          events: [
+            nflEvent(
+              "nfl-la-was-2026-11-08",
+              ramsGame.start,
+              ["Rams", "Commanders"],
+              ["1", "2"],
+            ),
+            nflEvent(
+              "nfl-hou-lac-2026-11-08",
+              chargersGame.start,
+              ["Texans", "Chargers"],
+              ["3", "4"],
+            ),
+            nflEvent(
+              "nfl-hou-lac-2026-11-08-player-props",
+              chargersGame.start,
+              ["Texans", "Chargers"],
+              ["5", "6"],
+            ),
+          ],
+        }),
+      )
+      .mockResolvedValueOnce(
+        response({ "1": "0.615", "2": "0.385", "3": "0.665", "4": "0.335" }),
+      );
+    const quotes = await createPolymarketSource(fetcher).load(
+      { division: "nfl", games: [ramsGame, chargersGame] },
+      new AbortController().signal,
+    );
+    expect(
+      new URL(String(fetcher.mock.calls[1][0])).searchParams.get("series_id"),
+    ).toBe("12185");
+    expect(quotes[ramsGame.id]).toMatchObject({
+      url: "https://polymarket.com/event/nfl-la-was-2026-11-08",
+      awayProbability: 0.615,
+      homeProbability: 0.385,
+    });
+    expect(quotes[chargersGame.id]).toMatchObject({
+      url: "https://polymarket.com/event/nfl-hou-lac-2026-11-08",
+      awayTokenId: "3",
+      homeTokenId: "4",
+    });
+  });
   it("does not substitute cached discovery prices when the live order book has no quote", async () => {
     const fetcher = vi
       .fn<typeof fetch>()

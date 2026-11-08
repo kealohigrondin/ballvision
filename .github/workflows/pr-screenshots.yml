@@ -68,19 +68,30 @@ jobs:
             const pr = Number(process.env.PR_NUMBER);
             const sha = process.env.HEAD_SHA;
             const marker = "<!-- pr-screenshots -->";
-            const files = fs
+            // PNG width and height live in the IHDR chunk at bytes 16-23.
+            const shots = fs
               .readdirSync("screenshots")
               .filter((file) => file.endsWith(".png"))
-              .sort();
+              .map((file) => {
+                const png = fs.readFileSync(`screenshots/${file}`);
+                return {
+                  file,
+                  width: png.readUInt32BE(16),
+                  height: png.readUInt32BE(20),
+                };
+              })
+              .sort((a, b) => b.width - a.width || a.file.localeCompare(b.file));
             const url = (file) =>
               `https://github.com/${owner}/${repo}/blob/pr-screenshots/pr-${pr}/${sha}/${file}?raw=true`;
-            const images = files
+            // Shown at the captured size; GitHub only scales down images
+            // wider than the comment column.
+            const images = shots
               .map(
-                (file) =>
-                  `<details open><summary>${file.replace(".png", "")}</summary>\n\n<img src="${url(file)}" width="720" alt="${file}">\n\n</details>`,
+                ({ file, width, height }) =>
+                  `<details open><summary>${file.replace(".png", "")} (${width}×${height})</summary>\n\n<img src="${url(file)}" width="${width}" alt="${file}">\n\n</details>`,
               )
               .join("\n");
-            const body = `${marker}\n### Screenshots\n\nCaptured at ${sha.slice(0, 7)} with mocked ESPN data.\n\n${images}`;
+            const body = `${marker}\n### Screenshots\n\nCaptured at ${sha.slice(0, 7)} with mocked ESPN data, one screen per viewport at 1x scale.\n\n${images}`;
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner,
               repo,

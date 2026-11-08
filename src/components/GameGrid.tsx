@@ -1,3 +1,4 @@
+import { useEspnData } from "../context/espnDataContext";
 import Grid from "@mui/material/Grid";
 import { getGameGridSize } from "../utils/gameGridLayout";
 
@@ -11,15 +12,12 @@ type GameGridProps = Record<string, never>;
 
 export const GameGrid = ({}: GameGridProps) => {
   const {
-    visibleGames: games,
     panelOpen: compact,
-    loading,
-    updatedAt,
-    error,
     filter,
     favoriteIds,
     toggleFavorite: onToggleFavorite,
   } = useAppData();
+  const { visibleGames: games, loading, updatedAt, error } = useEspnData();
   const hasLoaded = updatedAt !== null;
   const hasError = Boolean(error);
   const pinnedOnly = filter === "pinned";

@@ -1,3 +1,4 @@
+import { useEspnData } from "../context/espnDataContext";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -15,18 +16,16 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
   const {
     week,
     setWeek,
-    weeks,
-    currentWeekId,
     division,
     setDivision: onDivision,
     search,
     setSearch: onSearch,
     filter,
     setFilter: onFilter,
-    counts,
     panelOpen,
     setPanelOpen,
   } = useAppData();
+  const { counts, weeks, currentWeekId } = useEspnData();
   const panelLabel = panelOpen ? "Close league panel" : "Open league panel";
   const panelIcon = panelOpen ? (
     <PanelRightClose size={18} />

@@ -6,6 +6,7 @@ import TableRow from "@mui/material/TableRow";
 
 import type { Team } from "../data/types";
 import { TeamLogo } from "./TeamLogo";
+import { TeamScheduleLink } from "./TeamScheduleLink";
 
 type TeamRowProps = {
   team: Team;
@@ -34,12 +35,34 @@ export const TeamRow = ({
         <Stack
           direction="row"
           className="team-identity"
-          sx={{ alignItems: "center", gap: 1, minWidth: "0" }}
+          sx={{ alignItems: "center", gap: 1, minWidth: 0, width: "100%" }}
         >
+          <Box
+            sx={{
+              width: "1ch",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {possession && (
+              <Typography
+                component="span"
+                className="possession"
+                title="Possession"
+                aria-label="Possession"
+                sx={{
+                  color: "primary.main",
+                }}
+              >
+                ◆
+              </Typography>
+            )}
+          </Box>
           <TeamLogo team={team} size={36} />
-          <Box sx={{ minWidth: "0" }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
-              variant="caption"
               component="div"
               className="team-name"
               sx={{
@@ -50,7 +73,6 @@ export const TeamRow = ({
             >
               {Boolean(team.rank) && (
                 <Typography
-                  variant="caption"
                   component="span"
                   className="rank"
                   sx={{
@@ -61,26 +83,9 @@ export const TeamRow = ({
                   {team.rank}
                 </Typography>
               )}
-              &nbsp;
-              {team.name}&nbsp;
-              {possession && (
-                <Typography
-                  variant="caption"
-                  component="span"
-                  className="possession"
-                  title="Possession"
-                  aria-label="Possession"
-                  sx={{
-                    color: "primary.main",
-                    ml: 0.5,
-                  }}
-                >
-                  ◆
-                </Typography>
-              )}
+              <TeamScheduleLink team={team} />
             </Typography>
             <Typography
-              variant="caption"
               component="span"
               className="record"
               sx={{

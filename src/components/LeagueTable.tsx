@@ -1,4 +1,7 @@
+import { teamColumnTableSx } from "../styles/leagueTable";
+import { useEspnData } from "../context/espnDataContext";
 import Typography from "@mui/material/Typography";
+import { TeamScheduleLink } from "./TeamScheduleLink";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { TeamLogo } from "./TeamLogo";
@@ -9,12 +12,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
-import type { LeagueTable as LeagueTableData } from "../data/types";
-import type { LeagueView } from "../hooks/useLeagueTables";
-
-type LeagueTableProps = { table: LeagueTableData; view: LeagueView };
-
-export const LeagueTable = ({ table, view }: LeagueTableProps) => {
+type LeagueTableProps = Record<string, never>;
+export const LeagueTable = ({}: LeagueTableProps) => {
+  const {
+    league: { selected: table, view },
+  } = useEspnData();
+  if (!table) return null;
   const ranked = view === "rankings";
   const column = ranked ? "PTS" : "CONF";
   const rows = table.rows.map((row) => {
@@ -37,13 +40,7 @@ export const LeagueTable = ({ table, view }: LeagueTableProps) => {
               team={{ ...row, abbreviation: row.abbreviation || row.name }}
               size={24}
             />
-            <Typography
-              component="span"
-              variant="body2"
-              sx={{ overflowWrap: "anywhere" }}
-            >
-              {row.name}
-            </Typography>
+            <TeamScheduleLink team={row} />
           </Stack>
         </TableCell>
         <TableCell align="right">{value ?? "—"}</TableCell>
@@ -53,14 +50,10 @@ export const LeagueTable = ({ table, view }: LeagueTableProps) => {
   });
   return (
     <TableContainer className="league-table-scroll" sx={{ overflowX: "auto" }}>
-      <Table className="league-table">
+      <Table size="small" className="league-table" sx={teamColumnTableSx(1)}>
         <caption>
           {table.title}
-          <Typography
-            variant="caption"
-            component="span"
-            sx={{ display: "block" }}
-          >
+          <Typography component="span" sx={{ display: "block" }}>
             {table.subtitle}
           </Typography>
         </caption>

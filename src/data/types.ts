@@ -3,6 +3,7 @@ export type GameState = "live" | "upcoming" | "final" | "other";
 export interface Team {
   id: string;
   name: string;
+  location?: string;
   abbreviation: string;
   logo?: string;
   color: string;
@@ -79,4 +80,55 @@ export interface LeagueSource {
     signal: AbortSignal,
   ): Promise<LeagueTable[]>;
   loadRankings(division: Division, signal: AbortSignal): Promise<LeagueTable[]>;
+}
+
+export interface TeamScheduleGame extends Game {
+  timeConfirmed: boolean;
+  neutralSite: boolean;
+}
+export interface TeamSchedule {
+  season: string;
+  games: TeamScheduleGame[];
+}
+export interface TeamScheduleSource {
+  load(
+    query: { division: Division; teamId: string },
+    signal: AbortSignal,
+  ): Promise<TeamSchedule>;
+}
+
+export interface GameOdds {
+  source: "Polymarket";
+  url: string;
+  awayTokenId: string;
+  homeTokenId: string;
+  awayProbability: number;
+  homeProbability: number;
+  updatedAt: number;
+}
+export type GameOddsMap = Record<string, GameOdds>;
+export interface OddsQuery {
+  division: Division;
+  games: readonly Game[];
+}
+export interface OddsSource {
+  load(query: OddsQuery, signal: AbortSignal): Promise<GameOddsMap>;
+}
+
+export type OddsHistoryRange = "1h" | "6h" | "1d";
+export interface OddsHistoryPoint {
+  timestamp: number;
+  probability: number;
+}
+export interface OddsHistory {
+  away: OddsHistoryPoint[];
+  home: OddsHistoryPoint[];
+}
+export interface OddsHistoryQuery {
+  awayTokenId: string;
+  homeTokenId: string;
+  range: OddsHistoryRange;
+}
+export interface OddsHistorySource {
+  load(query: OddsHistoryQuery, signal: AbortSignal): Promise<OddsHistory>;
 }

@@ -1,3 +1,4 @@
+import { emptyOddsSource } from "./helpers/appData";
 import {
   cleanup,
   fireEvent,
@@ -7,7 +8,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import App from "../src/App";
-import { AppTheme } from "../src/components/AppTheme";
+import { AppTheme } from "../src/providers/AppTheme";
 import type {
   Game,
   LeagueSource,
@@ -61,6 +62,7 @@ const game = (id: string, state: Game["state"]): Game => ({
 
 afterEach(() => {
   cleanup();
+  localStorage.removeItem("ballvision:app-data:v1");
   localStorage.removeItem("saturday:favorites:v1");
 });
 
@@ -77,7 +79,11 @@ it("shares search, filters, and favorites between the header and game grid", asy
   };
   render(
     <AppTheme>
-      <App source={source} leagueSource={leagueSource} />
+      <App
+        source={source}
+        leagueSource={leagueSource}
+        oddsSource={emptyOddsSource}
+      />
     </AppTheme>,
   );
   await screen.findByRole("table", {
@@ -136,7 +142,11 @@ it("shares week, division, panel visibility, and pause state across app features
     );
   render(
     <AppTheme>
-      <App source={source} leagueSource={leagueSource} />
+      <App
+        source={source}
+        leagueSource={leagueSource}
+        oddsSource={emptyOddsSource}
+      />
     </AppTheme>,
   );
   await screen.findByText("No games on this field.");
@@ -185,4 +195,50 @@ it("shares week, division, panel visibility, and pause state across app features
   expect(
     screen.getByRole("button", { name: "Pause auto-refresh" }),
   ).toBeTruthy();
+});
+
+it("shares injected ESPN and Polymarket data with nested odds views and refreshes both providers", async () => {
+  const { oddsQuote } = await import("./helpers/oddsFixture");
+  const source: ScoreboardSource = {
+    load: vi.fn().mockResolvedValue([game("Live", "live")]),
+    loadCalendar: vi.fn().mockResolvedValue(calendar),
+  };
+  const leagueSource: LeagueSource = {
+    loadStandings: vi.fn().mockResolvedValue([]),
+    loadRankings: vi.fn().mockResolvedValue([]),
+  };
+  const loadOdds = vi.fn().mockResolvedValue({ Live: oddsQuote });
+  const loadHistory = vi.fn().mockResolvedValue({
+    away: [{ timestamp: Date.now() - 1000, probability: 0.6 }],
+    home: [{ timestamp: Date.now() - 1000, probability: 0.4 }],
+  });
+  render(
+    <AppTheme>
+      <App
+        source={source}
+        leagueSource={leagueSource}
+        oddsSource={{ load: loadOdds }}
+        oddsHistorySource={{ load: loadHistory }}
+      />
+    </AppTheme>,
+  );
+  await screen.findByRole("link", { name: "AWY -300" });
+  expect(loadHistory).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Game details" }));
+  await screen.findByRole("img", {
+    name: "Polymarket implied win probability history for AWY and HOM",
+  });
+  expect(loadHistory).toHaveBeenCalledWith(
+    { awayTokenId: "222", homeTokenId: "111", range: "1h" },
+    expect.any(AbortSignal),
+  );
+  const scoreCalls = vi.mocked(source.load).mock.calls.length;
+  const oddsCalls = loadOdds.mock.calls.length;
+  fireEvent.click(screen.getByRole("button", { name: "Refresh scores" }));
+  await waitFor(() => {
+    expect(vi.mocked(source.load).mock.calls.length).toBeGreaterThan(
+      scoreCalls,
+    );
+    expect(loadOdds.mock.calls.length).toBeGreaterThan(oddsCalls);
+  });
 });

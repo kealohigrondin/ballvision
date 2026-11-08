@@ -1,3 +1,4 @@
+import { useEspnData } from "../context/espnDataContext";
 import { SegmentedControl } from "./SegmentedControl";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -5,24 +6,28 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import Paper from "@mui/material/Paper";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useAppData } from "../context/appDataContext";
-import { useLeagueTables, type LeagueView } from "../hooks/useLeagueTables";
+import type { LeagueView } from "../hooks/useLeagueTables";
+import { TeamSchedule } from "./TeamSchedule";
 import { LeagueTable } from "./LeagueTable";
 
 type LeaguePanelProps = Record<string, never>;
 
 export const LeaguePanel = ({}: LeaguePanelProps) => {
-  const { leagueSource: source, division } = useAppData();
-  const [selectedView, setView] = useState<LeagueView>("standings");
-  const view = division === "nfl" ? "standings" : selectedView;
-  const [selectedId, setSelectedId] = useState("");
-  const { tables, loading, error, refresh } = useLeagueTables(
-    source,
-    division,
-    view,
-  );
-  const selected = tables.find((table) => table.id === selectedId) ?? tables[0];
+  const { division } = useAppData();
+  const {
+    league: {
+      tables,
+      loading,
+      error,
+      refresh,
+      view,
+      setView,
+      selected,
+      setSelectedId,
+    },
+  } = useEspnData();
   const options = tables.map((table) => (
     <option key={table.id} value={table.id}>
       {table.title}
@@ -34,6 +39,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   }, [division, view]);
 
   const content = useMemo(() => {
+    if (view === "schedule") return <TeamSchedule />;
     if (loading && !selected) {
       return (
         <Typography
@@ -48,7 +54,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       );
     }
     if (selected?.rows.length) {
-      return <LeagueTable table={selected} view={view} />;
+      return <LeagueTable />;
     }
     return (
       <Typography
@@ -63,9 +69,19 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   }, [loading, selected, view]);
 
   const label = useMemo(() => {
+    if (view === "schedule") return "Team schedule";
     if (division === "nfl") return "NFL standings";
     return view === "rankings" ? "Top 25" : "Conference standings";
   }, [division, view]);
+
+  const viewOptions = useMemo(() => {
+    const options: { value: LeagueView; label: string }[] = [
+      { value: "standings", label: "Standings" },
+    ];
+    if (division !== "nfl")
+      options.push({ value: "rankings", label: "Top 25" });
+    return [...options, { value: "schedule" as const, label: "Schedule" }];
+  }, [division]);
 
   return (
     <Paper
@@ -85,23 +101,18 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       id="league-panel"
       aria-label="League information"
     >
-      {division !== "nfl" && (
-        <SegmentedControl<LeagueView>
-          label="League view"
-          className="league-view-switch"
-          value={view}
-          options={[
-            { value: "standings", label: "Standings" },
-            { value: "rankings", label: "Top 25" },
-          ]}
-          onChange={(nextView) => {
-            setView(nextView);
-            setSelectedId("");
-          }}
-          sx={{ mb: 2 }}
-        />
-      )}
-      {tables.length > 0 && (
+      <SegmentedControl<LeagueView>
+        label="League view"
+        className="league-view-switch"
+        value={view}
+        options={viewOptions}
+        onChange={(nextView) => {
+          setView(nextView);
+          setSelectedId("");
+        }}
+        sx={{ mb: 2 }}
+      />
+      {view !== "schedule" && tables.length > 0 && (
         <TextField
           select
           fullWidth
@@ -114,7 +125,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
           {options}
         </TextField>
       )}
-      {error && (
+      {view !== "schedule" && error && (
         <Alert
           severity="warning"
           sx={{ mb: 2 }}
@@ -130,7 +141,6 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       )}
       {content}
       <Typography
-        variant="caption"
         component="p"
         className="league-note"
         color="text.secondary"

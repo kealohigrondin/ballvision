@@ -37,4 +37,5 @@
 
 - Run npm test and npm run build before completing changes.
 - For UI changes, also run `npm run test:e2e`, add or update Playwright specs in `e2e/` when user-visible behavior changes, and run `npm run screenshots` to check the result visually. Extend `e2e/screenshots.spec.ts` when a change is not visible in the existing shots. CI posts these screenshots to the PR automatically.
+- For each changed UI component, add `@screenshots` tests in `e2e/screenshots.spec.ts` that capture just that component with `locator.screenshot` in each of its states (for example loading, empty, error, populated and expanded), saved as `screenshots/<component>-<state>.png`. Set up each state with the mocked APIs in `e2e/support/mockApis.ts`.
 - After opening a pull request, subscribe to its activity so review comments and CI failures get addressed.

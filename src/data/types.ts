@@ -64,6 +64,21 @@ export interface LeagueSource {
   loadRankings(division: Division, signal: AbortSignal): Promise<LeagueTable[]>;
 }
 
+export interface TeamScheduleGame extends Game {
+  timeConfirmed: boolean;
+  neutralSite: boolean;
+}
+export interface TeamSchedule {
+  season: string;
+  games: TeamScheduleGame[];
+}
+export interface TeamScheduleSource {
+  load(
+    query: { division: Division; teamId: string },
+    signal: AbortSignal,
+  ): Promise<TeamSchedule>;
+}
+
 export interface GameOdds {
   source: "Polymarket";
   url: string;

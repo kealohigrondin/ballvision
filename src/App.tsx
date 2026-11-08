@@ -8,11 +8,13 @@ import type {
   ScoreboardSource,
   OddsSource,
   OddsHistorySource,
+  TeamScheduleSource,
 } from "./data/types";
 
 type AppProps = {
   source?: ScoreboardSource;
   leagueSource?: LeagueSource;
+  scheduleSource?: TeamScheduleSource;
   oddsSource?: OddsSource;
   oddsHistorySource?: OddsHistorySource;
 };
@@ -20,11 +22,16 @@ type AppProps = {
 const App = ({
   source,
   leagueSource,
+  scheduleSource,
   oddsSource,
   oddsHistorySource,
 }: AppProps) => (
   <AppDataProvider>
-    <EspnDataProvider source={source} leagueSource={leagueSource}>
+    <EspnDataProvider
+      source={source}
+      leagueSource={leagueSource}
+      scheduleSource={scheduleSource}
+    >
       <PolymarketDataProvider
         source={oddsSource}
         historySource={oddsHistorySource}

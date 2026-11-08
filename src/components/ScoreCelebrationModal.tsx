@@ -12,15 +12,14 @@ import {
 } from "../utils/scoreCelebrations";
 import { CelebrationControls } from "./CelebrationControls";
 import { ScoreChalkCircle } from "./ScoreChalkCircle";
+import { ScoreAlertTime } from "./ScoreAlertTime";
 import { TeamLogo } from "./TeamLogo";
 
 type ScoreCelebrationModalProps = Record<string, never>;
 export const ScoreCelebrationModal = ({}: ScoreCelebrationModalProps) => {
   const { current, pending, dismiss, dismissAll } = useScoreCelebration();
   if (!current) return null;
-  const eventLabel = current.preview
-    ? "PREVIEW · CURRENT SCORE"
-    : "LIVE SCORE DETECTED";
+
   const teams = [current.game.away, current.game.home].map((team) => {
     const scoring = current.scoringTeamIds.includes(team.id);
     const scoreColor = scoring ? "warning.main" : "text.primary";
@@ -82,7 +81,7 @@ export const ScoreCelebrationModal = ({}: ScoreCelebrationModalProps) => {
         }}
       >
         <Typography variant="overline" color="warning.main">
-          🚨 {eventLabel} 🚨
+          🚨 LIVE SCORE DETECTED 🚨
         </Typography>
         <Typography
           id="score-chaos-title"
@@ -96,7 +95,9 @@ export const ScoreCelebrationModal = ({}: ScoreCelebrationModalProps) => {
           {celebrationHeadline(current)}
         </Typography>
         <Stack direction="row" spacing={2} sx={{ alignItems: "center", my: 3 }}>
-          {teams}
+          {teams[0]}
+          <ScoreAlertTime />
+          {teams[1]}
         </Stack>
         <Typography
           id="score-chaos-description"

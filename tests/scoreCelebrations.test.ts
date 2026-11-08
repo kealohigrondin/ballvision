@@ -122,3 +122,70 @@ describe("score sound rules", () => {
     },
   );
 });
+
+describe("Tennessee score sound", () => {
+  it.each([
+    ["home", 7, "0", "7"],
+    ["away", 6, "7", "6"],
+    ["home", 3, "7", "6"],
+    ["away", 1, "6", "7"],
+  ] as const)(
+    "prioritizes Rocky Top for a %s Tennessee score worth %i",
+    (side, points, homeScore, awayScore) => {
+      const eventGame = game(homeScore, awayScore);
+      eventGame[side] = {
+        ...eventGame[side],
+        name: "Tennessee",
+        abbreviation: "TENN",
+      };
+      expect(
+        celebrationSoundKind({
+          id: "event",
+          game: eventGame,
+          scoringTeamIds: [eventGame[side].id],
+          points,
+          preview: false,
+        }),
+      ).toBe("rockyTop");
+    },
+  );
+  it("does not use Rocky Top for an opponent score, preview, or another Tennessee team", () => {
+    const eventGame = {
+      ...game("7", "0"),
+      home: { ...game("7").home, name: "Tennessee", abbreviation: "TENN" },
+    };
+    const event = {
+      id: "event",
+      game: eventGame,
+      scoringTeamIds: [eventGame.away.id],
+      points: 7,
+      preview: false,
+    };
+    expect(celebrationSoundKind(event)).toBe("score");
+    expect(
+      celebrationSoundKind({
+        ...event,
+        scoringTeamIds: [eventGame.home.id],
+        preview: true,
+      }),
+    ).toBe("score");
+    for (const team of [
+      { name: "Tennessee State", abbreviation: "TNST" },
+      { name: "Titans", location: "Tennessee", abbreviation: "TEN" },
+    ]) {
+      expect(
+        celebrationSoundKind({
+          ...event,
+          scoringTeamIds: [eventGame.home.id],
+          game: { ...eventGame, home: { ...eventGame.home, ...team } },
+        }),
+      ).toBe("score");
+    }
+    expect(
+      celebrationSoundKind({
+        ...event,
+        scoringTeamIds: [eventGame.home.id, eventGame.away.id],
+      }),
+    ).toBe("rockyTop");
+  });
+});

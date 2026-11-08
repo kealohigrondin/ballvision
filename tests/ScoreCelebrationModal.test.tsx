@@ -50,6 +50,11 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
   });
   rerender(build([{ ...first, home: { ...first.home, score: "7" } }]));
   const dialog = screen.getByRole("dialog", { name: "TOUCHDOWN TYPE BEAT" });
+  const gameTime = within(dialog).getByRole("group", {
+    name: "Game clock and period",
+  });
+  expect(within(gameTime).getByText("Q1")).toBeTruthy();
+  expect(within(gameTime).getByText("10:00")).toBeTruthy();
   const scoringScore = within(dialog).getByText("7");
   const chalkCircle = scoringScore.parentElement?.querySelector("img");
   expect(chalkCircle?.getAttribute("src")).toContain("red-chalk-circle.png");
@@ -69,9 +74,20 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
   );
   expect(screen.queryByRole("dialog")).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Unmute chaos sounds" }));
-  rerender(build([{ ...first, home: { ...first.home, score: "10" } }]));
+  rerender(
+    build([
+      {
+        ...first,
+        period: 6,
+        clock: "0:00",
+        home: { ...first.home, score: "10" },
+      },
+    ]),
+  );
   expect(
     screen.getByRole("dialog", { name: "FIELD GOAL JUMPSCARE" }),
   ).toBeTruthy();
+  expect(screen.getByText("2OT")).toBeTruthy();
+  expect(screen.getByText("0:00")).toBeTruthy();
   expect(audio.play).toHaveBeenLastCalledWith("fieldGoal");
 });

@@ -1,3 +1,4 @@
+import { scheduleGame } from "./helpers/scheduleFixture";
 import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
 import { emptyOddsSource } from "./helpers/appData";
 import {
@@ -16,6 +17,7 @@ import type {
   LeagueSource,
   LeagueTable,
   ScoreboardSource,
+  TeamScheduleSource,
 } from "../src/data/types";
 
 const conference: LeagueTable = {
@@ -243,4 +245,87 @@ describe("league panel", () => {
     await screen.findByRole("table", { name: /SEC/ });
     await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
   });
+});
+
+it("requires selecting a team name from standings or Top 25 and opens its schedule", async () => {
+  const provider = source();
+  const load = vi
+    .fn<TeamScheduleSource["load"]>()
+    .mockResolvedValue({ season: "2026", games: [scheduleGame] });
+  render(
+    <LeagueTestProvider
+      source={provider}
+      division="fbs"
+      scheduleSource={{ load }}
+    >
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  await screen.findByRole("table", { name: /SEC/ });
+  fireEvent.click(screen.getByRole("button", { name: "Schedule" }));
+  expect(
+    screen.getByText(/Select a team name in Standings or Top 25/),
+  ).toBeTruthy();
+  expect(load).not.toHaveBeenCalled();
+  expect(screen.queryByLabelText("Conference")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Standings" }));
+  fireEvent.click(await screen.findByRole("link", { name: "Georgia" }));
+  await screen.findByRole("table", { name: "Georgia schedule" });
+  expect(
+    screen
+      .getByRole("button", { name: "Schedule" })
+      .getAttribute("aria-pressed"),
+  ).toBe("true");
+  expect(load).toHaveBeenLastCalledWith(
+    { division: "fbs", teamId: "1" },
+    expect.any(AbortSignal),
+  );
+  const opponentLink = screen.getByRole("link", { name: "Clemson" });
+  expect(opponentLink.closest("th")?.textContent).toContain("vs Clemson");
+  expect(screen.getByText("W 35–14")).toBeTruthy();
+  fireEvent.click(opponentLink);
+  await screen.findByRole("table", { name: "Clemson schedule" });
+  expect(load).toHaveBeenLastCalledWith(
+    { division: "fbs", teamId: "8" },
+    expect.any(AbortSignal),
+  );
+  expect(screen.getByRole("link", { name: "Georgia" })).toBeTruthy();
+  expect(screen.getByText("L 14–35")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Top 25" }));
+  fireEvent.click(await screen.findByRole("link", { name: "Miami" }));
+  await screen.findByRole("heading", { name: "Miami schedule" });
+  await waitFor(() =>
+    expect(load).toHaveBeenLastCalledWith(
+      { division: "fbs", teamId: "2" },
+      expect.any(AbortSignal),
+    ),
+  );
+});
+it("retries schedule failures and clears the selected team when switching leagues", async () => {
+  const provider = source();
+  const load = vi
+    .fn<TeamScheduleSource["load"]>()
+    .mockRejectedValueOnce(new Error("Offline"))
+    .mockResolvedValue({ season: "2026", games: [] });
+  const build = (division: "fbs" | "nfl") => (
+    <LeagueTestProvider
+      source={provider}
+      division={division}
+      scheduleSource={{ load }}
+    >
+      <LeaguePanel />
+    </LeagueTestProvider>
+  );
+  const { rerender } = render(build("fbs"));
+  fireEvent.click(await screen.findByRole("link", { name: "Georgia" }));
+  await screen.findByRole("alert");
+  fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+  await screen.findByText(/No games are available/);
+  rerender(build("nfl"));
+  expect(
+    screen.queryByRole("heading", { name: "Georgia schedule" }),
+  ).toBeNull();
+  expect(screen.queryByRole("button", { name: "Top 25" })).toBeNull();
+  expect(screen.getByRole("button", { name: "Schedule" })).toBeTruthy();
+  expect(load).toHaveBeenCalledTimes(2);
 });

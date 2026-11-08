@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import { useMemo } from "react";
 import { useAppData } from "../context/appDataContext";
 import type { LeagueView } from "../hooks/useLeagueTables";
+import { TeamSchedule } from "./TeamSchedule";
 import { LeagueTable } from "./LeagueTable";
 
 type LeaguePanelProps = Record<string, never>;
@@ -38,6 +39,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   }, [division, view]);
 
   const content = useMemo(() => {
+    if (view === "schedule") return <TeamSchedule />;
     if (loading && !selected) {
       return (
         <Typography
@@ -67,9 +69,19 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
   }, [loading, selected, view]);
 
   const label = useMemo(() => {
+    if (view === "schedule") return "Team schedule";
     if (division === "nfl") return "NFL standings";
     return view === "rankings" ? "Top 25" : "Conference standings";
   }, [division, view]);
+
+  const viewOptions = useMemo(() => {
+    const options: { value: LeagueView; label: string }[] = [
+      { value: "standings", label: "Standings" },
+    ];
+    if (division !== "nfl")
+      options.push({ value: "rankings", label: "Top 25" });
+    return [...options, { value: "schedule" as const, label: "Schedule" }];
+  }, [division]);
 
   return (
     <Paper
@@ -89,23 +101,18 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       id="league-panel"
       aria-label="League information"
     >
-      {division !== "nfl" && (
-        <SegmentedControl<LeagueView>
-          label="League view"
-          className="league-view-switch"
-          value={view}
-          options={[
-            { value: "standings", label: "Standings" },
-            { value: "rankings", label: "Top 25" },
-          ]}
-          onChange={(nextView) => {
-            setView(nextView);
-            setSelectedId("");
-          }}
-          sx={{ mb: 2 }}
-        />
-      )}
-      {tables.length > 0 && (
+      <SegmentedControl<LeagueView>
+        label="League view"
+        className="league-view-switch"
+        value={view}
+        options={viewOptions}
+        onChange={(nextView) => {
+          setView(nextView);
+          setSelectedId("");
+        }}
+        sx={{ mb: 2 }}
+      />
+      {view !== "schedule" && tables.length > 0 && (
         <TextField
           select
           fullWidth
@@ -118,7 +125,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
           {options}
         </TextField>
       )}
-      {error && (
+      {view !== "schedule" && error && (
         <Alert
           severity="warning"
           sx={{ mb: 2 }}

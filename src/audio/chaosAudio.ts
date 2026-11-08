@@ -5,10 +5,13 @@ import anothaone from "./anothaone.mp3";
 import foxSports from "./fox-sports-bass-boosted-exe.mp3";
 import sixseven from "./sixseven.mp3";
 import wiiSports from "./wii_sports_sms.mp3";
+import rockyTop from "./rocky-top.mp3";
 
-export type ScoreAlertKind = "score" | "fieldGoal" | "pat" | "sixSeven";
+export type ScoreAlertKind =
+  "score" | "fieldGoal" | "pat" | "sixSeven" | "rockyTop";
 
 const alertSoundUrls = [
+  { url: rockyTop, kind: "rockyTop" }, // play only when Tennessee scores
   { url: tripleUrl, kind: "fieldGoal" }, // field goals only
   { url: sixseven, kind: "sixSeven" }, // score is 6-7 or 7-6
   { url: anothaone, kind: "pat" }, // PAT

@@ -4,20 +4,49 @@ import type {
   LeagueSource,
   ScoreboardSource,
   LeagueTable,
+  LeagueRow,
+  TeamScheduleSource,
 } from "../data/types";
+import { useTeamSchedule } from "./useTeamSchedule";
 import { useScoreboard } from "./useScoreboard";
 import { useLeagueTables, type LeagueView } from "./useLeagueTables";
 
-type EspnSources = { source: ScoreboardSource; leagueSource: LeagueSource };
-export const useEspnDataState = ({ source, leagueSource }: EspnSources) => {
+type EspnSources = {
+  source: ScoreboardSource;
+  leagueSource: LeagueSource;
+  scheduleSource: TeamScheduleSource;
+};
+export const useEspnDataState = ({
+  source,
+  leagueSource,
+  scheduleSource,
+}: EspnSources) => {
   const { date, division, paused, panelOpen, filter, search, favoriteIds } =
     useAppData();
   const scoreboard = useScoreboard(source, { date, division }, paused);
   const { games } = scoreboard;
   const [selectedView, setView] = useState<LeagueView>("standings");
-  const view = division === "nfl" ? "standings" : selectedView;
+  const view =
+    division === "nfl" && selectedView === "rankings"
+      ? "standings"
+      : selectedView;
   const [selectedId, setSelectedId] = useState("");
-  const league = useLeagueTables(leagueSource, division, view, panelOpen);
+  const tableView = view === "rankings" ? "rankings" : "standings";
+  const league = useLeagueTables(
+    leagueSource,
+    division,
+    tableView,
+    panelOpen && view !== "schedule",
+  );
+  const schedule = useTeamSchedule(
+    scheduleSource,
+    division,
+    panelOpen && view === "schedule",
+  );
+  const selectTeam = (team: LeagueRow) => {
+    schedule.selectTeam(team);
+    setView("schedule");
+  };
   const selected: LeagueTable | undefined =
     league.tables.find((table) => table.id === selectedId) ??
     league.tables.at(0);
@@ -52,6 +81,7 @@ export const useEspnDataState = ({ source, leagueSource }: EspnSources) => {
     refresh: scoreboard.refresh,
     counts,
     visibleGames,
+    schedule: { ...schedule, selectTeam },
     league: {
       tables: league.tables,
       loading: league.loading,

@@ -12,7 +12,7 @@ import { GameDetails } from "../src/components/GameDetails";
 import { AppTheme } from "../src/providers/AppTheme";
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { oddsGame, oddsQuote } from "./helpers/oddsFixture";
-import type { OddsHistorySource } from "../src/data/types";
+import type { Game, OddsHistorySource } from "../src/data/types";
 
 const history = {
   away: [
@@ -25,7 +25,7 @@ const history = {
   ],
 };
 afterEach(cleanup);
-const show = (load: OddsHistorySource["load"]) =>
+const show = (load: OddsHistorySource["load"], game: Game = oddsGame) =>
   render(
     <AppTheme>
       <AppDataTestProvider
@@ -35,8 +35,8 @@ const show = (load: OddsHistorySource["load"]) =>
           quotes: { [oddsGame.id]: { ...oddsQuote, updatedAt: 30000 } },
         }}
       >
-        <PolymarketGameProvider game={oddsGame}>
-          <GameDetails game={oddsGame} />
+        <PolymarketGameProvider game={game}>
+          <GameDetails game={game} />
         </PolymarketGameProvider>
       </AppDataTestProvider>
     </AppTheme>,
@@ -102,8 +102,18 @@ it("shows an empty state instead of inventing a historical curve", async () => {
       .mockResolvedValue({ away: [], home: [] }),
   );
   fireEvent.click(screen.getByRole("button", { name: "Game details" }));
-  await screen.findByText("No price history is available for this range.");
+  await screen.findByText("No polymarket history is available.");
   expect(
     screen.queryByRole("img", { name: /Polymarket implied win probability/ }),
   ).toBeNull();
+});
+
+it("renders last-play text without nesting paragraphs", () => {
+  const { container } = show(vi.fn().mockResolvedValue(history), {
+    ...oddsGame,
+    lastPlay: "Pass complete for a touchdown.",
+  });
+  expect(screen.getByText("Last play")).toBeTruthy();
+  expect(screen.getByText("Pass complete for a touchdown.")).toBeTruthy();
+  expect(container.querySelector("p p")).toBeNull();
 });

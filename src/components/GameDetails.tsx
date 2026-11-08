@@ -41,8 +41,11 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
             </Typography>
           )}
           {game.lastPlay && (
-            <Typography>
-              <Typography component="strong" sx={{ display: "block" }}>
+            <Typography component="div">
+              <Typography
+                component="span"
+                sx={{ display: "block", fontWeight: 600 }}
+              >
                 Last play
               </Typography>
               {game.lastPlay}

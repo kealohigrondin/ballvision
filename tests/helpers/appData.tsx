@@ -45,6 +45,14 @@ export const createEspnData = (
   updatedAt: new Date(),
   refresh: vi.fn(),
   counts: { all: 0, live: 0, upcoming: 0, final: 0, pinned: 0 },
+  schedule: {
+    selectedTeam: undefined,
+    selectTeam: vi.fn(),
+    data: undefined,
+    loading: false,
+    error: false,
+    refresh: vi.fn(),
+  },
   league: {
     tables: [],
     loading: false,

@@ -1,5 +1,7 @@
+import { teamColumnTableSx } from "../styles/leagueTable";
 import { useEspnData } from "../context/espnDataContext";
 import Typography from "@mui/material/Typography";
+import { TeamScheduleLink } from "./TeamScheduleLink";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { TeamLogo } from "./TeamLogo";
@@ -38,13 +40,7 @@ export const LeagueTable = ({}: LeagueTableProps) => {
               team={{ ...row, abbreviation: row.abbreviation || row.name }}
               size={24}
             />
-            <Typography
-              component="span"
-              variant="body2"
-              sx={{ overflowWrap: "anywhere" }}
-            >
-              {row.name}
-            </Typography>
+            <TeamScheduleLink team={row} />
           </Stack>
         </TableCell>
         <TableCell align="right">{value ?? "—"}</TableCell>
@@ -54,7 +50,7 @@ export const LeagueTable = ({}: LeagueTableProps) => {
   });
   return (
     <TableContainer className="league-table-scroll" sx={{ overflowX: "auto" }}>
-      <Table className="league-table">
+      <Table size="small" className="league-table" sx={teamColumnTableSx(1)}>
         <caption>
           {table.title}
           <Typography component="span" sx={{ display: "block" }}>

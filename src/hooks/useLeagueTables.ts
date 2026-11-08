@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Division, LeagueSource, LeagueTable } from "../data/types";
-export type LeagueView = "standings" | "rankings";
+export type LeagueView = "standings" | "rankings" | "schedule";
 
 export const useLeagueTables = (
   source: LeagueSource,
   division: Division,
-  view: LeagueView,
+  view: Exclude<LeagueView, "schedule">,
   enabled = true,
 ) => {
   const key = `${division}:${view}`;

@@ -64,13 +64,20 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   );
   const periodHeaders = periods.map((period) => {
     const label = period < 4 ? period + 1 : `${period - 3}OT`;
+    const contentLength = Math.max(
+      String(label).length,
+      game.away.quarters[period]?.length ?? 1,
+      game.home.quarters[period]?.length ?? 1,
+    );
     return (
       <TableCell
         component="th"
         scope="col"
         className="period-heading"
         align="right"
-        sx={{ width: 32 }}
+        sx={(theme) => ({
+          width: `calc(${contentLength}ch + ${theme.app.periodColumnPadding} + ${theme.app.periodColumnPadding})`,
+        })}
         key={period}
       >
         {label}
@@ -82,14 +89,14 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
     <PolymarketGameProvider game={game}>
       <Paper
         component="article"
-        sx={{ container: "game-card / inline-size" }}
-        className={clsx(
-          "game-card",
-          isLive && "is-live",
-          isInRedZone && "red-zone",
-        )}
+        sx={{
+          container: "game-card / inline-size",
+          ...(isInRedZone
+            ? { border: "2px solid", borderColor: "error.main" }
+            : {}),
+        }}
       >
-        <TableContainer className="card-scoreboard-scroll">
+        <TableContainer sx={{ pt: 1, px: 0.8 }}>
           <Table
             className="card-scoreboard"
             size="small"
@@ -180,18 +187,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
                 {game.broadcast}
               </Typography>
             )}
-            <Typography component="span">
-              {isInRedZone && (
-                <Typography
-                  component="span"
-                  className="red-zone-label"
-                  color="error"
-                >
-                  RED ZONE ·&nbsp;
-                </Typography>
-              )}
-              {situation}
-            </Typography>
+            <Typography component="span">{situation}</Typography>
           </Stack>
           <Stack
             direction="row"

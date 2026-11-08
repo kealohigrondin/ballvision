@@ -25,12 +25,18 @@ const strings = (value: unknown): string[] => {
   }
 };
 const text = (value: unknown) => (typeof value === "string" ? value : "");
-const normalize = (value: string) =>
-  value
+const teamNameAliases: Readonly<Record<string, string>> = {
+  miamifl: "miami",
+  miamiflorida: "miami",
+};
+const normalize = (value: string) => {
+  const normalized = value
     .toLowerCase()
     .replace(/\bst\b\.?/g, "state")
     .replace(/&/g, "and")
     .replace(/[^a-z0-9]/g, "");
+  return teamNameAliases[normalized] ?? normalized;
+};
 const matchesTeam = (name: string, team: Team) =>
   [team.name, team.location, team.abbreviation].some(
     (alias) => Boolean(alias) && normalize(alias ?? "") === normalize(name),

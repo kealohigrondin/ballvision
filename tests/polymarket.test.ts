@@ -57,6 +57,71 @@ describe("Polymarket moneylines", () => {
       matchMoneyline({ ...oddsGame, state: "final" }, markets),
     ).toBeUndefined();
   });
+  it("matches Miami (FL) to ESPN Miami without confusing Miami (OH)", async () => {
+    const game = {
+      ...oddsGame,
+      start: "2026-11-08T00:30:00Z",
+      away: {
+        ...oddsGame.away,
+        name: "Miami",
+        location: "Miami",
+        abbreviation: "MIA",
+      },
+      home: {
+        ...oddsGame.home,
+        name: "Notre Dame",
+        location: "Notre Dame",
+        abbreviation: "ND",
+      },
+    };
+    const miamiEvent = {
+      ...event,
+      slug: "cfb-mia-nd-2026-11-07",
+      startTime: game.start,
+      markets: [
+        { ...market, outcomes: JSON.stringify(["Miami (FL)", "Notre Dame"]) },
+      ],
+    };
+    const markets = parseMoneylineMarkets([miamiEvent]);
+    expect(matchMoneyline(game, markets)).toMatchObject({
+      awayToken: "111",
+      homeToken: "222",
+    });
+    expect(
+      matchMoneyline(
+        {
+          ...game,
+          away: {
+            ...game.away,
+            name: "Miami (OH)",
+            location: "Miami (OH)",
+            abbreviation: "M-OH",
+          },
+        },
+        markets,
+      ),
+    ).toBeUndefined();
+    expect(
+      matchMoneyline({ ...game, start: "2026-11-15T00:30:00Z" }, markets),
+    ).toBeUndefined();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(response([{ sport: "cfb", series: "999" }]))
+      .mockResolvedValueOnce(
+        response({ events: [miamiEvent], next_cursor: "" }),
+      )
+      .mockResolvedValueOnce(response({ "111": "0.4", "222": "0.6" }));
+    const quotes = await createPolymarketSource(fetcher).load(
+      { division: "fbs", games: [game] },
+      new AbortController().signal,
+    );
+    expect(quotes[game.id]).toMatchObject({
+      awayProbability: 0.4,
+      homeProbability: 0.6,
+      awayTokenId: "111",
+      homeTokenId: "222",
+    });
+  });
   it("ignores closed, suspended, malformed, spread, and companion markets", () => {
     expect(
       parseMoneylineMarkets([

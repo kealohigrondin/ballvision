@@ -90,14 +90,21 @@ export const detectScoreChanges = (
 export const celebrationHeadline = (event: ScoreCelebration) => {
   if (event.preview) return "CHAOS SOUND CHECK";
   if (event.scoringTeamIds.length > 1) return "EVERYBODY'S EATING";
-  if (event.points === 6 || event.points === 7) return "TOUCHDOWN TYPE BEAT";
-  if (event.points === 3) return "FIELD GOAL JUMPSCARE";
+  if (event.points === 6 || event.points === 7) return "TUDDY ALERT";
+  if (event.points === 3) return "FIELD GOAL";
   if (event.points === 1) return "EXTRA POINT. EXTRA AURA.";
   return "SCORE GO BRRRR";
 };
 
 export const celebrationSoundKind = (event: ScoreCelebration) => {
   if (event.preview) return "score";
+  const tennesseeScored = [event.game.home, event.game.away].some(
+    (team) =>
+      event.scoringTeamIds.includes(team.id) &&
+      (team.name.trim().toLowerCase() === "tennessee" ||
+        team.abbreviation.toUpperCase() === "TENN"),
+  );
+  if (tennesseeScored) return "rockyTop";
   const home = score(event.game.home.score);
   const away = score(event.game.away.score);
   if ((home === 6 && away === 7) || (home === 7 && away === 6))

@@ -5,6 +5,8 @@ import type {
   LeagueSource,
   Game,
   GameState,
+  TeamSchedule,
+  TeamScheduleSource,
   ScoreboardSource,
   Team,
 } from "./types";
@@ -33,9 +35,16 @@ const team = (raw: Json): Team => {
     name: str(t.shortDisplayName, str(t.displayName, "Unknown team")),
     location: str(t.location),
     abbreviation: str(t.abbreviation),
-    logo: image(t.logo),
+    logo:
+      image(t.logo) ??
+      list(t.logos)
+        .map((logo) => image(obj(logo).href))
+        .find(Boolean),
     color: /^[0-9a-f]{6}$/i.test(str(t.color)) ? `#${t.color}` : "#a6b99d",
-    score: str(raw.score, "—"),
+    score: str(
+      obj(raw.score).displayValue,
+      str(obj(raw.score).value, str(raw.score, "—")),
+    ),
     rank: rank && rank <= 25 ? rank : undefined,
     record: str(
       obj(list(raw.records).find((r) => obj(r).type === "total")).summary,
@@ -102,8 +111,12 @@ export const parseScoreboard = (payload: unknown): Game[] => {
       period: number(status.period) ?? 0,
       start: str(e.date),
       broadcast: list(c.broadcasts)
-        .flatMap((b) => list(obj(b).names))
+        .flatMap((b) => {
+          const broadcast = obj(b);
+          return broadcast.names ?? [obj(broadcast.media).shortName];
+        })
         .map((n) => str(n))
+        .filter(Boolean)
         .join(" / "),
       venue: str(obj(c.venue).fullName),
       possession: str(s.possession),
@@ -298,5 +311,68 @@ export const espnLeagueSource: LeagueSource = {
       ),
       division,
     );
+  },
+};
+
+export const parseTeamSchedule = (
+  payload: unknown,
+  teamId: string,
+): TeamSchedule => {
+  const root = obj(payload);
+  const metadata = new Map(
+    list(root.events).map((raw) => {
+      const event = obj(raw);
+      const competition = obj(list(event.competitions)[0]);
+      return [
+        str(event.id),
+        {
+          timeConfirmed:
+            event.timeValid !== false && competition.timeValid !== false,
+          neutralSite: competition.neutralSite === true,
+        },
+      ];
+    }),
+  );
+  const games = parseScoreboard(payload)
+    .filter((game) => game.home.id === teamId || game.away.id === teamId)
+    .map((game) => ({
+      ...game,
+      timeConfirmed: true,
+      neutralSite: false,
+      ...metadata.get(game.id),
+    }))
+    .sort((a, b) => (Date.parse(a.start) || 0) - (Date.parse(b.start) || 0));
+  return {
+    season: str(
+      obj(root.season).displayName,
+      str(obj(root.season).year, "Current season"),
+    ),
+    games,
+  };
+};
+
+export const espnTeamScheduleSource: TeamScheduleSource = {
+  load: async ({ division, teamId }, signal) => {
+    const sport = division === "nfl" ? "nfl" : "college-football";
+    const url = new URL(
+      `https://site.api.espn.com/apis/site/v2/sports/football/${sport}/teams/${encodeURIComponent(teamId)}/schedule`,
+    );
+    url.searchParams.set("seasontype", "2");
+    const regular = await loadLeagueJson(url.toString(), signal);
+    const schedule = parseTeamSchedule(regular, teamId);
+    const season = str(obj(obj(regular).season).year);
+    if (!/^\d{4}$/.test(season)) return schedule;
+    url.searchParams.set("season", season);
+    url.searchParams.set("seasontype", "3");
+    const postseason = parseTeamSchedule(
+      await loadLeagueJson(url.toString(), signal),
+      teamId,
+    );
+    const games = [
+      ...new Map(
+        [...schedule.games, ...postseason.games].map((game) => [game.id, game]),
+      ).values(),
+    ].sort((a, b) => (Date.parse(a.start) || 0) - (Date.parse(b.start) || 0));
+    return { ...schedule, games };
   },
 };

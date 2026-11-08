@@ -34,12 +34,18 @@ export const createAppTheme = (mode: "light" | "dark") =>
       periodColumnPadding: "0.2rem",
       navigationBarHeight: 80,
     },
-    typography: { fontFamily: "Montserrat, sans-serif" },
+    typography: {
+      fontFamily: "Montserrat, sans-serif",
+      // MUI scales every variant from this base (its default is 14).
+      fontSize: 12,
+      // body1 styles the page body, inputs, selects and menu items.
+      body1: { fontSize: "0.75rem" },
+    },
     components: {
       MuiTypography: {
         styleOverrides: {
           root: {
-            fontSize: "0.8rem",
+            fontSize: "0.75rem",
           },
         },
       },

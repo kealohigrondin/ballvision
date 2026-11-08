@@ -32,3 +32,18 @@ test("switches between dark and light mode", async ({ page }) => {
     page.getByRole("button", { name: copy.theme.toDark }),
   ).toBeVisible();
 });
+
+test("uses a 12px baseline for body text, selects and their options", async ({
+  page,
+}) => {
+  await page.goto("./");
+
+  const fontSize = (locator: ReturnType<typeof page.locator>) =>
+    locator.evaluate((element) => getComputedStyle(element).fontSize);
+
+  expect(await fontSize(page.locator("body"))).toBe("12px");
+  const week = page.getByRole("combobox", { name: copy.week.label });
+  expect(await fontSize(week)).toBe("12px");
+  await week.click();
+  expect(await fontSize(page.getByRole("option").first())).toBe("12px");
+});

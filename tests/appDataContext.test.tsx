@@ -20,7 +20,7 @@ import type {
 import { AppTheme } from "../src/providers/AppTheme";
 import { emptyOddsSource } from "./helpers/appData";
 import { oddsQuote } from "./helpers/oddsFixture";
-import { linkTo, navRailButton } from "./helpers/queries";
+import { linkTo } from "./helpers/queries";
 
 const week = (number: number): Week => ({
   id: `2026-2-${number}`,

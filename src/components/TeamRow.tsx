@@ -33,8 +33,12 @@ export const TeamRow = ({
       {team.quarters[period] ?? ""}
     </TableCell>
   ));
+
   const getScoreColor = () => {
-    if (isFinal && !isWinner) return "text.secondary";
+    if (isFinal && !isWinner) {
+      return "text.secondary";
+    }
+
     return "text.primary";
   };
 

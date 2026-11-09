@@ -9,7 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
-import { Star, StarOff, Tv } from "lucide-react";
+import { Star, StarOff } from "lucide-react";
 import { useMemo } from "react";
 
 import { copy } from "../copy";
@@ -19,8 +19,8 @@ import { compactBoxScoreSx } from "../styles/boxScore";
 import { gameTime, kickoff } from "../utils/gameTime";
 import { GameDetails } from "./GameDetails";
 import { GameOdds } from "./GameOdds";
-import { TeamRow } from "./TeamRow";
 import { GameSummary } from "./GameSummary";
+import { TeamRow } from "./TeamRow";
 
 type GameCardProps = {
   game: Game;
@@ -73,6 +73,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   );
   const periodHeaders = periods.map((period) => {
     const label = period < 4 ? period + 1 : `${period - 3}OT`;
+
     return (
       <TableCell
         component="th"

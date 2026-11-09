@@ -2,23 +2,28 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+import { useColorMode } from "../context/ColorModeContext";
 import type { Team } from "../data/types";
 
 type TeamLogoProps = {
-  team: Pick<Team, "logo"> & Partial<Pick<Team, "color" | "abbreviation">>;
+  team: Pick<Team, "logo"> &
+    Partial<Pick<Team, "logoDark" | "color" | "abbreviation">>;
   size?: number;
 };
 
 export const TeamLogo = ({ team, size = 40 }: TeamLogoProps) => {
-  const [failed, setFailed] = useState(false);
+  const { mode } = useColorMode();
+  // Remember which image failed so switching themes retries the other one.
+  const [failedSrc, setFailedSrc] = useState("");
+  const src = mode === "dark" ? (team.logoDark ?? team.logo) : team.logo;
   const logo =
-    team.logo && !failed ? (
+    src && src !== failedSrc ? (
       <Box
         component="img"
-        src={team.logo}
+        src={src}
         alt=""
         loading="lazy"
-        onError={() => setFailed(true)}
+        onError={() => setFailedSrc(src)}
         sx={{ width: "100%", height: "100%", objectFit: "contain" }}
       />
     ) : (

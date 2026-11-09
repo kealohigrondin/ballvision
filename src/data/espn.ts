@@ -42,6 +42,40 @@ const image = (value: unknown) => {
   return /^https:\/\/(?:a|a[0-9])\.espncdn\.com\//.test(url) ? url : undefined;
 };
 
+// Team logos bundled at 64px, named {league}/{espnTeamId}-{light|dark}.png.
+// src/data/teamLogos.json records the ESPN source of each file.
+const localLogoFiles = import.meta.glob<string>("../assets/logos/*/*.png", {
+  eager: true,
+  query: "?no-inline",
+  import: "default",
+});
+
+const localLogo = (league: string, id: string, variant: "light" | "dark") =>
+  localLogoFiles[`../assets/logos/${league}/${id}-${variant}.png`];
+
+// ESPN team ids repeat between the NFL and college, so the league comes from
+// ESPN's logo URL. College ids are unique across FBS and FCS.
+const teamLogos = (
+  id: string,
+  espnLogo?: string,
+  espnLogoDark?: string,
+): { logo?: string; logoDark?: string } => {
+  const leagues = espnLogo?.includes("/teamlogos/nfl/")
+    ? ["nfl"]
+    : espnLogo?.includes("/teamlogos/ncaa/")
+      ? ["fbs", "fcs"]
+      : [];
+  const league = leagues.find((name) => localLogo(name, id, "light"));
+  if (!league) {
+    return { logo: espnLogo, logoDark: espnLogoDark };
+  }
+
+  return {
+    logo: localLogo(league, id, "light"),
+    logoDark: localLogo(league, id, "dark"),
+  };
+};
+
 const team = (raw: Json): Team => {
   const t = obj(raw.team);
   const rank = number(obj(raw.curatedRank).current);
@@ -51,11 +85,14 @@ const team = (raw: Json): Team => {
     name: str(t.shortDisplayName, str(t.displayName, "Unknown team")),
     location: str(t.location),
     abbreviation: str(t.abbreviation),
-    logo:
+    ...teamLogos(
+      str(raw.id),
       image(t.logo) ??
-      list(t.logos)
-        .map((logo) => image(obj(logo).href))
-        .find(Boolean),
+        list(t.logos)
+          .map((logo) => image(obj(logo).href))
+          .find(Boolean),
+      image(t.logoDark),
+    ),
     color: /^[0-9a-f]{6}$/i.test(str(t.color)) ? `#${t.color}` : "#a6b99d",
     score: str(
       obj(raw.score).displayValue,
@@ -268,11 +305,13 @@ export const espnSource: ScoreboardSource = {
 
 // League context stays separate from the high-frequency scoreboard feed.
 const leagueTeamIdentity = (team: Json) => ({
-  logo:
+  ...teamLogos(
+    str(team.id),
     image(team.logo) ??
-    list(team.logos)
-      .map((logo) => image(obj(logo).href))
-      .find(Boolean),
+      list(team.logos)
+        .map((logo) => image(obj(logo).href))
+        .find(Boolean),
+  ),
   abbreviation: str(team.abbreviation),
   color: /^[0-9a-f]{6}$/i.test(str(team.color)) ? `#${team.color}` : undefined,
 });

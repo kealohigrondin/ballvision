@@ -1,6 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
+import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
 import { mockApis } from "./support/mockApis";
 
 // Captures reference screenshots for pull requests. Run with
@@ -38,4 +39,95 @@ test.describe("@screenshots", () => {
       });
     }
   }
+});
+
+// Real ESPN teams with bundled logos, swapped into the fixture's games.
+// The app picks a logo's league from its ESPN URL, so NFL logos show on the
+// college scoreboard too.
+const logoTeams = [
+  { id: "26", name: "Seahawks", logo: "nfl/500/sea" },
+  { id: "2", name: "Bills", logo: "nfl/500/buf" },
+  { id: "12", name: "Chiefs", logo: "nfl/500/kc" },
+  { id: "61", name: "Georgia", logo: "ncaa/500/61" },
+  { id: "333", name: "Alabama", logo: "ncaa/500/333" },
+  { id: "292", name: "UT Rio Grande Valley", logo: "ncaa/500/292" },
+];
+
+const logoScoreboard = () => {
+  const teams = [...logoTeams];
+  const events = scoreboard.events.map((event) => ({
+    ...event,
+    competitions: event.competitions.map((competition) => ({
+      ...competition,
+      competitors: competition.competitors.map((competitor) => {
+        const team = teams.shift();
+
+        return team
+          ? {
+              ...competitor,
+              id: team.id,
+              team: {
+                ...competitor.team,
+                shortDisplayName: team.name,
+                logo: `https://a.espncdn.com/i/teamlogos/${team.logo}.png`,
+              },
+            }
+          : competitor;
+      }),
+    })),
+  }));
+
+  return { ...scoreboard, events };
+};
+
+const openLogoDashboard = async (page: Page) => {
+  await page.clock.setFixedTime(new Date("2026-11-07T21:00:00Z"));
+  await mockApis(page);
+  await page.route("https://site.api.espn.com/**/scoreboard*", (route) =>
+    route.fulfill({ json: logoScoreboard() }),
+  );
+  await page.goto("./");
+  await expect(page.getByText("Georgia").first()).toBeVisible();
+};
+
+const waitForLogos = async (page: Page) => {
+  const images = page.locator(".team-logo img");
+  await expect(images).toHaveCount(logoTeams.length);
+  await expect
+    .poll(() =>
+      images.evaluateAll((all) =>
+        all.every(
+          (image) =>
+            image instanceof HTMLImageElement &&
+            image.complete &&
+            image.naturalWidth > 0,
+        ),
+      ),
+    )
+    .toBe(true);
+};
+
+test.describe("@screenshots team logo", () => {
+  test.use({ viewport: viewports.desktop });
+
+  for (const theme of themes) {
+    test(`bundled logos, ${theme}`, async ({ page }) => {
+      await openLogoDashboard(page);
+      if (theme === "light") {
+        await page.getByRole("button", { name: copy.theme.toLight }).click();
+      }
+      await waitForLogos(page);
+      await page
+        .getByRole("region", { name: copy.grid.label })
+        .screenshot({ path: `screenshots/team-logo-${theme}.png` });
+    });
+  }
+
+  test("fallback abbreviation", async ({ page }) => {
+    await openDashboard(page);
+    await page
+      .locator(".team-logo")
+      .first()
+      .screenshot({ path: "screenshots/team-logo-fallback.png" });
+  });
 });

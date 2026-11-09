@@ -55,8 +55,8 @@ export const loadAppPreferences = (
       week: validWeek(value.week) ? value.week : defaults.week,
       division:
         value.division === "fbs" ||
-          value.division === "fcs" ||
-          value.division === "nfl"
+        value.division === "fcs" ||
+        value.division === "nfl"
           ? value.division
           : defaults.division,
       filter: validFilter(value.filter) ? value.filter : defaults.filter,

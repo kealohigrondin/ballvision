@@ -20,7 +20,6 @@ export const copy = {
   },
   gameCard: {
     inProgress: "Game in progress",
-    final: "Final score",
     kickoff: "Kickoff",
     possession: "Possession",
     scoresByPeriod: (away: string, home: string) =>

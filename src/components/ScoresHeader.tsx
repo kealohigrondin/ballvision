@@ -14,7 +14,7 @@ import { WeekSelect } from "./WeekSelect";
 
 type ScoresHeaderProps = Record<string, never>;
 
-export const ScoresHeader = ({ }: ScoresHeaderProps) => {
+export const ScoresHeader = ({}: ScoresHeaderProps) => {
   const {
     week,
     setWeek,

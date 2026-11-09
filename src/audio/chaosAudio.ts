@@ -110,7 +110,7 @@ export const createChaosAudio = (): ChaosAudio => {
     stop,
     dispose: () => {
       stop();
-      void context.close().catch(() => { });
+      void context.close().catch(() => {});
     },
   };
 };

@@ -39,16 +39,10 @@ export const createAppTheme = (mode: "light" | "dark") =>
       // MUI scales every variant from this base (its default is 14).
       fontSize: 12,
       // body1 styles the page body, inputs, selects and menu items.
-      body1: { fontSize: "0.75rem" },
+      // body1: { fontSize: "0.75rem" },
     },
     components: {
-      MuiTypography: {
-        styleOverrides: {
-          root: {
-            fontSize: "0.75rem",
-          },
-        },
-      },
+
       MuiPaper: {
         styleOverrides: {
           root: {

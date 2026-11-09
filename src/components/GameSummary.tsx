@@ -8,7 +8,7 @@ type GameSummaryProps = {
 export const GameSummary = ({ venue }: GameSummaryProps) => {
   return (
     <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
-      <MapPin size={16} />
+      <MapPin size={14} />
       <Typography>{venue}</Typography>
     </Stack>
   );

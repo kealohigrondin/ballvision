@@ -15,6 +15,8 @@ import { PeriodScores } from "./PeriodScores";
 type GameDetailsProps = { game: Game };
 
 export const GameDetails = ({ game }: GameDetailsProps) => {
+  const isFinal = game.state === "final";
+
   const {
     quote: odds,
     historyOpen: expanded,
@@ -49,8 +51,8 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
       </AccordionSummary>
       <AccordionDetails>
         <Stack spacing={1}>
-          {expanded && odds !== undefined && <GameOddsHistory />}
-          {expanded && !odds && (
+          {!isFinal && expanded && odds !== undefined && <GameOddsHistory />}
+          {!isFinal && expanded && !odds && (
             <Typography variant="body2" color="text.secondary">
               {oddsMessage}
             </Typography>
@@ -73,7 +75,7 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
               {game.home.abbreviation} {game.homeTimeouts ?? "—"}
             </Typography>
           )}
-          {game.venue && (
+          {!isFinal && game.venue && (
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <MapPin size={20} />
               <Typography>{game.venue}</Typography>

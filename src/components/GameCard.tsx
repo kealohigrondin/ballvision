@@ -118,12 +118,12 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
                 "& .period-heading, & .team-period": { display: "none" },
                 "& .total-heading": { visibility: "hidden" },
                 [`@container game-card (min-width: ${theme.app.boxScoreMinWidth}px)`]:
-                  {
-                    "& .period-heading, & .team-period": {
-                      display: "table-cell",
-                    },
-                    "& .total-heading": { visibility: "visible" },
+                {
+                  "& .period-heading, & .team-period": {
+                    display: "table-cell",
                   },
+                  "& .total-heading": { visibility: "visible" },
+                },
               }),
             ]}
           >

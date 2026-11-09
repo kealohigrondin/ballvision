@@ -25,6 +25,7 @@ import { AppTheme } from "../src/providers/AppTheme";
 import { scheduleGameStatus } from "../src/utils/teamSchedule";
 import { emptyOddsSource } from "./helpers/appData";
 import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
+import { oddsGame } from "./helpers/oddsFixture";
 import { navRailButton } from "./helpers/queries";
 import { scheduleGame } from "./helpers/scheduleFixture";
 
@@ -465,4 +466,55 @@ it("retries schedule failures and clears the selected team when switching league
   expect(navRailButton("rankings").hasAttribute("disabled")).toBe(true);
   expect(navRailButton("schedule")).toBeTruthy();
   expect(load).toHaveBeenCalledTimes(2);
+});
+
+const openScheduleFromGameCard = () => {
+  const load = vi
+    .fn<TeamScheduleSource["load"]>()
+    .mockResolvedValue({ season: "2026", games: [scheduleGame] });
+  const scoreboard: ScoreboardSource = {
+    load: vi.fn().mockResolvedValue([oddsGame]),
+    loadCalendar: vi.fn().mockResolvedValue({ weeks: [], currentWeekId: "" }),
+  };
+  render(
+    <AppTheme>
+      <App
+        source={scoreboard}
+        leagueSource={source()}
+        scheduleSource={{ load }}
+        oddsSource={emptyOddsSource}
+      />
+    </AppTheme>,
+  );
+
+  return { load };
+};
+
+it("opens the closed league panel when a game card team name is clicked", async () => {
+  openScheduleFromGameCard();
+  const teamLink = await screen.findByRole("link", {
+    name: oddsGame.away.name,
+  });
+  expect(
+    screen.queryByRole("complementary", { name: copy.league.panel }),
+  ).toBeNull();
+  fireEvent.click(teamLink);
+  expect(
+    screen.getByRole("complementary", { name: copy.league.panel }),
+  ).toBeTruthy();
+});
+
+it("opens the league panel on the clicked team's schedule", async () => {
+  const { load } = openScheduleFromGameCard();
+  fireEvent.click(
+    await screen.findByRole("link", { name: oddsGame.away.name }),
+  );
+  await screen.findByRole("table", {
+    name: copy.schedule.table(oddsGame.away.name),
+  });
+  expect(navRailButton("schedule").getAttribute("aria-pressed")).toBe("true");
+  expect(load).toHaveBeenLastCalledWith(
+    { division: "fbs", teamId: oddsGame.away.id },
+    expect.any(AbortSignal),
+  );
 });

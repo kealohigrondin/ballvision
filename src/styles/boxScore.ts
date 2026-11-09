@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from "@mui/material/styles";
 
 export const compactBoxScoreSx = {
-  "& .MuiTableCell-root": { px: 1, py: 0.25, typography: "caption" },
+  "& .MuiTableCell-root": { px: 1, py: 0.25 },
   "& .period-heading, & .team-period": {
     px: "var(--mui-app-periodColumnPadding)",
     whiteSpace: "nowrap",

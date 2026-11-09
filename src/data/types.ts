@@ -6,6 +6,7 @@ export interface Team {
   location?: string;
   abbreviation: string;
   logo?: string;
+  logoDark?: string;
   color: string;
   score: string;
   rank?: number;
@@ -59,6 +60,7 @@ export interface ScoreboardSource {
 
 export interface LeagueRow {
   logo?: string;
+  logoDark?: string;
   abbreviation?: string;
   color?: string;
   id: string;

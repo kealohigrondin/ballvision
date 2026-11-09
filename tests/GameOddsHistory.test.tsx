@@ -170,6 +170,6 @@ it("keeps the plain unavailable message when no market exists or the game is fin
   fireEvent.click(
     screen.getByRole("button", { name: copy.gameDetails.toggle }),
   );
-  expect(screen.getByText(copy.gameDetails.chartUnavailable)).toBeTruthy();
+  expect(screen.getByText(copy.gameDetails.chartUnavailable)).toBeFalsy();
   expect(screen.queryByText(copy.gameDetails.oddsBlocked)).toBeNull();
 });

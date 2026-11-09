@@ -41,4 +41,5 @@
 - After opening a pull request, subscribe to its activity so review comments and CI failures get addressed.
 
 ## Testing
+
 - each test should test singular functions rather than a series of events

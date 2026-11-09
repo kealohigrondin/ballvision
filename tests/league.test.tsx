@@ -277,7 +277,6 @@ describe("league panel", () => {
     const standings = navRailButton("standings");
     fireEvent.click(standings);
     expect(standings.getAttribute("aria-expanded")).toBe("true");
-
   });
   it("switches between conference standings and Top 25 and selects a conference", async () => {
     const provider = source();

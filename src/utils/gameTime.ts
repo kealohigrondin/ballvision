@@ -5,7 +5,7 @@ export const periodLabel = (period: number) =>
 
 export const gameTime = (game: Game) => {
   if (game.state !== "live") {
-    return game.status;
+    return game.status.toUpperCase();
   }
   if (/half|delay|suspend|end/i.test(game.status)) {
     return game.status;
@@ -25,6 +25,6 @@ export const kickoff = (start: string) => {
     : new Intl.DateTimeFormat(undefined, {
         hour: "numeric",
         minute: "2-digit",
-        timeZoneName: "short",
+        // timeZoneName: "short",
       }).format(date);
 };

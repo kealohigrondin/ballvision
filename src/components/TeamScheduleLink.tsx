@@ -5,9 +5,13 @@ import type { LeagueRow } from "../data/types";
 
 type TeamScheduleLinkProps = {
   team: Pick<LeagueRow, "id" | "name"> & Partial<LeagueRow>;
+  isBold?: boolean;
 };
 
-export const TeamScheduleLink = ({ team }: TeamScheduleLinkProps) => {
+export const TeamScheduleLink = ({
+  team,
+  isBold = false,
+}: TeamScheduleLinkProps) => {
   const {
     schedule: { selectTeam },
   } = useEspnData();
@@ -24,10 +28,12 @@ export const TeamScheduleLink = ({ team }: TeamScheduleLinkProps) => {
         overflowWrap: "anywhere",
         textDecoration: "none",
         color: "inherit",
-        fontSize: "0.8rem",
+        fontSize: "inherit",
       }}
     >
-      {team.name}
+      <span style={{ fontWeight: isBold ? "bold" : "normal" }}>
+        {team.name}
+      </span>
     </Link>
   );
 };

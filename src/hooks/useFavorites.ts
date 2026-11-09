@@ -1,5 +1,5 @@
 import { useState } from "react";
-const KEY = "saturday:favorites:v1";
+const KEY = "ballvision:favorites:v1";
 
 export const useFavorites = () => {
   const [ids, setIds] = useState<string[]>(() => {

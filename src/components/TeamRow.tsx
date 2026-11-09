@@ -14,6 +14,8 @@ type TeamRowProps = {
   possession: boolean;
   scheduled: boolean;
   periods: readonly number[];
+  isWinner: boolean;
+  isFinal: boolean;
 };
 
 export const TeamRow = ({
@@ -21,6 +23,8 @@ export const TeamRow = ({
   possession,
   scheduled,
   periods,
+  isWinner,
+  isFinal,
 }: TeamRowProps) => {
   const score = scheduled ? copy.common.emptyValue : team.score;
   const record = team.record || team.abbreviation;
@@ -29,6 +33,14 @@ export const TeamRow = ({
       {team.quarters[period] ?? ""}
     </TableCell>
   ));
+
+  const getScoreColor = () => {
+    if (isFinal && !isWinner) {
+      return "text.secondary";
+    }
+
+    return "text.primary";
+  };
 
   return (
     <TableRow className="team-row">
@@ -70,6 +82,7 @@ export const TeamRow = ({
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
+                fontSize: "14px !important",
               }}
             >
               {Boolean(team.rank) && (
@@ -84,7 +97,7 @@ export const TeamRow = ({
                   {team.rank}
                 </Typography>
               )}
-              <TeamScheduleLink team={team} />
+              <TeamScheduleLink team={team} isBold />
             </Typography>
             <Typography
               component="span"
@@ -92,6 +105,7 @@ export const TeamRow = ({
               sx={{
                 color: "text.secondary",
                 display: "block",
+                fontSize: "11px",
               }}
             >
               {record}
@@ -105,7 +119,15 @@ export const TeamRow = ({
           variant="body1"
           component="span"
           className="score"
-          sx={{ fontVariantNumeric: "tabular-nums" }}
+          sx={{
+            fontVariantNumeric: "tabular-nums",
+            fontWeight: "600",
+            fontSize: "1.25rem",
+            color: getScoreColor(),
+            borderRight: isFinal && isWinner ? "4px solid" : "none",
+            borderColor: isFinal && isWinner ? "success.main" : "none",
+            paddingRight: isFinal && isWinner ? "2px" : "6px",
+          }}
         >
           {score}
         </Typography>

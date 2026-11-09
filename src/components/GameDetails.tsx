@@ -44,11 +44,11 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
 
   return (
     <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
-      <AccordionSummary expandIcon={<ChevronDown />}>
-        <Typography>{copy.gameDetails.toggle}</Typography>
+      <AccordionSummary expandIcon={<ChevronDown />} sx={{ px: 2, m: 0 }}>
+        <span>{copy.gameDetails.toggle}</span>
       </AccordionSummary>
       <AccordionDetails>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           {expanded && odds !== undefined && <GameOddsHistory />}
           {expanded && !odds && (
             <Typography variant="body2" color="text.secondary">

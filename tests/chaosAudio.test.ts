@@ -33,7 +33,7 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
 
     return result;
   };
-  const decoded = Array.from({ length: 8 }, (_, index) => ({
+  const decoded = Array.from({ length: 9 }, (_, index) => ({
     duration: index + 1,
   }));
   let decodeIndex = 0;
@@ -74,9 +74,10 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
   const audio = createChaosAudio();
   await audio.unlock();
   await audio.unlock();
-  expect(fetch).toHaveBeenCalledTimes(8);
+  expect(fetch).toHaveBeenCalledTimes(9);
   expect(fetch.mock.calls.map(([url]) => url)).toEqual([
     expect.stringContaining("rocky-top.mp3"),
+    expect.stringContaining("touchdown_seahawks.mp3"),
     expect.stringContaining("oh-baby-a-triple.mp3"),
     expect.stringContaining("sixseven.mp3"),
     expect.stringContaining("anothaone.mp3"),
@@ -90,22 +91,22 @@ it("caches all clips, selects the matching score sound, and stops on mute", asyn
     random.mockReturnValue(value);
     audio.play();
     expect(sources).toHaveLength(index + 1);
-    expect(sources[index].buffer).toBe(decoded[index + 4]);
+    expect(sources[index].buffer).toBe(decoded[index + 5]);
     expect(sources[index].start).toHaveBeenCalled();
     if (index > 0) {
       expect(sources[index - 1].stop).toHaveBeenCalled();
     }
   }
   for (const [index, kind] of (
-    ["rockyTop", "fieldGoal", "sixSeven", "pat"] as const
+    ["tennessee_td", "seahawks_td", "fieldGoal", "sixSeven", "pat"] as const
   ).entries()) {
     audio.play(kind);
     expect(sources[index + 4].buffer).toBe(decoded[index]);
     expect(sources[index + 4].start).toHaveBeenCalled();
   }
-  expect(sources).toHaveLength(8);
+  expect(sources).toHaveLength(9);
   audio.stop();
-  expect(sources[7].stop).toHaveBeenCalled();
+  expect(sources[8].stop).toHaveBeenCalled();
   audio.dispose();
   expect(context.close).toHaveBeenCalled();
 });

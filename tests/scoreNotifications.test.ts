@@ -148,7 +148,7 @@ describe("Tennessee score sound", () => {
           points,
           preview: false,
         }),
-      ).toBe("rockyTop");
+      ).toBe("tennessee_td");
     },
   );
   it("does not use Rocky Top for an opponent score, preview, or another Tennessee team", () => {
@@ -188,6 +188,6 @@ describe("Tennessee score sound", () => {
         ...event,
         scoringTeamIds: [eventGame.home.id, eventGame.away.id],
       }),
-    ).toBe("rockyTop");
+    ).toBe("tennessee_td");
   });
 });

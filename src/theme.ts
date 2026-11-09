@@ -38,11 +38,8 @@ export const createAppTheme = (mode: "light" | "dark") =>
       fontFamily: "Montserrat, sans-serif",
       // MUI scales every variant from this base (its default is 14).
       fontSize: 12,
-      // body1 styles the page body, inputs, selects and menu items.
-      // body1: { fontSize: "0.75rem" },
     },
     components: {
-
       MuiPaper: {
         styleOverrides: {
           root: {

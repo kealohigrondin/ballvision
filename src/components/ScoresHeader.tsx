@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Stack from "@mui/material/Stack";
@@ -67,9 +66,6 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
             currentWeekId={currentWeekId}
             onChange={setWeek}
           />
-          <Button onClick={() => setWeek(null)} disabled={week === null}>
-            {copy.scoresHeader.thisWeek}
-          </Button>
           <SegmentedControl
             label={copy.scoresHeader.division}
             value={division}

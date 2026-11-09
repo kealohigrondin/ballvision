@@ -4,7 +4,7 @@ import type { Week } from "../data/types";
 export const APP_PREFERENCES_KEY = "ballvision:app-data:v1";
 
 export const defaultAppPreferences = (): AppPreferences => ({
-  panelOpen: true,
+  panelOpen: false,
   week: null,
   division: "fbs",
   filter: "all",

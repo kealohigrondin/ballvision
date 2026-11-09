@@ -9,7 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
-import { Star, StarOff, Tv } from "lucide-react";
+import { Star, StarOff } from "lucide-react";
 import { useMemo } from "react";
 
 import { copy } from "../copy";
@@ -19,6 +19,7 @@ import { compactBoxScoreSx } from "../styles/boxScore";
 import { gameTime, kickoff } from "../utils/gameTime";
 import { GameDetails } from "./GameDetails";
 import { GameOdds } from "./GameOdds";
+import { GameSummary } from "./GameSummary";
 import { TeamRow } from "./TeamRow";
 
 type GameCardProps = {
@@ -32,6 +33,8 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   const awayHasPossession = isLive && game.possession === game.away.id;
   const homeHasPossession = isLive && game.possession === game.home.id;
   const isScheduled = game.state === "upcoming";
+  const isFinal = game.state === "final";
+  const isHomeWinner = isFinal && game.home.score > game.away.score;
   const isInRedZone = game.redZone && isLive;
   const favoriteLabel = copy.gameCard.favorite(
     favorite,
@@ -51,7 +54,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
       return game.situation || copy.gameCard.inProgress;
     }
     if (game.state === "final") {
-      return copy.gameCard.final;
+      return "";
     }
 
     return copy.gameCard.kickoff;
@@ -70,11 +73,6 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
   );
   const periodHeaders = periods.map((period) => {
     const label = period < 4 ? period + 1 : `${period - 3}OT`;
-    const contentLength = Math.max(
-      String(label).length,
-      game.away.quarters[period]?.length ?? 1,
-      game.home.quarters[period]?.length ?? 1,
-    );
 
     return (
       <TableCell
@@ -82,9 +80,9 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
         scope="col"
         className="period-heading"
         align="right"
-        sx={(theme) => ({
-          width: `calc(${contentLength}ch + ${theme.app.periodColumnPadding} + ${theme.app.periodColumnPadding})`,
-        })}
+        sx={{
+          width: "3ch",
+        }}
         key={period}
       >
         {label}
@@ -130,19 +128,19 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
             ]}
           >
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ pl: 1 }}>
                 <TableCell
                   component="th"
                   scope="col"
                   className="card-status-cell"
                 >
-                  <Typography
-                    component="span"
-                    className={clsx("game-state", game.state)}
-                    color="text.secondary"
-                  >
-                    {time}
-                  </Typography>
+                  <strong>{time}</strong>
+                  {game.broadcast && !isFinal && (
+                    <span>
+                      &nbsp;&nbsp;
+                      {game.broadcast}
+                    </span>
+                  )}
                 </TableCell>
                 {periodHeaders}
                 <TableCell
@@ -162,12 +160,16 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
                 possession={awayHasPossession}
                 scheduled={isScheduled}
                 periods={periods}
+                isWinner={!isHomeWinner}
+                isFinal={isFinal}
               />
               <TeamRow
                 team={game.home}
                 possession={homeHasPossession}
                 scheduled={isScheduled}
                 periods={periods}
+                isWinner={isHomeWinner}
+                isFinal={isFinal}
               />
             </TableBody>
           </Table>
@@ -179,25 +181,10 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
             justifyContent: "space-between",
             alignItems: "center",
             gap: 1,
-            p: 2,
+            p: 1,
           }}
         >
-          <Stack
-            className="card-broadcast-info"
-            spacing={0.5}
-            sx={{ minWidth: 0 }}
-          >
-            {game.broadcast && (
-              <Typography
-                component="span"
-                className="broadcast"
-                color="text.secondary"
-                sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}
-              >
-                <Tv size={12} />
-                {game.broadcast}
-              </Typography>
-            )}
+          <Stack className="card-situation" spacing={0.5} sx={{ minWidth: 0 }}>
             <Typography component="span">{situation}</Typography>
           </Stack>
           <Stack
@@ -205,7 +192,11 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
             spacing={1}
             sx={{ alignItems: "center", minWidth: 0 }}
           >
-            {(isLive || isScheduled) && <GameOdds />}
+            {isLive || isScheduled ? (
+              <GameOdds />
+            ) : (
+              <GameSummary venue={game.venue} />
+            )}
             <IconButton
               className={clsx(
                 "icon-button",

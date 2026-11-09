@@ -20,7 +20,6 @@ export const copy = {
   },
   gameCard: {
     inProgress: "Game in progress",
-    final: "Final score",
     kickoff: "Kickoff",
     possession: "Possession",
     scoresByPeriod: (away: string, home: string) =>
@@ -62,7 +61,6 @@ export const copy = {
       `Polymarket implied win probability history for ${away} and ${home}`,
   },
   scoresHeader: {
-    thisWeek: "This week",
     division: "Division",
     divisions: { fbs: "FBS", fcs: "FCS", nfl: "NFL" },
     search: "Search teams",

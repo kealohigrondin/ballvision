@@ -22,7 +22,7 @@ const week = {
 afterEach(() => {
   cleanup();
   localStorage.removeItem(APP_PREFERENCES_KEY);
-  localStorage.removeItem("saturday:favorites:v1");
+  localStorage.removeItem("ballvision:favorites:v1");
 });
 
 it("restores all app controls after unmounting and mounting again", () => {

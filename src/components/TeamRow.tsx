@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import TableCell from "@mui/material/TableCell";
@@ -26,21 +27,23 @@ export const TeamRow = ({
   isWinner,
   isFinal,
 }: TeamRowProps) => {
-  const score = isScheduled ? copy.common.emptyValue : team.score;
-  const record = team.record || team.abbreviation;
+  const scoreStyles = useMemo(() => {
+    return {
+      fontVariantNumeric: "tabular-nums",
+      fontWeight: "600",
+      fontSize: "1.25rem",
+      color: isFinal && !isWinner ? "text.secondary" : "text.primary",
+      borderRight: isFinal && isWinner ? "4px solid" : "none",
+      borderColor: isFinal && isWinner ? "success.main" : "none",
+      paddingRight: isFinal && isWinner ? "2px" : "6px",
+    };
+  }, [isFinal, isWinner]);
+
   const periodCells = periods.map((period) => (
     <TableCell className="team-period" key={period} align="right">
       {team.quarters[period] ?? ""}
     </TableCell>
   ));
-
-  const getScoreColor = () => {
-    if (isFinal && !isWinner) {
-      return "text.secondary";
-    }
-
-    return "text.primary";
-  };
 
   return (
     <TableRow className="team-row">
@@ -108,7 +111,7 @@ export const TeamRow = ({
                 fontSize: "11px",
               }}
             >
-              {record}
+              {team.record}
             </Typography>
           </Box>
         </Stack>
@@ -121,17 +124,9 @@ export const TeamRow = ({
               variant="body1"
               component="span"
               className="score"
-              sx={{
-                fontVariantNumeric: "tabular-nums",
-                fontWeight: "600",
-                fontSize: "1.25rem",
-                color: getScoreColor(),
-                borderRight: isFinal && isWinner ? "4px solid" : "none",
-                borderColor: isFinal && isWinner ? "success.main" : "none",
-                paddingRight: isFinal && isWinner ? "2px" : "6px",
-              }}
+              sx={scoreStyles}
             >
-              {score}
+              {team.score}
             </Typography>
           </TableCell>
         </>

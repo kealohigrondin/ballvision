@@ -12,7 +12,7 @@ import { TeamScheduleLink } from "./TeamScheduleLink";
 type TeamRowProps = {
   team: Team;
   possession: boolean;
-  scheduled: boolean;
+  isScheduled: boolean;
   periods: readonly number[];
   isWinner: boolean;
   isFinal: boolean;
@@ -21,12 +21,12 @@ type TeamRowProps = {
 export const TeamRow = ({
   team,
   possession,
-  scheduled,
+  isScheduled,
   periods,
   isWinner,
   isFinal,
 }: TeamRowProps) => {
-  const score = scheduled ? copy.common.emptyValue : team.score;
+  const score = isScheduled ? copy.common.emptyValue : team.score;
   const record = team.record || team.abbreviation;
   const periodCells = periods.map((period) => (
     <TableCell className="team-period" key={period} align="right">
@@ -113,25 +113,29 @@ export const TeamRow = ({
           </Box>
         </Stack>
       </TableCell>
-      {periodCells}
-      <TableCell className="team-total" align="right">
-        <Typography
-          variant="body1"
-          component="span"
-          className="score"
-          sx={{
-            fontVariantNumeric: "tabular-nums",
-            fontWeight: "600",
-            fontSize: "1.25rem",
-            color: getScoreColor(),
-            borderRight: isFinal && isWinner ? "4px solid" : "none",
-            borderColor: isFinal && isWinner ? "success.main" : "none",
-            paddingRight: isFinal && isWinner ? "2px" : "6px",
-          }}
-        >
-          {score}
-        </Typography>
-      </TableCell>
+      {isScheduled ? null : (
+        <>
+          {periodCells}
+          <TableCell className="team-total" align="right">
+            <Typography
+              variant="body1"
+              component="span"
+              className="score"
+              sx={{
+                fontVariantNumeric: "tabular-nums",
+                fontWeight: "600",
+                fontSize: "1.25rem",
+                color: getScoreColor(),
+                borderRight: isFinal && isWinner ? "4px solid" : "none",
+                borderColor: isFinal && isWinner ? "success.main" : "none",
+                paddingRight: isFinal && isWinner ? "2px" : "6px",
+              }}
+            >
+              {score}
+            </Typography>
+          </TableCell>
+        </>
+      )}
     </TableRow>
   );
 };

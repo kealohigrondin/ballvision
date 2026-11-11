@@ -3,6 +3,7 @@ import Stack from "@mui/material/Stack";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import { useMemo } from "react";
 
 import { copy } from "../copy";
 import type { Team } from "../data/types";
@@ -12,7 +13,7 @@ import { TeamScheduleLink } from "./TeamScheduleLink";
 type TeamRowProps = {
   team: Team;
   possession: boolean;
-  scheduled: boolean;
+  isScheduled: boolean;
   periods: readonly number[];
   isWinner: boolean;
   isFinal: boolean;
@@ -21,26 +22,28 @@ type TeamRowProps = {
 export const TeamRow = ({
   team,
   possession,
-  scheduled,
+  isScheduled,
   periods,
   isWinner,
   isFinal,
 }: TeamRowProps) => {
-  const score = scheduled ? copy.common.emptyValue : team.score;
-  const record = team.record || team.abbreviation;
+  const scoreStyles = useMemo(() => {
+    return {
+      fontVariantNumeric: "tabular-nums",
+      fontWeight: "600",
+      fontSize: "1.25rem",
+      color: isFinal && !isWinner ? "text.secondary" : "text.primary",
+      borderRight: isFinal && isWinner ? "4px solid" : "none",
+      borderColor: isFinal && isWinner ? "success.main" : "none",
+      paddingRight: isFinal && isWinner ? "2px" : "6px",
+    };
+  }, [isFinal, isWinner]);
+
   const periodCells = periods.map((period) => (
     <TableCell className="team-period" key={period} align="right">
       {team.quarters[period] ?? ""}
     </TableCell>
   ));
-
-  const getScoreColor = () => {
-    if (isFinal && !isWinner) {
-      return "text.secondary";
-    }
-
-    return "text.primary";
-  };
 
   return (
     <TableRow className="team-row">
@@ -108,30 +111,26 @@ export const TeamRow = ({
                 fontSize: "11px",
               }}
             >
-              {record}
+              {team.record}
             </Typography>
           </Box>
         </Stack>
       </TableCell>
-      {periodCells}
-      <TableCell className="team-total" align="right">
-        <Typography
-          variant="body1"
-          component="span"
-          className="score"
-          sx={{
-            fontVariantNumeric: "tabular-nums",
-            fontWeight: "600",
-            fontSize: "1.25rem",
-            color: getScoreColor(),
-            borderRight: isFinal && isWinner ? "4px solid" : "none",
-            borderColor: isFinal && isWinner ? "success.main" : "none",
-            paddingRight: isFinal && isWinner ? "2px" : "6px",
-          }}
-        >
-          {score}
-        </Typography>
-      </TableCell>
+      {isScheduled ? null : (
+        <>
+          {periodCells}
+          <TableCell className="team-total" align="right">
+            <Typography
+              variant="body1"
+              component="span"
+              className="score"
+              sx={scoreStyles}
+            >
+              {team.score}
+            </Typography>
+          </TableCell>
+        </>
+      )}
     </TableRow>
   );
 };

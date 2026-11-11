@@ -142,23 +142,27 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
                     </span>
                   )}
                 </TableCell>
-                {periodHeaders}
-                <TableCell
-                  component="th"
-                  scope="col"
-                  className="total-heading"
-                  align="right"
-                  sx={{ width: 56 }}
-                >
-                  {copy.periodScores.total}
-                </TableCell>
+                {isScheduled ? null : (
+                  <>
+                    {periodHeaders}
+                    <TableCell
+                      component="th"
+                      scope="col"
+                      className="total-heading"
+                      align="right"
+                      sx={{ width: 56 }}
+                    >
+                      {copy.periodScores.total}
+                    </TableCell>
+                  </>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               <TeamRow
                 team={game.away}
                 possession={awayHasPossession}
-                scheduled={isScheduled}
+                isScheduled={isScheduled}
                 periods={periods}
                 isWinner={!isHomeWinner}
                 isFinal={isFinal}
@@ -166,7 +170,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
               <TeamRow
                 team={game.home}
                 possession={homeHasPossession}
-                scheduled={isScheduled}
+                isScheduled={isScheduled}
                 periods={periods}
                 isWinner={isHomeWinner}
                 isFinal={isFinal}

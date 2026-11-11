@@ -5,7 +5,15 @@ export const periodLabel = (period: number) =>
 
 export const gameTime = (game: Game) => {
   if (game.state !== "live") {
-    return game.status.toUpperCase();
+    return (
+      game.status.toUpperCase() +
+      " " +
+      new Intl.DateTimeFormat(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      }).format(new Date(game.start))
+    );
   }
   if (/half|delay|suspend|end/i.test(game.status)) {
     return game.status;
@@ -23,8 +31,11 @@ export const kickoff = (start: string) => {
   return Number.isNaN(date.getTime())
     ? "Time TBD"
     : new Intl.DateTimeFormat(undefined, {
-        hour: "numeric",
-        minute: "2-digit",
-        // timeZoneName: "short",
+        weekday: "short", // Fri
+        month: "short", // Nov
+        day: "numeric", // 12
+        hour: "numeric", // 4
+        minute: "2-digit", // 30
+        hour12: true, // PM
       }).format(date);
 };

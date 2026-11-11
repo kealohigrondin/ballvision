@@ -15,4 +15,7 @@ export const teamColumnTableSx = (column: number): SxProps<Theme> => ({
     borderBottomWidth: 2,
     borderBottomColor: "text.secondary",
   },
+  "& .league-row-divider-dashed .MuiTableCell-root": {
+    borderBottomStyle: "dashed",
+  },
 });

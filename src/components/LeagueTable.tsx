@@ -29,7 +29,10 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
     return (
       <TableRow
         key={row.id}
-        className={clsx(row.dividerAfter && "league-row-divider")}
+        className={clsx(
+          row.dividerAfter && "league-row-divider",
+          row.dividerAfter === "dashed" && "league-row-divider-dashed",
+        )}
       >
         <TableCell component="th" scope="row">
           <Stack

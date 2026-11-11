@@ -75,7 +75,7 @@ const nflTables: LeagueTable[] = [
     subtitle: "2026",
     nflView: "wildcard",
     rows: [
-      nflRow("2", "Bills", { rank: 4, dividerAfter: true }),
+      nflRow("2", "Bills", { rank: 4, dividerAfter: "dashed" }),
       nflRow("12", "Chiefs", { rank: 5 }),
     ],
   },
@@ -658,4 +658,11 @@ it("lists only NFL divisions in the team schedule picker", async () => {
       .filter((option) => option.value)
       .map((option) => option.textContent),
   ).toEqual(["AFC East", "NFC West"]);
+});
+
+it("dashes the divider under a row marked as a dashed cut line", async () => {
+  renderNflPanel({ nflStandingsView: "wildcard" });
+  const afc = await screen.findByRole("table", { name: /AFC/ });
+  const [bills] = afc.querySelectorAll("tbody tr");
+  expect(bills.classList.contains("league-row-divider-dashed")).toBe(true);
 });

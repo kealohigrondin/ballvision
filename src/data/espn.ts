@@ -436,7 +436,15 @@ export const parseNflStandings = (
     };
   });
 
-  // Seeds 1-4 win their divisions and 5-7 are wild cards.
+  // Seeds 1-4 win their divisions and 5-7 are wild cards: a dashed line
+  // separates the two, and a solid one marks the playoff cut.
+  const dividerAfterSeed = (seed: number) => {
+    if (seed === 4) {
+      return "dashed" as const;
+    }
+
+    return seed === 7 ? ("solid" as const) : undefined;
+  };
   const wildcard: LeagueTable[] = conferences.map((conference) => ({
     id: `${conference.id}-wildcard`,
     title: conference.title,
@@ -447,7 +455,7 @@ export const parseNflStandings = (
       .map(({ row, seed }) => ({
         ...row,
         rank: Number.isFinite(seed) ? seed : undefined,
-        dividerAfter: seed === 4 || seed === 7,
+        dividerAfter: dividerAfterSeed(seed),
       })),
   }));
   // Seeds already include the NFL tiebreakers, so they settle equal records.

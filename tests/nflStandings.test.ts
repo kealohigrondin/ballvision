@@ -118,3 +118,11 @@ it("gives every table a unique id across views", () => {
   const ids = tables().map((table) => table.id);
   expect(new Set(ids).size).toBe(ids.length);
 });
+
+it("dashes the line after the division leaders and keeps the cut line solid", () => {
+  const [afcWildcard] = view("wildcard");
+
+  const divider = (seed: number) =>
+    afcWildcard.rows.find((row) => row.rank === seed)?.dividerAfter;
+  expect([divider(4), divider(7)]).toEqual(["dashed", "solid"]);
+});

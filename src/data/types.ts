@@ -70,7 +70,7 @@ export interface LeagueRow {
   conferenceRecord?: string;
   points?: string;
   /** Draws a separator below this row, e.g. at a playoff cut line. */
-  dividerAfter?: boolean;
+  dividerAfter?: "solid" | "dashed";
 }
 export type NflStandingsView = "wildcard" | "division" | "conference";
 export interface LeagueTable {

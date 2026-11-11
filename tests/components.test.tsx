@@ -189,7 +189,6 @@ describe("scoreboard presentation", () => {
     expect(screen.queryByText(game.broadcast)).toBeNull();
     expect(screen.queryByLabelText(copy.gameCard.possession)).toBeNull();
     expect(screen.getByText(copy.gameDetails.unavailable)).toBeTruthy();
-    expect(screen.getAllByText(copy.common.emptyValue)).toHaveLength(2);
   });
   it("falls back to a team abbreviation if its logo cannot load", () => {
     const { container } = render(

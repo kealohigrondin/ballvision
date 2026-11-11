@@ -50,3 +50,17 @@ test("remembers the chosen NFL standings view after a reload", async ({
     "conference",
   );
 });
+
+test("names each NFL division above its standings table", async ({ page }) => {
+  await mockNflStandings(page);
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
+    .click();
+  await page.getByRole("button", { name: copy.navRail.standings }).click();
+  await page.getByLabel(copy.league.standingsView).selectOption("division");
+  const table = page.getByRole("table", { name: /NFC North/ });
+  const caption = await table.locator("caption").boundingBox();
+  const header = await table.locator("thead").boundingBox();
+  expect(caption!.y + caption!.height).toBeLessThanOrEqual(header!.y);
+});

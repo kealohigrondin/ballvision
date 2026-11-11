@@ -4,6 +4,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -13,6 +14,7 @@ import {
   LeagueNavRail,
 } from "../src/components/LeagueNavRail";
 import { LeaguePanel } from "../src/components/LeaguePanel";
+import type { AppData } from "../src/context/appDataContext";
 import { copy } from "../src/copy";
 import { parseRankings, parseStandings } from "../src/data/espn";
 import type {
@@ -57,8 +59,67 @@ const poll: LeagueTable = {
   rows: [{ id: "2", name: "Miami", rank: 1, record: "7-0", points: "1500" }],
 };
 
+const nflRow = (id: string, name: string, extra = {}) => ({
+  id,
+  name,
+  record: "5-3",
+  conferenceRecord: "3-2",
+  ...extra,
+});
+// One table per NFL standings view and conference, as parseNflStandings
+// returns them.
+const nflTables: LeagueTable[] = [
+  {
+    id: "8-wildcard",
+    title: "AFC",
+    subtitle: "2026",
+    nflView: "wildcard",
+    rows: [
+      nflRow("2", "Bills", { rank: 4, dividerAfter: true }),
+      nflRow("12", "Chiefs", { rank: 5 }),
+    ],
+  },
+  {
+    id: "7-wildcard",
+    title: "NFC",
+    subtitle: "2026",
+    nflView: "wildcard",
+    rows: [nflRow("26", "Seahawks", { rank: 1 })],
+  },
+  {
+    id: "4",
+    title: "AFC East",
+    subtitle: "2026",
+    nflView: "division",
+    rows: [nflRow("2", "Bills")],
+  },
+  {
+    id: "1",
+    title: "NFC West",
+    subtitle: "2026",
+    nflView: "division",
+    rows: [nflRow("26", "Seahawks")],
+  },
+  {
+    id: "8-conference",
+    title: "AFC",
+    subtitle: "2026",
+    nflView: "conference",
+    rows: [nflRow("12", "Chiefs"), nflRow("2", "Bills")],
+  },
+  {
+    id: "7-conference",
+    title: "NFC",
+    subtitle: "2026",
+    nflView: "conference",
+    rows: [nflRow("26", "Seahawks")],
+  },
+];
+
 const source = (): LeagueSource => ({
-  loadStandings: vi.fn().mockResolvedValue([conference]),
+  loadStandings: vi.fn((division) =>
+    Promise.resolve(division === "nfl" ? nflTables : [conference]),
+  ),
   loadRankings: vi.fn().mockResolvedValue([poll]),
 });
 afterEach(() => {
@@ -197,9 +258,9 @@ describe("league panel", () => {
         <LeaguePanel />
       </LeagueTestProvider>,
     );
-    await screen.findByRole("table", { name: /SEC/ });
+    await screen.findByRole("table", { name: /AFC/ });
     expect(navRailButton("rankings").hasAttribute("disabled")).toBe(true);
-    expect(screen.getByLabelText(copy.league.division)).toBeTruthy();
+    expect(screen.getByLabelText(copy.league.standingsView)).toBeTruthy();
     expect(provider.loadStandings).toHaveBeenCalledWith(
       "nfl",
       expect.any(AbortSignal),
@@ -517,4 +578,84 @@ it("opens the league panel on the clicked team's schedule", async () => {
     { division: "fbs", teamId: oddsGame.away.id },
     expect.any(AbortSignal),
   );
+});
+
+const renderNflPanel = (appData: Partial<AppData> = {}) =>
+  render(
+    <LeagueTestProvider source={source()} division="nfl" appData={appData}>
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+
+const tableNames = () =>
+  screen
+    .getAllByRole("table")
+    .map((table) => table.querySelector("caption")?.firstChild?.textContent);
+
+it("lists the NFL standings views as wild card, division, then conference", async () => {
+  renderNflPanel();
+  const picker = await screen.findByLabelText(copy.league.standingsView);
+  expect(
+    [...picker.querySelectorAll("option")].map((option) => option.textContent),
+  ).toEqual([
+    copy.league.nflViews.wildcard,
+    copy.league.nflViews.division,
+    copy.league.nflViews.conference,
+  ]);
+});
+
+it("shows the AFC and NFC wild card standings for the wildcard view", async () => {
+  renderNflPanel({ nflStandingsView: "wildcard" });
+  await screen.findByRole("table", { name: /AFC/ });
+  expect(tableNames()).toEqual(["AFC", "NFC"]);
+  expect(screen.getAllByText("Bills").length).toBeGreaterThan(0);
+});
+
+it("shows every division table for the division view", async () => {
+  renderNflPanel({ nflStandingsView: "division" });
+  await screen.findByRole("table", { name: /AFC East/ });
+  expect(tableNames()).toEqual(["AFC East", "NFC West"]);
+});
+
+it("shows the AFC and NFC conference standings for the conference view", async () => {
+  renderNflPanel({ nflStandingsView: "conference" });
+  await screen.findByRole("table", { name: /AFC/ });
+  expect(tableNames()).toEqual(["AFC", "NFC"]);
+  const afcTeams = within(screen.getAllByRole("table")[0]).getAllByRole("link");
+  expect(afcTeams.map((link) => link.textContent)).toEqual(["Chiefs", "Bills"]);
+});
+
+it("saves the chosen NFL standings view", async () => {
+  const setNflStandingsView = vi.fn();
+  renderNflPanel({ setNflStandingsView });
+  fireEvent.change(await screen.findByLabelText(copy.league.standingsView), {
+    target: { value: "division" },
+  });
+  expect(setNflStandingsView).toHaveBeenCalledWith("division");
+});
+
+it("draws a divider under wild card rows marked as a cut line", async () => {
+  renderNflPanel({ nflStandingsView: "wildcard" });
+  const afc = await screen.findByRole("table", { name: /AFC/ });
+  const rows = [...afc.querySelectorAll("tbody tr")];
+  expect(
+    rows.map((row) => row.classList.contains("league-row-divider")),
+  ).toEqual([true, false]);
+});
+
+it("lists only NFL divisions in the team schedule picker", async () => {
+  render(
+    <LeagueTestProvider source={source()} division="nfl">
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  await screen.findByRole("table", { name: /AFC/ });
+  fireEvent.click(navRailButton("schedule"));
+  const picker = screen.getByLabelText(copy.league.division);
+  expect(
+    [...picker.querySelectorAll("option")]
+      .filter((option) => option.value)
+      .map((option) => option.textContent),
+  ).toEqual(["AFC East", "NFC West"]);
 });

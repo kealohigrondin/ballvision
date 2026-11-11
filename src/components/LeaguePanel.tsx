@@ -2,6 +2,7 @@ import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
+import Stack from "@mui/material/Stack";
 import type { SxProps, Theme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -10,6 +11,7 @@ import { useMemo } from "react";
 import { useAppData } from "../context/appDataContext";
 import { useEspnData } from "../context/espnDataContext";
 import { copy } from "../copy";
+import type { NflStandingsView } from "../data/types";
 import { useCompactWindow } from "../hooks/useCompactWindow";
 import { LeagueTable } from "./LeagueTable";
 import { TeamSchedule } from "./TeamSchedule";
@@ -48,31 +50,69 @@ const bottomSheetSx: SxProps<Theme> = {
   "&&": { borderRadius: "28px 28px 0 0" },
 };
 
+const nflStandingsViews: NflStandingsView[] = [
+  "wildcard",
+  "division",
+  "conference",
+];
+
 export const LeaguePanel = ({}: LeaguePanelProps) => {
-  const { division } = useAppData();
+  const { division, nflStandingsView, setNflStandingsView } = useAppData();
   const compact = useCompactWindow();
   const {
-    league: { tables, loading, error, refresh, view, selected, setSelectedId },
+    league: {
+      tables,
+      loading,
+      error,
+      refresh,
+      view,
+      selected,
+      setSelectedId,
+      visibleTables,
+    },
   } = useEspnData();
-  const options = tables.map((table) => (
-    <option key={table.id} value={table.id}>
-      {table.title}
-    </option>
-  ));
 
-  const secondaryLabel = useMemo(() => {
+  // NFL picks a standings view; college picks one conference or poll.
+  const picker = useMemo(() => {
     if (division === "nfl") {
-      return copy.league.division;
+      return {
+        label: copy.league.standingsView,
+        value: nflStandingsView,
+        onChange: (value: string) =>
+          setNflStandingsView(value as NflStandingsView),
+        options: nflStandingsViews.map((option) => (
+          <option key={option} value={option}>
+            {copy.league.nflViews[option]}
+          </option>
+        )),
+      };
     }
 
-    return view === "standings" ? copy.league.conference : copy.league.poll;
-  }, [division, view]);
+    return {
+      label: view === "standings" ? copy.league.conference : copy.league.poll,
+      value: selected?.id ?? "",
+      onChange: setSelectedId,
+      options: tables.map((table) => (
+        <option key={table.id} value={table.id}>
+          {table.title}
+        </option>
+      )),
+    };
+  }, [
+    division,
+    nflStandingsView,
+    setNflStandingsView,
+    view,
+    selected,
+    setSelectedId,
+    tables,
+  ]);
 
   const content = useMemo(() => {
     if (view === "schedule") {
       return <TeamSchedule />;
     }
-    if (loading && !selected) {
+    if (loading && visibleTables.length === 0) {
       return (
         <Typography
           variant="body2"
@@ -85,8 +125,14 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
         </Typography>
       );
     }
-    if (selected?.rows.length) {
-      return <LeagueTable />;
+    if (visibleTables.some((table) => table.rows.length > 0)) {
+      return (
+        <Stack spacing={2}>
+          {visibleTables.map((table) => (
+            <LeagueTable key={table.id} table={table} />
+          ))}
+        </Stack>
+      );
     }
 
     return (
@@ -99,7 +145,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
         {copy.league.empty}
       </Typography>
     );
-  }, [loading, selected, view]);
+  }, [loading, visibleTables, view]);
 
   const label = useMemo(() => {
     if (view === "schedule") {
@@ -127,13 +173,13 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
           <TextField
             select
             fullWidth
-            label={secondaryLabel}
-            value={selected?.id ?? ""}
-            onChange={(e) => setSelectedId(e.target.value)}
+            label={picker.label}
+            value={picker.value}
+            onChange={(e) => picker.onChange(e.target.value)}
             slotProps={{ select: { native: true } }}
             sx={{ mb: 2 }}
           >
-            {options}
+            {picker.options}
           </TextField>
         )}
         {error && (

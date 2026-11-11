@@ -2,7 +2,7 @@ import { expect, type Page, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
 import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
-import { mockApis } from "./support/mockApis";
+import { mockApis, mockNflStandings } from "./support/mockApis";
 
 // Captures reference screenshots for pull requests. Run with
 // `npm run screenshots`; images are written to ./screenshots.
@@ -129,5 +129,54 @@ test.describe("@screenshots team logo", () => {
       .locator(".team-logo")
       .first()
       .screenshot({ path: "screenshots/team-logo-fallback.png" });
+  });
+});
+
+const openNflStandings = async (page: Page) => {
+  await openDashboard(page);
+  await mockNflStandings(page);
+  await page
+    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
+    .click();
+  await page.getByRole("button", { name: copy.navRail.standings }).click();
+};
+
+const screenshotLeaguePanel = async (page: Page, name: string) => {
+  const panel = page.getByRole("complementary", { name: copy.league.panel });
+  await expect(panel.getByRole("table").first()).toBeVisible();
+  await expect
+    .poll(() =>
+      panel
+        .locator(".team-logo img")
+        .evaluateAll((all) =>
+          all.every(
+            (image) =>
+              image instanceof HTMLImageElement &&
+              image.complete &&
+              image.naturalWidth > 0,
+          ),
+        ),
+    )
+    .toBe(true);
+  await panel.screenshot({ path: `screenshots/${name}.png` });
+};
+
+test.describe("@screenshots NFL league panel", () => {
+  // Tall enough for every view, including all eight divisions, to fit
+  // without scrolling the panel.
+  test.use({ viewport: { width: 1440, height: 2500 } });
+
+  for (const view of ["wildcard", "division", "conference"] as const) {
+    test(`${view}, dark`, async ({ page }) => {
+      await openNflStandings(page);
+      await page.getByLabel(copy.league.standingsView).selectOption(view);
+      await screenshotLeaguePanel(page, `league-panel-nfl-${view}-dark`);
+    });
+  }
+
+  test("wildcard, light", async ({ page }) => {
+    await openNflStandings(page);
+    await page.getByRole("button", { name: copy.theme.toLight }).click();
+    await screenshotLeaguePanel(page, "league-panel-nfl-wildcard-light");
   });
 });

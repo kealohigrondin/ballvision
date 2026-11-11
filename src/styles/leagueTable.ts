@@ -8,4 +8,9 @@ export const teamColumnTableSx = (column: number): SxProps<Theme> => ({
     width: "100%",
     whiteSpace: "normal",
   },
+  // A heavier rule under rows marked dividerAfter, e.g. a playoff cut line.
+  "& .league-row-divider .MuiTableCell-root": {
+    borderBottomWidth: 2,
+    borderBottomColor: "text.secondary",
+  },
 });

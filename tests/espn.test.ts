@@ -45,7 +45,7 @@ describe("ESPN adapter", () => {
         ok: true,
         json: async () => ({ events: [event("nfl", "pre")] }),
       })
-      .mockResolvedValueOnce({
+      .mockResolvedValue({
         ok: true,
         json: async () => ({ children: [] }),
       });
@@ -62,12 +62,21 @@ describe("ESPN adapter", () => {
     expect(scoreUrl.searchParams.has("dates")).toBe(false);
     expect(games[0].state).toBe("upcoming");
     await espnLeagueSource.loadStandings("nfl", signal);
-    const standingsUrl = new URL(fetchMock.mock.calls[1][0]);
-    expect(standingsUrl.pathname).toContain("/nfl/standings");
-    expect(standingsUrl.searchParams.get("level")).toBe("3");
-    expect(standingsUrl.searchParams.has("group")).toBe(false);
+    const standingsUrls = fetchMock.mock.calls
+      .slice(1)
+      .map(([url]) => new URL(String(url)));
+    expect(standingsUrls.every((url) => url.pathname.includes("/nfl/"))).toBe(
+      true,
+    );
+    expect(standingsUrls.map((url) => url.searchParams.get("level"))).toEqual([
+      "2",
+      "3",
+    ]);
+    expect(standingsUrls.some((url) => url.searchParams.has("group"))).toBe(
+      false,
+    );
     expect(await espnLeagueSource.loadRankings("nfl", signal)).toEqual([]);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
   it("requests the full daily slate using ESPN's working 100-game limit", async () => {

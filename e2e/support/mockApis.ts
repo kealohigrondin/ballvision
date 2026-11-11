@@ -1,5 +1,7 @@
 import type { Page, Route } from "@playwright/test";
 
+import nflConferences from "../fixtures/nfl-standings-conferences.json" with { type: "json" };
+import nflDivisions from "../fixtures/nfl-standings-divisions.json" with { type: "json" };
 import scoreboard from "../fixtures/scoreboard.json" with { type: "json" };
 
 const json = (route: Route, body: unknown) =>
@@ -25,5 +27,18 @@ export const mockApis = async (page: Page): Promise<void> => {
   );
   await page.route(/^https:\/\/(gamma-api|clob)\.polymarket\.com\//, (route) =>
     json(route, []),
+  );
+};
+
+// Serve real NFL standings captured from ESPN: level 2 is the AFC and NFC,
+// level 3 their divisions. Call after mockApis so these routes take priority.
+export const mockNflStandings = async (page: Page): Promise<void> => {
+  await page.route("https://site.web.api.espn.com/**/nfl/standings*", (route) =>
+    json(
+      route,
+      new URL(route.request().url()).searchParams.get("level") === "2"
+        ? nflConferences
+        : nflDivisions,
+    ),
   );
 };

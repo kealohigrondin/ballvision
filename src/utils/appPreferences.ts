@@ -1,5 +1,5 @@
 import type { AppPreferences, Filter } from "../context/appDataTypes";
-import type { Week } from "../data/types";
+import type { NflStandingsView, Week } from "../data/types";
 
 export const APP_PREFERENCES_KEY = "ballvision:app-data:v1";
 
@@ -10,11 +10,15 @@ export const defaultAppPreferences = (): AppPreferences => ({
   filter: "all",
   search: "",
   paused: false,
+  nflStandingsView: "wildcard",
 });
 
 const validFilter = (value: unknown): value is Filter =>
   typeof value === "string" &&
   ["all", "live", "upcoming", "final", "pinned"].includes(value);
+
+const validNflStandingsView = (value: unknown): value is NflStandingsView =>
+  value === "wildcard" || value === "division" || value === "conference";
 
 const validWeek = (value: unknown): value is Week => {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -63,6 +67,9 @@ export const loadAppPreferences = (
       search: typeof value.search === "string" ? value.search : defaults.search,
       paused:
         typeof value.paused === "boolean" ? value.paused : defaults.paused,
+      nflStandingsView: validNflStandingsView(value.nflStandingsView)
+        ? value.nflStandingsView
+        : defaults.nflStandingsView,
     };
   } catch {
     return defaults;

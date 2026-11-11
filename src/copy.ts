@@ -114,6 +114,12 @@ export const copy = {
     division: "Division",
     conference: "Conference",
     poll: "Poll",
+    standingsView: "Standings view",
+    nflViews: {
+      wildcard: "Wild card",
+      division: "Division",
+      conference: "Conference",
+    },
     loading: "Loading league data…",
     empty: "No league data is available for this division.",
     error:

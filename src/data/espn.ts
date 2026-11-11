@@ -389,6 +389,84 @@ export const parseStandings = (
   return root.children.flatMap(collect);
 };
 
+// NFL standings come from two ESPN payloads: the conference level (AFC and
+// NFC, each with a playoff seed per team) and the division level.
+export const parseNflStandings = (
+  conferencePayload: unknown,
+  divisionPayload: unknown,
+): LeagueTable[] => {
+  const root = obj(conferencePayload);
+  if (!Array.isArray(root.children)) {
+    throw new Error("Unexpected ESPN standings response.");
+  }
+  const conferences = root.children.map((raw) => {
+    const group = obj(raw),
+      standings = obj(group.standings);
+    const rows = list(standings.entries).map((rawEntry) => {
+      const entry = obj(rawEntry),
+        t = obj(entry.team),
+        stats = list(entry.stats).map(obj);
+
+      const stat = (name: string) => stats.find((s) => s.name === name);
+
+      const record = (type: string) => {
+        const found = stats.find((s) => s.type === type);
+
+        return str(found?.summary, str(found?.displayValue, "—"));
+      };
+
+      return {
+        row: {
+          ...leagueTeamIdentity(t),
+          id: str(t.id),
+          name: str(t.shortDisplayName, str(t.displayName, str(t.location))),
+          record: record("total"),
+          conferenceRecord: record("vsconf"),
+        },
+        seed: number(stat("playoffSeed")?.value) ?? Infinity,
+        winPercent: number(stat("winPercent")?.value) ?? 0,
+      };
+    });
+
+    return {
+      id: str(group.id),
+      title: str(group.abbreviation, str(group.name, "Conference")),
+      subtitle: str(standings.seasonDisplayName, str(standings.season)),
+      rows: rows.filter(({ row }) => row.id && row.name),
+    };
+  });
+
+  // Seeds 1-4 win their divisions and 5-7 are wild cards.
+  const wildcard: LeagueTable[] = conferences.map((conference) => ({
+    id: `${conference.id}-wildcard`,
+    title: conference.title,
+    subtitle: conference.subtitle,
+    nflView: "wildcard",
+    rows: [...conference.rows]
+      .sort((a, b) => a.seed - b.seed)
+      .map(({ row, seed }) => ({
+        ...row,
+        rank: Number.isFinite(seed) ? seed : undefined,
+        dividerAfter: seed === 4 || seed === 7,
+      })),
+  }));
+  // Seeds already include the NFL tiebreakers, so they settle equal records.
+  const conference: LeagueTable[] = conferences.map((conference) => ({
+    id: `${conference.id}-conference`,
+    title: conference.title,
+    subtitle: conference.subtitle,
+    nflView: "conference",
+    rows: [...conference.rows]
+      .sort((a, b) => b.winPercent - a.winPercent || a.seed - b.seed)
+      .map(({ row }) => row),
+  }));
+  const division: LeagueTable[] = parseStandings(divisionPayload, "nfl").map(
+    (table) => ({ ...table, nflView: "division" }),
+  );
+
+  return [...wildcard, ...division, ...conference];
+};
+
 export const parseRankings = (
   payload: unknown,
   division: Division,
@@ -456,12 +534,22 @@ const loadLeagueJson = async (
 
 export const espnLeagueSource: LeagueSource = {
   loadStandings: async (division, signal) => {
+    if (division === "nfl") {
+      const nflUrl = (level: string) =>
+        `https://site.web.api.espn.com/apis/v2/sports/football/nfl/standings?level=${level}&type=0`;
+      const [conferences, divisions] = await Promise.all([
+        loadLeagueJson(nflUrl("2"), signal),
+        loadLeagueJson(nflUrl("3"), signal),
+      ]);
+
+      return parseNflStandings(conferences, divisions);
+    }
     const url = new URL(
-      `https://site.web.api.espn.com/apis/v2/sports/football/${division === "nfl" ? "nfl" : "college-football"}/standings`,
+      "https://site.web.api.espn.com/apis/v2/sports/football/college-football/standings",
     );
     url.search = new URLSearchParams({
-      ...(division !== "nfl" && { group: division === "fbs" ? "80" : "81" }),
-      level: division === "nfl" ? "3" : "2",
+      group: division === "fbs" ? "80" : "81",
+      level: "2",
       type: "0",
     }).toString();
 

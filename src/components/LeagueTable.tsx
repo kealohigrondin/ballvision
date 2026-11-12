@@ -26,7 +26,7 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
   const ranked = view === "rankings";
   const column = ranked ? "PTS" : "CONF";
   // Polls without voting points (the playoff committee) skip that column.
-  const showValueColumn =
+  const showPointsColumn =
     !ranked || table.rows.some((row) => row.points !== undefined);
   const rows = table.rows.map((row) => {
     const value = ranked ? row.points : row.conferenceRecord;
@@ -59,7 +59,7 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
             <TeamScheduleLink team={row} />
           </Stack>
         </TableCell>
-        {showValueColumn && <TableCell align="right">{value ?? "—"}</TableCell>}
+        {showPointsColumn && <TableCell align="right">{value ?? "—"}</TableCell>}
         <TableCell align="right">{row.record}</TableCell>
         {ranked && (
           <TableCell
@@ -98,7 +98,7 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
                 {table.title}
               </Typography>
             </TableCell>
-            {showValueColumn && (
+            {showPointsColumn && (
               <TableCell component="th" scope="col" align="right">
                 {column}
               </TableCell>

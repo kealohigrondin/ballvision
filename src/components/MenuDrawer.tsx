@@ -2,7 +2,7 @@ import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Menu, X } from "lucide-react";
+import { type LucideIcon, Menu, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
 type MenuDrawerProps = {
@@ -10,16 +10,19 @@ type MenuDrawerProps = {
   label: string;
   closeLabel: string;
   children: ReactNode;
+  /** The button's icon; defaults to a menu (hamburger) icon. */
+  icon?: LucideIcon;
   iconSize?: number;
   /** Prefix for the button and drawer ids, e.g. `masthead-menu`. */
   id?: string;
 };
 
-// A menu button that opens a Material side sheet from the right edge.
+// A button that opens a Material side sheet from the right edge.
 export const MenuDrawer = ({
   label,
   closeLabel,
   children,
+  icon: Icon = Menu,
   iconSize = 24,
   id = "menu",
 }: MenuDrawerProps) => {
@@ -35,7 +38,7 @@ export const MenuDrawer = ({
         aria-controls={`${id}-drawer`}
         onClick={() => setOpen(true)}
       >
-        <Menu size={iconSize} />
+        <Icon size={iconSize} />
       </IconButton>
       <Drawer
         anchor="right"
@@ -67,7 +70,7 @@ export const MenuDrawer = ({
             <X size={iconSize} />
           </IconButton>
         </Stack>
-        <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
+        <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
           {children}
         </Stack>
       </Drawer>

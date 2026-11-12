@@ -79,8 +79,8 @@ export const copy = {
     label: "Week",
   },
   mastHead: {
-    menu: "Menu",
-    closeMenu: "Close menu",
+    settings: "Settings",
+    closeSettings: "Close settings",
   },
   sync: {
     pause: "Pause auto-refresh",

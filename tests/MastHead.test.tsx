@@ -1,4 +1,10 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
 import MastHead from "../src/components/MastHead";
@@ -101,6 +107,29 @@ it("shows the masthead controls without a menu button on wider screens", () => {
     expect(
       within(header).getByRole("button", { name: copy.sync.pause }),
     ).toBeTruthy();
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it("labels each control in the phone settings menu with its tooltip text", () => {
+  stubWindow(true);
+
+  try {
+    renderMastHead();
+    fireEvent.click(document.getElementById("masthead-menu-button")!);
+    const drawer = document.getElementById("masthead-menu-drawer")!;
+    const labels = within(drawer)
+      .getAllByRole("button")
+      .filter((button) => button.id !== "masthead-menu-close")
+      .map((button) => button.textContent);
+    expect(labels).toEqual([
+      copy.sync.pause,
+      copy.sync.refresh,
+      copy.scoreNotification.enableSound,
+      copy.scoreNotification.test,
+      copy.theme.toLight,
+    ]);
   } finally {
     vi.unstubAllGlobals();
   }

@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
-import { Radio } from "lucide-react";
+import { Radio, Settings } from "lucide-react";
 
 import { copy } from "../copy";
 import { useCompactWindow } from "../hooks/useCompactWindow";
@@ -15,26 +15,25 @@ type MastHeadProps = Record<string, never>;
 
 const MastHead = ({}: MastHeadProps) => {
   const compact = useCompactWindow();
-  const controls = (
-    <>
-      <SyncControls />
-      <ScoreNotificationControls />
-      <ThemeToggle />
-    </>
-  );
-  // Phones tuck the controls into a menu that opens from the right.
+  // Phones tuck the controls into a settings sheet that opens from the
+  // right, where each button shows its label as text.
   const actions = compact ? (
     <MenuDrawer
       id="masthead-menu"
-      label={copy.mastHead.menu}
-      closeLabel={copy.mastHead.closeMenu}
+      label={copy.mastHead.settings}
+      closeLabel={copy.mastHead.closeSettings}
+      icon={Settings}
       iconSize={MASTHEAD_ICON_SIZE}
     >
-      {controls}
+      <SyncControls showLabels />
+      <ScoreNotificationControls showLabels />
+      <ThemeToggle showLabels />
     </MenuDrawer>
   ) : (
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-      {controls}
+      <SyncControls />
+      <ScoreNotificationControls />
+      <ThemeToggle />
     </Stack>
   );
 

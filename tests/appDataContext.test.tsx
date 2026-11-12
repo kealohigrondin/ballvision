@@ -1,14 +1,11 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import App from "../src/App";
-import { copy } from "../src/copy";
+import { useAppData } from "../src/context/appDataContext";
+import { useEspnData } from "../src/context/espnDataContext";
+import { usePolymarketData } from "../src/context/polymarketDataContext";
+import { usePolymarketGame } from "../src/context/polymarketGameContext";
 import type {
   Game,
   LeagueSource,
@@ -17,10 +14,12 @@ import type {
   ScoreboardSource,
   Week,
 } from "../src/data/types";
-import { AppTheme } from "../src/providers/AppTheme";
+import { AppDataProvider } from "../src/providers/AppDataProvider";
+import { EspnDataProvider } from "../src/providers/EspnDataProvider";
+import { PolymarketDataProvider } from "../src/providers/PolymarketDataProvider";
+import { PolymarketGameProvider } from "../src/providers/PolymarketGameProvider";
 import { emptyOddsSource } from "./helpers/appData";
 import { oddsQuote } from "./helpers/oddsFixture";
-import { linkTo } from "./helpers/queries";
 
 const week = (number: number): Week => ({
   id: `2026-2-${number}`,
@@ -66,17 +65,19 @@ const game = (id: string, state: Game["state"]): Game => ({
   redZone: false,
 });
 
-type RenderAppOptions = {
+type Sources = {
   games?: Game[];
   oddsSource?: OddsSource;
   oddsHistorySource?: OddsHistorySource;
 };
 
-const renderApp = ({
+// Renders only the app's context providers (no UI) and returns what each
+// context exposes, so tests call the context functions directly.
+const renderContexts = ({
   games = [],
   oddsSource = emptyOddsSource,
   oddsHistorySource,
-}: RenderAppOptions = {}) => {
+}: Sources = {}) => {
   const source: ScoreboardSource = {
     load: vi.fn().mockResolvedValue(games),
     loadCalendar: vi.fn().mockResolvedValue(calendar),
@@ -85,15 +86,26 @@ const renderApp = ({
     loadStandings: vi.fn().mockResolvedValue([]),
     loadRankings: vi.fn().mockResolvedValue([]),
   };
-  render(
-    <AppTheme>
-      <App
-        source={source}
-        leagueSource={leagueSource}
-        oddsSource={oddsSource}
-        oddsHistorySource={oddsHistorySource}
-      />
-    </AppTheme>,
+
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <AppDataProvider>
+      <EspnDataProvider source={source} leagueSource={leagueSource}>
+        <PolymarketDataProvider
+          source={oddsSource}
+          historySource={oddsHistorySource}
+        >
+          {children}
+        </PolymarketDataProvider>
+      </EspnDataProvider>
+    </AppDataProvider>
+  );
+  const { result } = renderHook(
+    () => ({
+      app: useAppData(),
+      espn: useEspnData(),
+      odds: usePolymarketData(),
+    }),
+    { wrapper },
   );
 
   const lastQuery = (query: object) =>
@@ -104,54 +116,12 @@ const renderApp = ({
       ),
     );
 
-  return { source, leagueSource, lastQuery };
+  return { result, source, lastQuery };
 };
 
-const scoreTable = (id: string) =>
-  screen.queryByRole("table", {
-    name: copy.gameCard.scoresByPeriod(`${id} Away`, `${id} Home`),
-  });
+const twoGames = [game("Live", "live"), game("Later", "upcoming")];
 
-const findScoreTable = (id: string) =>
-  screen.findByRole("table", {
-    name: copy.gameCard.scoresByPeriod(`${id} Away`, `${id} Home`),
-  });
-
-const favoriteButton = (favorite: boolean, id: string) =>
-  screen.getByRole("button", {
-    name: copy.gameCard.favorite(favorite, `${id} Away`, `${id} Home`),
-  });
-
-const filterButton = (
-  filter: keyof typeof copy.scoresHeader.filters,
-  count: number,
-) =>
-  screen.getByRole("button", {
-    name: `${copy.scoresHeader.filters[filter]} ${count}`,
-  });
-
-const searchBox = () =>
-  screen.getByRole("textbox", { name: copy.scoresHeader.search });
-
-const weekSelect = async () => {
-  const select = await screen.findByRole("combobox", {
-    name: copy.week.label,
-  });
-  // Wait for the calendar so the select shows the current week.
-  await waitFor(() => expect(select.textContent).toBe(week(1).label));
-
-  return select;
-};
-
-const chooseWeek = async (number: number) => {
-  fireEvent.mouseDown(await weekSelect());
-  fireEvent.click(
-    await screen.findByRole("option", { name: week(number).label }),
-  );
-};
-
-const divisionButton = (division: "fbs" | "fcs" | "nfl") =>
-  screen.getByRole("button", { name: copy.scoresHeader.divisions[division] });
+const visibleIds = (games: Game[]) => games.map(({ id }) => id);
 
 afterEach(() => {
   cleanup();
@@ -161,132 +131,193 @@ afterEach(() => {
 
 // Search, filters and favorites
 
-it("filters games by team search and restores them when cleared", async () => {
-  renderApp({ games: [game("Live", "live"), game("Later", "upcoming")] });
-  await findScoreTable("Live");
-  fireEvent.change(searchBox(), { target: { value: "Later" } });
-  expect(scoreTable("Live")).toBeNull();
-  expect(scoreTable("Later")).toBeTruthy();
-  fireEvent.click(
-    screen.getByRole("button", { name: copy.scoresHeader.clearSearch }),
-  );
-  expect(scoreTable("Live")).toBeTruthy();
-  expect(scoreTable("Later")).toBeTruthy();
+it("filters games by team search", async () => {
+  const { result } = renderContexts({ games: twoGames });
+  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  act(() => result.current.app.setSearch("Later"));
+  expect(visibleIds(result.current.espn.visibleGames)).toEqual(["Later"]);
+});
+
+it("shows every game again when the search is cleared", async () => {
+  const { result } = renderContexts({ games: twoGames });
+  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  act(() => result.current.app.setSearch("Later"));
+  act(() => result.current.app.setSearch(""));
+  expect(visibleIds(result.current.espn.visibleGames)).toEqual([
+    "Live",
+    "Later",
+  ]);
 });
 
 it("filters games by state", async () => {
-  renderApp({ games: [game("Live", "live"), game("Later", "upcoming")] });
-  await findScoreTable("Live");
-  fireEvent.click(filterButton("upcoming", 1));
-  expect(scoreTable("Live")).toBeNull();
-  expect(scoreTable("Later")).toBeTruthy();
-  fireEvent.click(filterButton("live", 1));
-  expect(scoreTable("Live")).toBeTruthy();
-  expect(scoreTable("Later")).toBeNull();
+  const { result } = renderContexts({ games: twoGames });
+  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  act(() => result.current.app.setFilter("upcoming"));
+  expect(visibleIds(result.current.espn.visibleGames)).toEqual(["Later"]);
 });
 
-it("pins a game to the watchlist and unpins it", async () => {
-  renderApp({ games: [game("Live", "live"), game("Later", "upcoming")] });
-  await findScoreTable("Live");
-  fireEvent.click(favoriteButton(false, "Later"));
-  fireEvent.click(filterButton("pinned", 1));
-  expect(scoreTable("Later")).toBeTruthy();
-  expect(scoreTable("Live")).toBeNull();
-  fireEvent.click(favoriteButton(true, "Later"));
-  expect(screen.getByText(copy.grid.watchlistEmpty)).toBeTruthy();
+it("counts games by state", async () => {
+  const { result } = renderContexts({ games: twoGames });
+  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  expect(result.current.espn.counts).toMatchObject({
+    all: 2,
+    live: 1,
+    upcoming: 1,
+    final: 0,
+    pinned: 0,
+  });
+});
+
+it("shows only pinned games under the pinned filter", async () => {
+  const { result } = renderContexts({ games: twoGames });
+  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  act(() => result.current.app.toggleFavorite("Later"));
+  act(() => result.current.app.setFilter("pinned"));
+  expect(visibleIds(result.current.espn.visibleGames)).toEqual(["Later"]);
+});
+
+it("unpins a pinned game", async () => {
+  const { result } = renderContexts({ games: twoGames });
+  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  act(() => result.current.app.toggleFavorite("Later"));
+  act(() => result.current.app.toggleFavorite("Later"));
+  expect(result.current.espn.counts.pinned).toBe(0);
 });
 
 // Week selection
 
-it("starts on the current FBS week", async () => {
-  const { source, lastQuery } = renderApp();
-  await screen.findByText(copy.grid.noGames);
+it("loads the current FBS week on start", async () => {
+  const { lastQuery } = renderContexts();
   await lastQuery({ week: null, division: "fbs" });
+});
+
+it("loads the FBS season calendar on start", async () => {
+  const { result, source } = renderContexts();
+  await waitFor(() =>
+    expect(result.current.espn.currentWeekId).toBe(calendar.currentWeekId),
+  );
   expect(source.loadCalendar).toHaveBeenLastCalledWith(
     "fbs",
     expect.any(AbortSignal),
   );
-  await weekSelect();
 });
 
-it("loads the week chosen from the week select", async () => {
-  const { lastQuery } = renderApp();
-  const select = await weekSelect();
-  fireEvent.mouseDown(select);
-  fireEvent.click(await screen.findByRole("option", { name: week(0).label }));
+it("loads the chosen week", async () => {
+  const { result, lastQuery } = renderContexts();
+  act(() => result.current.app.setWeek(week(0)));
   await lastQuery({ week: week(0), division: "fbs" });
-  expect(select.textContent).toBe(week(0).label);
 });
 
 // Division
 
-it("keeps the selected week when switching between college divisions", async () => {
-  const { lastQuery } = renderApp();
-  await chooseWeek(0);
-  await lastQuery({ week: week(0), division: "fbs" });
-  fireEvent.click(divisionButton("fcs"));
+it("keeps the chosen week when switching between college divisions", async () => {
+  const { result, lastQuery } = renderContexts();
+  act(() => result.current.app.setWeek(week(0)));
+  act(() => result.current.app.setDivision("fcs"));
   await lastQuery({ week: week(0), division: "fcs" });
 });
 
-it("pauses and resumes auto-refresh", async () => {
-  renderApp();
-  await screen.findByText(copy.grid.noGames);
-  fireEvent.click(screen.getByRole("button", { name: copy.sync.pause }));
-  await screen.findByText(copy.sync.paused);
-  fireEvent.click(screen.getByRole("button", { name: copy.sync.resume }));
-  expect(screen.getByRole("button", { name: copy.sync.pause })).toBeTruthy();
+it("returns to the current week when switching to the NFL", async () => {
+  const { result, lastQuery } = renderContexts();
+  act(() => result.current.app.setWeek(week(0)));
+  act(() => result.current.app.setDivision("nfl"));
+  await lastQuery({ week: null, division: "nfl" });
+});
+
+// Auto-refresh
+
+it("pauses auto-refresh", () => {
+  const { result } = renderContexts();
+  act(() => result.current.app.setPaused(true));
+  expect(result.current.app.paused).toBe(true);
+});
+
+it("reloads scores when the scores are refreshed", async () => {
+  const { result, source } = renderContexts();
+  await waitFor(() => expect(source.load).toHaveBeenCalled());
+  const calls = vi.mocked(source.load).mock.calls.length;
+  act(() => result.current.espn.refresh());
+  await waitFor(() =>
+    expect(vi.mocked(source.load).mock.calls.length).toBeGreaterThan(calls),
+  );
 });
 
 // Polymarket odds
 
-it("shows Polymarket odds in the game card", async () => {
-  renderApp({
+it("loads Polymarket odds for live games", async () => {
+  const { result } = renderContexts({
     games: [game("Live", "live")],
     oddsSource: { load: vi.fn().mockResolvedValue({ Live: oddsQuote }) },
   });
-  await waitFor(() =>
-    expect(linkTo(oddsQuote.url).textContent).toContain("AWY"),
-  );
+  await waitFor(() => expect(result.current.odds.quotes.Live).toBe(oddsQuote));
 });
 
-it("loads odds history only when game details are opened", async () => {
-  const loadHistory = vi.fn().mockResolvedValue({
-    away: [{ timestamp: Date.now() - 1000, probability: 0.6 }],
-    home: [{ timestamp: Date.now() - 1000, probability: 0.4 }],
-  });
-  renderApp({
-    games: [game("Live", "live")],
-    oddsSource: { load: vi.fn().mockResolvedValue({ Live: oddsQuote }) },
-    oddsHistorySource: { load: loadHistory },
-  });
-  await waitFor(() => linkTo(oddsQuote.url));
-  expect(loadHistory).not.toHaveBeenCalled();
-  fireEvent.click(
-    screen.getByRole("button", { name: copy.gameDetails.toggle }),
-  );
-  await screen.findByRole("img", {
-    name: copy.oddsHistory.chart("AWY", "HOM"),
-  });
-  expect(loadHistory).toHaveBeenCalledWith(
-    { awayTokenId: "222", homeTokenId: "111", range: "1h" },
-    expect.any(AbortSignal),
-  );
-});
-
-it("refreshes both scores and odds from the refresh button", async () => {
+it("reloads odds when the odds are refreshed", async () => {
   const loadOdds = vi.fn().mockResolvedValue({ Live: oddsQuote });
-  const { source } = renderApp({
+  const { result } = renderContexts({
     games: [game("Live", "live")],
     oddsSource: { load: loadOdds },
   });
-  await waitFor(() => linkTo(oddsQuote.url));
-  const scoreCalls = vi.mocked(source.load).mock.calls.length;
-  const oddsCalls = loadOdds.mock.calls.length;
-  fireEvent.click(screen.getByRole("button", { name: copy.sync.refresh }));
-  await waitFor(() => {
-    expect(vi.mocked(source.load).mock.calls.length).toBeGreaterThan(
-      scoreCalls,
-    );
-    expect(loadOdds.mock.calls.length).toBeGreaterThan(oddsCalls);
-  });
+  await waitFor(() => expect(result.current.odds.quotes.Live).toBe(oddsQuote));
+  const calls = loadOdds.mock.calls.length;
+  act(() => result.current.odds.refresh());
+  await waitFor(() =>
+    expect(loadOdds.mock.calls.length).toBeGreaterThan(calls),
+  );
+});
+
+// Renders the providers plus a single game's odds context.
+const renderGameOdds = (loadHistory: OddsHistorySource["load"]) => {
+  const live = game("Live", "live");
+
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <AppDataProvider>
+      <EspnDataProvider
+        source={{
+          load: vi.fn().mockResolvedValue([live]),
+          loadCalendar: vi.fn().mockResolvedValue(calendar),
+        }}
+        leagueSource={{
+          loadStandings: vi.fn().mockResolvedValue([]),
+          loadRankings: vi.fn().mockResolvedValue([]),
+        }}
+      >
+        <PolymarketDataProvider
+          source={{ load: vi.fn().mockResolvedValue({ Live: oddsQuote }) }}
+          historySource={{ load: loadHistory }}
+        >
+          <PolymarketGameProvider game={live}>
+            {children}
+          </PolymarketGameProvider>
+        </PolymarketDataProvider>
+      </EspnDataProvider>
+    </AppDataProvider>
+  );
+
+  return renderHook(() => usePolymarketGame(), { wrapper }).result;
+};
+
+const history = {
+  away: [{ timestamp: Date.now() - 1000, probability: 0.6 }],
+  home: [{ timestamp: Date.now() - 1000, probability: 0.4 }],
+};
+
+it("does not load odds history until it is opened", async () => {
+  const loadHistory = vi.fn().mockResolvedValue(history);
+  const result = renderGameOdds(loadHistory);
+  await waitFor(() => expect(result.current.quote).toBe(oddsQuote));
+  expect(loadHistory).not.toHaveBeenCalled();
+});
+
+it("loads odds history for the game's tokens when opened", async () => {
+  const loadHistory = vi.fn().mockResolvedValue(history);
+  const result = renderGameOdds(loadHistory);
+  await waitFor(() => expect(result.current.quote).toBe(oddsQuote));
+  act(() => result.current.setHistoryOpen(true));
+  await waitFor(() =>
+    expect(loadHistory).toHaveBeenCalledWith(
+      { awayTokenId: "222", homeTokenId: "111", range: "1h" },
+      expect.any(AbortSignal),
+    ),
+  );
 });

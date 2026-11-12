@@ -115,6 +115,9 @@ export const copy = {
     conference: "Conference",
     poll: "Poll",
     standingsView: "Standings view",
+    trend: "TREND",
+    trendNew: "NEW",
+    trendUnchanged: "-",
     nflViews: {
       wildcard: "Wild card",
       division: "Division",

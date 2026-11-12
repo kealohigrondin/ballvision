@@ -38,7 +38,16 @@ const poll: LeagueTable = {
   id: "ap",
   title: "AP Top 25",
   subtitle: "Week 9",
-  rows: [{ id: "2", name: "Miami", rank: 1, record: "7-0", points: "1500" }],
+  rows: [
+    {
+      id: "2",
+      name: "Miami",
+      rank: 1,
+      record: "7-0",
+      points: "1500",
+      rankChange: 2,
+    },
+  ],
 };
 
 const nflRow = (id: string, name: string, extra = {}) => ({
@@ -578,4 +587,79 @@ it("gives each league table a title id built from its name", async () => {
     "league-table-title-afc-east",
     "league-table-title-nfc-west",
   ]);
+});
+
+it("shows each team's rank trend in the Top 25 table", async () => {
+  const { container } = render(
+    <LeagueTestProvider source={source()} division="fbs">
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  fireEvent.click(navRailButton("rankings"));
+  await screen.findByRole("table", { name: /AP Top 25/ });
+  expect(
+    screen.getByRole("columnheader", { name: copy.league.trend }),
+  ).toBeTruthy();
+  expect(container.querySelector("#league-trend-2")?.textContent).toBe("+2");
+});
+
+it("leaves the trend column out of standings tables", async () => {
+  render(
+    <LeagueTestProvider source={source()} division="fbs">
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  await screen.findByRole("table", { name: /SEC/ });
+  expect(
+    screen.queryByRole("columnheader", { name: copy.league.trend }),
+  ).toBeNull();
+});
+
+const committee: LeagueTable = {
+  id: "cfp",
+  title: "Playoff Committee Rankings",
+  subtitle: "Week 11",
+  rows: [{ id: "61", name: "Georgia", rank: 1, record: "8-1" }],
+};
+
+const renderRankings = () => {
+  const provider = source();
+  vi.mocked(provider.loadRankings).mockResolvedValue([committee, poll]);
+  render(
+    <LeagueTestProvider source={provider} division="fbs">
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  fireEvent.click(navRailButton("rankings"));
+};
+
+it("leaves the points column out of the playoff committee rankings", async () => {
+  renderRankings();
+  await screen.findByRole("table", { name: /Playoff Committee/ });
+  expect(screen.queryByRole("columnheader", { name: "PTS" })).toBeNull();
+});
+
+it("shows the points column for a points-based poll", async () => {
+  renderRankings();
+  await screen.findByRole("table", { name: /Playoff Committee/ });
+  fireEvent.change(screen.getByLabelText(copy.league.poll), {
+    target: { value: "ap" },
+  });
+  expect(screen.getByRole("columnheader", { name: "PTS" })).toBeTruthy();
+});
+
+it("puts the trend column last in the Top 25 table", async () => {
+  render(
+    <LeagueTestProvider source={source()} division="fbs">
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  fireEvent.click(navRailButton("rankings"));
+  await screen.findByRole("table", { name: /AP Top 25/ });
+  expect(screen.getAllByRole("columnheader").at(-1)?.textContent).toBe(
+    copy.league.trend,
+  );
 });

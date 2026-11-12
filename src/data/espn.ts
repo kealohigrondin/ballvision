@@ -495,6 +495,11 @@ export const parseRankings = (
             !/fcs|division ii|division iii/.test(name);
     })
     .map((poll) => ({
+      poll,
+      // The playoff committee ranks teams without voting points.
+      pointsBased: str(poll.type) !== "cfp",
+    }))
+    .map(({ poll, pointsBased }) => ({
       id: str(poll.id, str(poll.name)),
       title: str(poll.name),
       subtitle: [
@@ -507,6 +512,12 @@ export const parseRankings = (
         .map((rawRank) => {
           const r = obj(rawRank),
             t = obj(r.team);
+          const rank = number(r.current);
+          // ESPN sends previous: 0 for teams that were unranked last poll.
+          // Its trend text treats them as having been 26th, so work the
+          // change out from the previous rank instead.
+          const previous = number(r.previous);
+          const ranked = rank !== undefined && previous !== undefined;
 
           return {
             ...leagueTeamIdentity(t),
@@ -515,9 +526,11 @@ export const parseRankings = (
               t.shortDisplayName,
               str(t.nickname, str(t.location, str(t.displayName))),
             ),
-            rank: number(r.current),
+            rank,
             record: str(r.recordSummary, "—"),
-            points: str(r.points, "—"),
+            points: pointsBased ? str(r.points, "—") : undefined,
+            rankChange: ranked && previous > 0 ? previous - rank : undefined,
+            newlyRanked: ranked && previous === 0 ? true : undefined,
           };
         })
         .filter((row) => row.id && row.rank !== undefined && row.rank <= 25)

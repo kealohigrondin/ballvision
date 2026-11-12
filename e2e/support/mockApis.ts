@@ -2,6 +2,7 @@ import type { Page, Route } from "@playwright/test";
 
 import nflConferences from "../fixtures/nfl-standings-conferences.json" with { type: "json" };
 import nflDivisions from "../fixtures/nfl-standings-divisions.json" with { type: "json" };
+import rankings from "../fixtures/rankings.json" with { type: "json" };
 import scoreboard from "../fixtures/scoreboard.json" with { type: "json" };
 
 const json = (route: Route, body: unknown) =>
@@ -40,5 +41,13 @@ export const mockNflStandings = async (page: Page): Promise<void> => {
         ? nflConferences
         : nflDivisions,
     ),
+  );
+};
+
+// Serve real college rankings captured from ESPN (Playoff Committee, AP
+// Top 25 and Coaches Poll). Call after mockApis so this route takes priority.
+export const mockRankings = async (page: Page): Promise<void> => {
+  await page.route("https://site.api.espn.com/**/rankings*", (route) =>
+    json(route, rankings),
   );
 };

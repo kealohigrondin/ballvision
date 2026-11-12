@@ -516,7 +516,10 @@ const renderNflPanel = (appData: Partial<AppData> = {}) =>
 const tableNames = () =>
   screen
     .getAllByRole("table")
-    .map((table) => table.querySelector("#league-table-title")?.textContent);
+    .map(
+      (table) =>
+        table.querySelector('[id^="league-table-title-"]')?.textContent,
+    );
 
 it("shows the AFC and NFC wild card standings for the wildcard view", async () => {
   renderNflPanel({ nflStandingsView: "wildcard" });
@@ -563,4 +566,16 @@ it("lists only NFL divisions in the team schedule picker", async () => {
       .filter((option) => option.value)
       .map((option) => option.textContent),
   ).toEqual(["AFC East", "NFC West"]);
+});
+
+it("gives each league table a title id built from its name", async () => {
+  renderNflPanel({ nflStandingsView: "division" });
+  await screen.findByRole("table", { name: /AFC East/ });
+  const ids = screen
+    .getAllByRole("table")
+    .map((table) => table.querySelector('[id^="league-table-title-"]')?.id);
+  expect(ids).toEqual([
+    "league-table-title-afc-east",
+    "league-table-title-nfc-west",
+  ]);
 });

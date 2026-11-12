@@ -105,12 +105,8 @@ describe("scoreboard presentation", () => {
 
   it("renders live game context, period scores, and pin action", () => {
     const onFavorite = vi.fn();
-    const { container } = render(
-      <GameCard game={game} favorite={false} onFavorite={onFavorite} />,
-    );
+    render(<GameCard game={game} favorite={false} onFavorite={onFavorite} />);
     expect(screen.getByText(gameTime(game))).toBeTruthy();
-    const card = container.querySelector("article");
-    expect(card?.classList.contains("red-zone")).toBe(true);
     expect(screen.getByText(game.broadcast)).toBeTruthy();
     fireEvent.click(
       screen.getByRole("button", { name: copy.gameDetails.toggle }),
@@ -169,7 +165,7 @@ describe("scoreboard presentation", () => {
     expect(link.textContent).not.toContain("HOM");
   });
   it("omits unavailable optional details and live indicators for scheduled games", () => {
-    const { container } = render(
+    render(
       <GameCard
         game={{
           ...game,
@@ -184,8 +180,6 @@ describe("scoreboard presentation", () => {
         onFavorite={() => {}}
       />,
     );
-    const card = container.querySelector("article");
-    expect(card?.classList.contains("red-zone")).toBe(false);
     expect(screen.queryByText(game.broadcast)).toBeNull();
     expect(screen.queryByLabelText(copy.gameCard.possession)).toBeNull();
     expect(screen.getByText(copy.gameDetails.unavailable)).toBeTruthy();

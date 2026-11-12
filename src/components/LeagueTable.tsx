@@ -59,8 +59,14 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
     );
   });
 
+  // IDs can't contain spaces, so "AFC East" becomes "afc-east".
+  const titleId = table.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
   return (
-    <TableContainer id="league-table-scroll" sx={{ overflowX: "auto" }}>
+    <TableContainer
+      id={`league-table-scroll-${titleId}`}
+      sx={{ overflowX: "auto" }}
+    >
       <Table
         size="small"
         aria-label={`league-table-${table.title}`}
@@ -72,7 +78,7 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
               <Typography
                 variant="body1"
                 sx={{ fontWeight: "bold" }}
-                id="league-table-title"
+                id={`league-table-title-${titleId}`}
               >
                 {table.title}
               </Typography>

@@ -44,3 +44,4 @@
 
 - each test should test singular functions rather than a series of events
 - unit tests should only test UI functions and states, not whether or not certain styles render
+- To find DOM elements in tests, give them an `id` and query by it. When a component can render more than once on a page, include a distinguishing value in the `id` so it stays unique, e.g. `league-table-title-${titleId}` where `titleId` is the table title lowercased with spaces and symbols replaced by `-`.

@@ -8,8 +8,6 @@ export const teamColumnTableSx = (column: number): SxProps<Theme> => ({
     width: "100%",
     whiteSpace: "normal",
   },
-  // Name each table above it, so stacked tables read top to bottom.
-  "& caption": { captionSide: "top" },
   // A heavier rule under rows marked dividerAfter, e.g. a playoff cut line.
   "& .league-row-divider .MuiTableCell-root": {
     borderBottomWidth: 2,

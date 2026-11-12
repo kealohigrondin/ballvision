@@ -62,7 +62,13 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
           direction="row"
           useFlexGap
           spacing={1}
-          sx={{ alignItems: "center", flexWrap: "wrap" }}
+          sx={{
+            alignItems: "center",
+            flexWrap: "wrap",
+            // Phones spread the week select and division toggle across the
+            // row; the search box wraps onto its own full-width line.
+            justifyContent: { xs: "space-between", sm: "flex-start" },
+          }}
         >
           <WeekSelect
             weeks={weeks}

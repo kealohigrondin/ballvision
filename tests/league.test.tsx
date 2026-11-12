@@ -9,9 +9,7 @@ import {
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import App from "../src/App";
-import {
-  LeagueNavRail,
-} from "../src/components/LeagueNavRail";
+import { LeagueNavRail } from "../src/components/LeagueNavRail";
 import { LeaguePanel } from "../src/components/LeaguePanel";
 import type { AppData } from "../src/context/appDataContext";
 import { copy } from "../src/copy";

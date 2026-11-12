@@ -10,8 +10,10 @@ import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 
 import { useEspnData } from "../context/espnDataContext";
+import { copy } from "../copy";
 import type { LeagueTable as LeagueTableData } from "../data/types";
-import { teamColumnTableSx } from "../styles/leagueTable";
+import { rankTrendColor, teamColumnTableSx } from "../styles/leagueTable";
+import { rankTrend } from "../utils/rankTrend";
 import { TeamLogo } from "./TeamLogo";
 import { TeamScheduleLink } from "./TeamScheduleLink";
 
@@ -23,8 +25,12 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
   } = useEspnData();
   const ranked = view === "rankings";
   const column = ranked ? "PTS" : "CONF";
+  // Polls without voting points (the playoff committee) skip that column.
+  const showValueColumn =
+    !ranked || table.rows.some((row) => row.points !== undefined);
   const rows = table.rows.map((row) => {
     const value = ranked ? row.points : row.conferenceRecord;
+    const trend = rankTrend(row);
 
     return (
       <TableRow
@@ -53,7 +59,16 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
             <TeamScheduleLink team={row} />
           </Stack>
         </TableCell>
-        <TableCell align="right">{value ?? "—"}</TableCell>
+        {ranked && (
+          <TableCell
+            align="right"
+            id={`league-trend-${row.id}`}
+            sx={{ color: rankTrendColor[trend.direction] }}
+          >
+            {trend.label}
+          </TableCell>
+        )}
+        {showValueColumn && <TableCell align="right">{value ?? "—"}</TableCell>}
         <TableCell align="right">{row.record}</TableCell>
       </TableRow>
     );
@@ -83,9 +98,16 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
                 {table.title}
               </Typography>
             </TableCell>
-            <TableCell component="th" scope="col" align="right">
-              {column}
-            </TableCell>
+            {ranked && (
+              <TableCell component="th" scope="col" align="right">
+                {copy.league.trend}
+              </TableCell>
+            )}
+            {showValueColumn && (
+              <TableCell component="th" scope="col" align="right">
+                {column}
+              </TableCell>
+            )}
             <TableCell component="th" scope="col" align="right">
               OVR
             </TableCell>

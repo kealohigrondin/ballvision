@@ -69,6 +69,10 @@ export interface LeagueRow {
   record: string;
   conferenceRecord?: string;
   points?: string;
+  /** Places moved since the previous poll: positive is up, negative down. */
+  rankChange?: number;
+  /** Ranked this poll but not in the previous one. */
+  newlyRanked?: boolean;
   /** Draws a separator below this row, e.g. at a playoff cut line. */
   dividerAfter?: "solid" | "dashed";
 }

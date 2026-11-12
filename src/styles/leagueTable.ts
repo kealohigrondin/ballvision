@@ -17,3 +17,10 @@ export const teamColumnTableSx = (column: number): SxProps<Theme> => ({
     borderBottomStyle: "dashed",
   },
 });
+
+// Rank movement colors for the Top 25 TREND column.
+export const rankTrendColor = {
+  up: "success.main",
+  down: "error.main",
+  none: "inherit",
+} as const;

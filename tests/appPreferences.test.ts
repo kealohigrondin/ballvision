@@ -34,6 +34,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     first.result.current.setFilter("pinned");
     first.result.current.setSearch("Seattle");
     first.result.current.setPaused(true);
+    first.result.current.setNflStandingsView("conference");
   });
   expect(JSON.parse(localStorage.getItem(APP_PREFERENCES_KEY)!)).toEqual({
     version: 1,
@@ -43,6 +44,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     filter: "pinned",
     search: "Seattle",
     paused: true,
+    nflStandingsView: "conference",
   });
   first.unmount();
   const next = renderHook(() => useAppDataState());
@@ -53,6 +55,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     filter: "pinned",
     search: "Seattle",
     paused: true,
+    nflStandingsView: "conference",
   });
 });
 it("validates restored fields independently, including malformed weeks", () => {
@@ -99,4 +102,19 @@ it("continues without errors when browser storage is blocked", () => {
   expect(() =>
     saveAppPreferences(defaultAppPreferences(), { setItem }),
   ).not.toThrow();
+});
+
+it("defaults the NFL standings view to wildcard", () => {
+  expect(defaultAppPreferences().nflStandingsView).toBe("wildcard");
+});
+
+it("falls back to the wildcard view for an unknown saved NFL view", () => {
+  const storage = {
+    getItem: vi
+      .fn()
+      .mockReturnValue(
+        JSON.stringify({ version: 1, nflStandingsView: "playoffs" }),
+      ),
+  };
+  expect(loadAppPreferences(storage).nflStandingsView).toBe("wildcard");
 });

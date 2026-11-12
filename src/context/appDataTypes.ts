@@ -1,4 +1,4 @@
-import type { Division, Week } from "../data/types";
+import type { Division, NflStandingsView, Week } from "../data/types";
 
 export type Filter = "all" | "live" | "upcoming" | "final" | "pinned";
 export type AppPreferences = {
@@ -9,4 +9,5 @@ export type AppPreferences = {
   filter: Filter;
   search: string;
   paused: boolean;
+  nflStandingsView: NflStandingsView;
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { Filter } from "../context/appDataTypes";
-import type { Division, Week } from "../data/types";
+import type { Division, NflStandingsView, Week } from "../data/types";
 import {
   loadAppPreferences,
   saveAppPreferences,
@@ -18,11 +18,22 @@ export const useAppDataState = () => {
   const [filter, setFilter] = useState<Filter>(initial.filter);
   const [search, setSearch] = useState(initial.search);
   const [paused, setPaused] = useState(initial.paused);
+  const [nflStandingsView, setNflStandingsView] = useState<NflStandingsView>(
+    initial.nflStandingsView,
+  );
   const favorites = useFavorites();
 
   useEffect(() => {
-    saveAppPreferences({ panelOpen, week, division, filter, search, paused });
-  }, [panelOpen, week, division, filter, search, paused]);
+    saveAppPreferences({
+      panelOpen,
+      week,
+      division,
+      filter,
+      search,
+      paused,
+      nflStandingsView,
+    });
+  }, [panelOpen, week, division, filter, search, paused, nflStandingsView]);
 
   // FBS and FCS share the college calendar; NFL weeks mean something else.
   const setDivision = (next: Division) => {
@@ -45,6 +56,8 @@ export const useAppDataState = () => {
     setSearch,
     paused,
     setPaused,
+    nflStandingsView,
+    setNflStandingsView,
     favoriteIds: favorites.ids,
     toggleFavorite: favorites.toggle,
   };

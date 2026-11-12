@@ -34,6 +34,8 @@ export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   setSearch: vi.fn(),
   paused: false,
   setPaused: vi.fn(),
+  nflStandingsView: "wildcard",
+  setNflStandingsView: vi.fn(),
   favoriteIds: [],
   toggleFavorite: vi.fn(),
   ...overrides,
@@ -72,6 +74,7 @@ export const createEspnData = (
     selected: undefined,
     selectedId: "",
     setSelectedId: vi.fn(),
+    visibleTables: [],
   },
   ...overrides,
 });

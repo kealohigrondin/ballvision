@@ -24,8 +24,16 @@ export const useEspnDataState = ({
   leagueSource,
   scheduleSource,
 }: EspnSources) => {
-  const { week, division, paused, panelOpen, filter, search, favoriteIds } =
-    useAppData();
+  const {
+    week,
+    division,
+    paused,
+    panelOpen,
+    filter,
+    search,
+    favoriteIds,
+    nflStandingsView,
+  } = useAppData();
   const scoreboard = useScoreboard(source, { division, week }, paused);
   const calendar = useSeasonCalendar(source, division);
   const { games } = scoreboard;
@@ -49,7 +57,18 @@ export const useEspnDataState = ({
     setScheduleConferenceId("");
     setView("schedule");
   };
-  const scheduleConferences = tableView === "standings" ? league.tables : [];
+
+  // NFL standings hold every view's tables; schedules pick from divisions.
+  const scheduleConferences = useMemo(() => {
+    if (tableView !== "standings") {
+      return [];
+    }
+    if (division === "nfl") {
+      return league.tables.filter((table) => table.nflView === "division");
+    }
+
+    return league.tables;
+  }, [tableView, division, league.tables]);
   const scheduleConference: LeagueTable | undefined =
     scheduleConferences.find((table) => table.id === scheduleConferenceId) ??
     scheduleConferences.find((table) =>
@@ -58,6 +77,17 @@ export const useEspnDataState = ({
   const selected: LeagueTable | undefined =
     league.tables.find((table) => table.id === selectedId) ??
     league.tables.at(0);
+
+  // NFL standings show every table in the chosen view; college shows one.
+  const visibleTables = useMemo(() => {
+    if (division === "nfl") {
+      return league.tables.filter(
+        (table) => table.nflView === nflStandingsView,
+      );
+    }
+
+    return selected ? [selected] : [];
+  }, [division, league.tables, nflStandingsView, selected]);
 
   const counts = useMemo(
     () => ({
@@ -112,6 +142,7 @@ export const useEspnDataState = ({
       selected,
       selectedId,
       setSelectedId,
+      visibleTables,
     },
   };
 };

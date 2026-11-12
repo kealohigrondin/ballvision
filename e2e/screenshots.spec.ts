@@ -2,7 +2,7 @@ import { expect, type Page, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
 import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
-import { mockApis, mockNflStandings } from "./support/mockApis";
+import { mockApis, mockNflStandings, mockRankings } from "./support/mockApis";
 
 // Captures reference screenshots for pull requests. Run with
 // `npm run screenshots`; images are written to ./screenshots.
@@ -178,5 +178,32 @@ test.describe("@screenshots NFL league panel", () => {
     await openNflStandings(page);
     await page.getByRole("button", { name: copy.theme.toLight }).click();
     await screenshotLeaguePanel(page, "league-panel-nfl-wildcard-light");
+  });
+});
+
+const openRankings = async (page: Page, poll: string) => {
+  await openDashboard(page);
+  await mockRankings(page);
+  await page.getByRole("button", { name: copy.navRail.rankings }).click();
+  await page.getByLabel(copy.league.poll).selectOption({ label: poll });
+};
+
+test.describe("@screenshots rankings panel", () => {
+  // Tall enough for all 25 teams without scrolling the panel.
+  test.use({ viewport: { width: 1440, height: 1500 } });
+
+  for (const theme of themes) {
+    test(`AP Top 25, ${theme}`, async ({ page }) => {
+      await openRankings(page, "AP Top 25");
+      if (theme === "light") {
+        await page.getByRole("button", { name: copy.theme.toLight }).click();
+      }
+      await screenshotLeaguePanel(page, `league-panel-rankings-ap-${theme}`);
+    });
+  }
+
+  test("Playoff Committee, dark", async ({ page }) => {
+    await openRankings(page, "Playoff Committee Rankings");
+    await screenshotLeaguePanel(page, "league-panel-rankings-committee-dark");
   });
 });

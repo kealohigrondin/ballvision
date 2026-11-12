@@ -68,8 +68,8 @@ export const copy = {
     clearSearch: "Clear search",
     filter: "Filter games",
     filters: {
-      all: "All games",
-      live: "Live now",
+      all: "All",
+      live: "Live",
       upcoming: "Upcoming",
       final: "Final",
       pinned: "Pinned",
@@ -77,8 +77,10 @@ export const copy = {
   },
   week: {
     label: "Week",
-    previous: "Previous week",
-    next: "Next week",
+  },
+  mastHead: {
+    settings: "Settings",
+    closeSettings: "Close settings",
   },
   sync: {
     pause: "Pause auto-refresh",
@@ -95,10 +97,10 @@ export const copy = {
     toDark: "Switch to dark mode",
   },
   scoreNotification: {
-    enableSound: "Enable chaos sounds",
-    retrySound: "Retry chaos sounds",
-    muteSound: "Mute chaos sounds",
-    unmuteSound: "Unmute chaos sounds",
+    enableSound: "Enable score alerts",
+    retrySound: "Retry score alerts",
+    muteSound: "Mute score alerts",
+    unmuteSound: "Unmute score alerts",
     test: "Test score notification",
     dismissAll: "I have seen enough",
     clock: "Game clock and period",

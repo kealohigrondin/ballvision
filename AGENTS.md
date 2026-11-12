@@ -17,7 +17,7 @@
 - Put all user-facing UI copy (text, labels, aria-labels, titles, placeholders) in src/copy.ts and reference it from components. In tests, query by `copy` entries rather than hardcoded strings so wording changes do not break tests.
 - Prefer low coupling and high cohesion.
 - prefer optional props to `type | null` props. use a default value of '' for strings for example
-- For new UI components, keep them general and reusable. Do not make them specific to a feature
+- For new UI components, keep them general and reusable. Do not make them specific to a feature. Add a brief comment above the component explaining what it does
 - for variables that need more than one inline if statement to determine its value, use usememo to determine value
 - use prettier formatting in all files
 
@@ -45,3 +45,4 @@
 - each test should test singular functions rather than a series of events
 - unit tests should only test UI functions and states, not whether or not certain styles render
 - To find DOM elements in tests, give them an `id` and query by it. When a component can render more than once on a page, include a distinguishing value in the `id` so it stays unique, e.g. `league-table-title-${titleId}` where `titleId` is the table title lowercased with spaces and symbols replaced by `-`.
+- unit tests for non-UI functions (any function that doesn't return JSX like context hooks and api calls) should call the functions being tested directly and not rely on UI interactions

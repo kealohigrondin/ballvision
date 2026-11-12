@@ -37,16 +37,15 @@ export const NavRailItem = ({
       width: "100%",
       minWidth: 0,
       py: 0.5,
-      borderRadius: 2,
-      color: active ? "text.primary" : "text.secondary",
+      color: "text.primary",
       opacity: disabled ? 0.38 : 1,
       "&:hover .nav-rail-indicator": {
-        bgcolor: active ? "primary.dark" : "action.hover",
+        boxShadow: (theme) =>
+          active ? theme.app.win98.bevel.pressed : theme.app.win98.bevel.button,
       },
       "&.Mui-focusVisible .nav-rail-indicator": {
-        outline: "2px solid",
-        outlineColor: "primary.main",
-        outlineOffset: 2,
+        outline: "1px dotted",
+        outlineOffset: -4,
       },
     }}
   >
@@ -57,10 +56,10 @@ export const NavRailItem = ({
         placeItems: "center",
         width: 56,
         height: 32,
-        borderRadius: 4,
-        transition: "background-color 150ms",
-        bgcolor: active ? "primary.main" : "transparent",
-        color: active ? "primary.contrastText" : "inherit",
+        // Windows 98 toolbar button: flat until hovered, latched when active.
+        background: (theme) =>
+          active ? theme.app.win98.checkered : "transparent",
+        boxShadow: (theme) => (active ? theme.app.win98.bevel.pressed : "none"),
       }}
     >
       {icon}

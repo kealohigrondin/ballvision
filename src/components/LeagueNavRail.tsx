@@ -48,6 +48,8 @@ const railSx: SxProps<Theme> = {
   gridAutoFlow: "row",
   rowGap: 1.5,
   justifyItems: "center",
+  bgcolor: "background.paper",
+  boxShadow: (theme) => theme.app.win98.bevel.window,
 };
 
 // Compact windows: a horizontal navigation bar pinned to the bottom edge,
@@ -66,8 +68,9 @@ const barSx: SxProps<Theme> = {
   gridAutoColumns: "minmax(0, 1fr)",
   alignItems: "center",
   bgcolor: "background.paper",
-  borderTop: 1,
-  borderColor: "divider",
+  // Windows 98 taskbar: a raised top edge.
+  boxShadow: (theme) =>
+    `inset 0 1px ${theme.app.win98.colors.light}, inset 0 2px ${theme.app.win98.colors.highlight}`,
 };
 
 export const LeagueNavRail = ({}: LeagueNavRailProps) => {

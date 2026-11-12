@@ -1,7 +1,6 @@
 import {
   cleanup,
   fireEvent,
-  render,
   screen,
   waitFor,
   within,
@@ -26,6 +25,7 @@ import { emptyOddsSource } from "./helpers/appData";
 import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
 import { oddsGame } from "./helpers/oddsFixture";
 import { navRailButton } from "./helpers/queries";
+import { renderWithTheme } from "./helpers/renderWithTheme";
 import { scheduleGame } from "./helpers/scheduleFixture";
 
 const conference: LeagueTable = {
@@ -235,7 +235,7 @@ describe("league data adapters", () => {
 describe("league panel", () => {
   it("uses NFL standings when switching from a college poll", async () => {
     const provider = source();
-    const { rerender } = render(
+    const { rerender } = renderWithTheme(
       <LeagueTestProvider source={provider} division="fbs">
         <LeagueNavRail />
         <LeaguePanel />
@@ -262,7 +262,7 @@ describe("league panel", () => {
       load: vi.fn().mockResolvedValue([]),
       loadCalendar: vi.fn().mockResolvedValue({ weeks: [] }),
     };
-    render(
+    renderWithTheme(
       <AppTheme>
         <App
           source={scores}
@@ -281,7 +281,7 @@ describe("league panel", () => {
       conference,
       { ...conference, id: "acc", title: "ACC" },
     ]);
-    render(
+    renderWithTheme(
       <LeagueTestProvider source={provider} division="fbs">
         <LeagueNavRail />
         <LeaguePanel />
@@ -306,7 +306,7 @@ describe("league panel", () => {
     vi.mocked(provider.loadStandings).mockRejectedValueOnce(
       new Error("offline"),
     );
-    render(
+    renderWithTheme(
       <LeagueTestProvider source={provider} division="fcs">
         <LeagueNavRail />
         <LeaguePanel />
@@ -324,7 +324,7 @@ it("opens a team schedule from standings and Top 25 links", async () => {
   const load = vi
     .fn<TeamScheduleSource["load"]>()
     .mockResolvedValue({ season: "2026", games: [scheduleGame] });
-  render(
+  renderWithTheme(
     <LeagueTestProvider
       source={provider}
       division="fbs"
@@ -392,7 +392,7 @@ it("selects a schedule team from conference and team dropdowns", async () => {
   const load = vi
     .fn<TeamScheduleSource["load"]>()
     .mockResolvedValue({ season: "2026", games: [] });
-  render(
+  renderWithTheme(
     <LeagueTestProvider
       source={provider}
       division="fbs"
@@ -450,7 +450,7 @@ it("retries schedule failures and clears the selected team when switching league
       <LeaguePanel />
     </LeagueTestProvider>
   );
-  const { rerender } = render(build("fbs"));
+  const { rerender } = renderWithTheme(build("fbs"));
   fireEvent.click(await screen.findByRole("link", { name: "Georgia" }));
   await screen.findByRole("alert");
   fireEvent.click(screen.getByRole("button", { name: copy.common.retry }));
@@ -472,7 +472,7 @@ const openScheduleFromGameCard = () => {
     load: vi.fn().mockResolvedValue([oddsGame]),
     loadCalendar: vi.fn().mockResolvedValue({ weeks: [], currentWeekId: "" }),
   };
-  render(
+  renderWithTheme(
     <AppTheme>
       <App
         source={scoreboard}
@@ -516,7 +516,7 @@ it("opens the league panel on the clicked team's schedule", async () => {
 });
 
 const renderNflPanel = (appData: Partial<AppData> = {}) =>
-  render(
+  renderWithTheme(
     <LeagueTestProvider source={source()} division="nfl" appData={appData}>
       <LeaguePanel />
     </LeagueTestProvider>,
@@ -561,7 +561,7 @@ it("saves the chosen NFL standings view", async () => {
 });
 
 it("lists only NFL divisions in the team schedule picker", async () => {
-  render(
+  renderWithTheme(
     <LeagueTestProvider source={source()} division="nfl">
       <LeagueNavRail />
       <LeaguePanel />
@@ -590,7 +590,7 @@ it("gives each league table a title id built from its name", async () => {
 });
 
 it("shows each team's rank trend in the Top 25 table", async () => {
-  const { container } = render(
+  const { container } = renderWithTheme(
     <LeagueTestProvider source={source()} division="fbs">
       <LeagueNavRail />
       <LeaguePanel />
@@ -605,7 +605,7 @@ it("shows each team's rank trend in the Top 25 table", async () => {
 });
 
 it("leaves the trend column out of standings tables", async () => {
-  render(
+  renderWithTheme(
     <LeagueTestProvider source={source()} division="fbs">
       <LeaguePanel />
     </LeagueTestProvider>,
@@ -626,7 +626,7 @@ const committee: LeagueTable = {
 const renderRankings = () => {
   const provider = source();
   vi.mocked(provider.loadRankings).mockResolvedValue([committee, poll]);
-  render(
+  renderWithTheme(
     <LeagueTestProvider source={provider} division="fbs">
       <LeagueNavRail />
       <LeaguePanel />
@@ -651,7 +651,7 @@ it("shows the points column for a points-based poll", async () => {
 });
 
 it("puts the trend column last in the Top 25 table", async () => {
-  render(
+  renderWithTheme(
     <LeagueTestProvider source={source()} division="fbs">
       <LeagueNavRail />
       <LeaguePanel />

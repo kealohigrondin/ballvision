@@ -22,6 +22,8 @@ import { GameOdds } from "./GameOdds";
 import { GameSummary } from "./GameSummary";
 import { TeamRow } from "./TeamRow";
 
+const GAME_TITLE_BAR_HEIGHT = 22;
+
 type GameCardProps = {
   game: Game;
   favorite: boolean;
@@ -102,7 +104,7 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
             : {}),
         }}
       >
-        <TableContainer sx={{ pt: 1, px: 0.8 }}>
+        <TableContainer sx={{ pb: 1 }}>
           <Table
             className="card-scoreboard"
             size="small"
@@ -114,6 +116,14 @@ export const GameCard = ({ game, favorite, onFavorite }: GameCardProps) => {
               compactBoxScoreSx,
               (theme) => ({
                 tableLayout: "fixed",
+                // Windows 98 title bar across the top of each game window.
+                // Painted on the table so it spans hidden period columns.
+                background: `${theme.app.win98.titleBar} top / 100% ${GAME_TITLE_BAR_HEIGHT}px no-repeat`,
+                "& thead .MuiTableCell-root": {
+                  height: GAME_TITLE_BAR_HEIGHT,
+                  py: 0,
+                  color: "#ffffff",
+                },
                 "& .MuiTableCell-root": { borderBottom: 0 },
                 "& .period-heading, & .team-period": { display: "none" },
                 "& .total-heading": { visibility: "hidden" },

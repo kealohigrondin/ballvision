@@ -47,7 +47,6 @@ const bottomSheetSx: SxProps<Theme> = {
     `calc(${theme.app.navigationBarHeight}px + env(safe-area-inset-bottom))`,
   zIndex: (theme) => theme.zIndex.appBar,
   maxHeight: "60dvh",
-  "&&": { borderRadius: "28px 28px 0 0" },
 };
 
 const nflStandingsViews: NflStandingsView[] = [

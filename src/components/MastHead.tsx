@@ -40,12 +40,28 @@ const MastHead = ({}: MastHeadProps) => {
       component="header"
       direction="row"
       spacing={2}
-      sx={{
+      sx={(theme) => ({
         justifyContent: "space-between",
         alignItems: "center",
         py: 0.5,
-        px: 0.5,
-      }}
+        px: 1,
+        // Windows 98 active window title bar with raised caption buttons.
+        background: theme.app.win98.titleBar,
+        color: "#ffffff",
+        "& .MuiIconButton-root": {
+          color: theme.app.win98.colors.text,
+          bgcolor: "background.paper",
+          boxShadow: theme.app.win98.bevel.button,
+          p: 0.5,
+        },
+        "& .MuiIconButton-root:hover": {
+          bgcolor: "background.paper",
+          boxShadow: theme.app.win98.bevel.button,
+        },
+        "& .MuiIconButton-root:active": {
+          boxShadow: theme.app.win98.bevel.pressed,
+        },
+      })}
     >
       <Link
         variant="h5"

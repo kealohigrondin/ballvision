@@ -1,12 +1,13 @@
-import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, waitFor } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 
 import { MenuDrawer } from "../src/components/MenuDrawer";
+import { renderWithTheme } from "./helpers/renderWithTheme";
 
 afterEach(cleanup);
 
 const renderMenu = () =>
-  render(
+  renderWithTheme(
     <MenuDrawer id="test-menu" label="Menu" closeLabel="Close menu">
       <span id="test-menu-item">Item</span>
     </MenuDrawer>,

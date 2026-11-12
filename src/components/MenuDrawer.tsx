@@ -46,16 +46,24 @@ export const MenuDrawer = ({
             id: `${id}-drawer`,
             role: "dialog",
             "aria-label": label,
-            sx: { p: 2, maxWidth: "85vw" },
+            sx: { p: 0.5, maxWidth: "85vw" },
           },
         }}
       >
-        {/* Material 3 side sheet: a headline with a close button. */}
+        {/* Windows 98 window title bar: a caption with a close button. */}
         <Stack
           direction="row"
-          sx={{ alignItems: "center", justifyContent: "space-between", mb: 2 }}
+          sx={(theme) => ({
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 2,
+            px: 1,
+            py: 0.5,
+            background: theme.app.win98.titleBar,
+            color: "#ffffff",
+          })}
         >
-          <Typography component="h2" variant="h6">
+          <Typography component="h2" variant="h6" sx={{ fontWeight: 700 }}>
             {label}
           </Typography>
           <IconButton
@@ -63,11 +71,21 @@ export const MenuDrawer = ({
             aria-label={closeLabel}
             title={closeLabel}
             onClick={() => setOpen(false)}
+            sx={(theme) => ({
+              p: 0.25,
+              bgcolor: "background.paper",
+              boxShadow: theme.app.win98.bevel.button,
+              "&:hover": {
+                bgcolor: "background.paper",
+                boxShadow: theme.app.win98.bevel.button,
+              },
+              "&:active": { boxShadow: theme.app.win98.bevel.pressed },
+            })}
           >
             <X size={iconSize} />
           </IconButton>
         </Stack>
-        <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
+        <Stack spacing={1} sx={{ alignItems: "flex-start", px: 1.5 }}>
           {children}
         </Stack>
       </Drawer>

@@ -254,3 +254,44 @@ test.describe("@screenshots phone header", () => {
       .screenshot({ path: "screenshots/scores-header-mobile-dark.png" });
   });
 });
+
+test.describe("@screenshots Windows 98 components", () => {
+  test.use({ viewport: viewports.desktop });
+
+  for (const theme of themes) {
+    test(`game cards, ${theme}`, async ({ page }) => {
+      await openDashboard(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      const cards = page.locator("article");
+      const states = ["live", "upcoming", "final"];
+      for (const [index, state] of states.entries()) {
+        await cards
+          .nth(index)
+          .screenshot({ path: `screenshots/game-card-${state}-${theme}.png` });
+      }
+    });
+
+    test(`masthead, ${theme}`, async ({ page }) => {
+      await openDashboard(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await page
+        .getByRole("banner")
+        .screenshot({ path: `screenshots/masthead-desktop-${theme}.png` });
+    });
+
+    test(`nav rail with an open panel, ${theme}`, async ({ page }) => {
+      await openDashboard(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await page.getByRole("button", { name: copy.navRail.standings }).click();
+      await page
+        .getByRole("navigation", { name: copy.navRail.label })
+        .screenshot({ path: `screenshots/nav-rail-active-${theme}.png` });
+    });
+  }
+});

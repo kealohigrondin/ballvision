@@ -60,18 +60,22 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
   });
 
   return (
-    <TableContainer className="league-table-scroll" sx={{ overflowX: "auto" }}>
-      <Table size="small" className="league-table" sx={teamColumnTableSx(1)}>
-        <caption>
-          {table.title}
-          <Typography component="span" sx={{ display: "block" }}>
-            {table.subtitle}
-          </Typography>
-        </caption>
+    <TableContainer id="league-table-scroll" sx={{ overflowX: "auto" }}>
+      <Table
+        size="small"
+        aria-label={`league-table-${table.title}`}
+        sx={teamColumnTableSx(1)}
+      >
         <TableHead>
           <TableRow>
             <TableCell component="th" scope="col">
-              TEAM
+              <Typography
+                variant="body1"
+                sx={{ fontWeight: "bold" }}
+                id="league-table-title"
+              >
+                {table.title}
+              </Typography>
             </TableCell>
             <TableCell component="th" scope="col" align="right">
               {column}

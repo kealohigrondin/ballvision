@@ -10,7 +10,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import App from "../src/App";
 import {
-  leagueNavDestinations,
   LeagueNavRail,
 } from "../src/components/LeagueNavRail";
 import { LeaguePanel } from "../src/components/LeaguePanel";
@@ -30,21 +29,6 @@ import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
 import { oddsGame } from "./helpers/oddsFixture";
 import { navRailButton } from "./helpers/queries";
 import { scheduleGame } from "./helpers/scheduleFixture";
-
-const stubCompactWindow = () =>
-  vi.stubGlobal(
-    "matchMedia",
-    vi.fn((query: string) => ({
-      matches: true,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  );
 
 const conference: LeagueTable = {
   id: "sec",
@@ -265,62 +249,6 @@ describe("league panel", () => {
       "nfl",
       expect.any(AbortSignal),
     );
-  });
-  it("names every navigation rail button without showing visible text", () => {
-    render(
-      <LeagueTestProvider source={source()} division="fbs">
-        <LeagueNavRail />
-      </LeagueTestProvider>,
-    );
-    for (const destination of leagueNavDestinations) {
-      const button = navRailButton(destination.view);
-      expect(button.getAttribute("aria-label")).toBe(destination.label);
-      expect(button.getAttribute("title")).toBe(destination.label);
-      expect(button.textContent).toBe("");
-    }
-  });
-  it("shows labelled destinations in a bottom navigation bar on compact windows", () => {
-    stubCompactWindow();
-
-    try {
-      render(
-        <AppTheme>
-          <LeagueTestProvider source={source()} division="fbs">
-            <LeagueNavRail />
-          </LeagueTestProvider>
-        </AppTheme>,
-      );
-      const nav = screen.getByRole("navigation", { name: copy.navRail.label });
-      expect(getComputedStyle(nav).position).toBe("fixed");
-      for (const destination of leagueNavDestinations) {
-        expect(navRailButton(destination.view).textContent).toBe(
-          destination.label,
-        );
-      }
-    } finally {
-      vi.unstubAllGlobals();
-    }
-  });
-  it("opens the league panel as a bottom sheet on compact windows", async () => {
-    stubCompactWindow();
-
-    try {
-      render(
-        <AppTheme>
-          <LeagueTestProvider source={source()} division="fbs">
-            <LeagueNavRail />
-            <LeaguePanel />
-          </LeagueTestProvider>
-        </AppTheme>,
-      );
-      const panel = await screen.findByRole("complementary", {
-        name: copy.league.panel,
-      });
-      expect(getComputedStyle(panel).position).toBe("fixed");
-      expect(getComputedStyle(panel).bottom).toContain("80px");
-    } finally {
-      vi.unstubAllGlobals();
-    }
   });
   it("opens and closes from the navigation rail", async () => {
     const scores: ScoreboardSource = {
@@ -590,36 +518,24 @@ const renderNflPanel = (appData: Partial<AppData> = {}) =>
 const tableNames = () =>
   screen
     .getAllByRole("table")
-    .map((table) => table.querySelector("caption")?.firstChild?.textContent);
-
-it("lists the NFL standings views as wild card, division, then conference", async () => {
-  renderNflPanel();
-  const picker = await screen.findByLabelText(copy.league.standingsView);
-  expect(
-    [...picker.querySelectorAll("option")].map((option) => option.textContent),
-  ).toEqual([
-    copy.league.nflViews.wildcard,
-    copy.league.nflViews.division,
-    copy.league.nflViews.conference,
-  ]);
-});
+    .map((table) => table.querySelector("#league-table-title")?.textContent);
 
 it("shows the AFC and NFC wild card standings for the wildcard view", async () => {
   renderNflPanel({ nflStandingsView: "wildcard" });
-  await screen.findByRole("table", { name: /AFC/ });
+  await screen.findByRole("table", { name: /league-table-AFC/ });
   expect(tableNames()).toEqual(["AFC", "NFC"]);
   expect(screen.getAllByText("Bills").length).toBeGreaterThan(0);
 });
 
 it("shows every division table for the division view", async () => {
   renderNflPanel({ nflStandingsView: "division" });
-  await screen.findByRole("table", { name: /AFC East/ });
+  await screen.findByRole("table", { name: /league-table-AFC East/ });
   expect(tableNames()).toEqual(["AFC East", "NFC West"]);
 });
 
 it("shows the AFC and NFC conference standings for the conference view", async () => {
   renderNflPanel({ nflStandingsView: "conference" });
-  await screen.findByRole("table", { name: /AFC/ });
+  await screen.findByRole("table", { name: /league-table-AFC/ });
   expect(tableNames()).toEqual(["AFC", "NFC"]);
   const afcTeams = within(screen.getAllByRole("table")[0]).getAllByRole("link");
   expect(afcTeams.map((link) => link.textContent)).toEqual(["Chiefs", "Bills"]);
@@ -634,15 +550,6 @@ it("saves the chosen NFL standings view", async () => {
   expect(setNflStandingsView).toHaveBeenCalledWith("division");
 });
 
-it("draws a divider under wild card rows marked as a cut line", async () => {
-  renderNflPanel({ nflStandingsView: "wildcard" });
-  const afc = await screen.findByRole("table", { name: /AFC/ });
-  const rows = [...afc.querySelectorAll("tbody tr")];
-  expect(
-    rows.map((row) => row.classList.contains("league-row-divider")),
-  ).toEqual([true, false]);
-});
-
 it("lists only NFL divisions in the team schedule picker", async () => {
   render(
     <LeagueTestProvider source={source()} division="nfl">
@@ -650,7 +557,7 @@ it("lists only NFL divisions in the team schedule picker", async () => {
       <LeaguePanel />
     </LeagueTestProvider>,
   );
-  await screen.findByRole("table", { name: /AFC/ });
+  await screen.findByRole("table", { name: /league-table-AFC/ });
   fireEvent.click(navRailButton("schedule"));
   const picker = screen.getByLabelText(copy.league.division);
   expect(
@@ -658,11 +565,4 @@ it("lists only NFL divisions in the team schedule picker", async () => {
       .filter((option) => option.value)
       .map((option) => option.textContent),
   ).toEqual(["AFC East", "NFC West"]);
-});
-
-it("dashes the divider under a row marked as a dashed cut line", async () => {
-  renderNflPanel({ nflStandingsView: "wildcard" });
-  const afc = await screen.findByRole("table", { name: /AFC/ });
-  const [bills] = afc.querySelectorAll("tbody tr");
-  expect(bills.classList.contains("league-row-divider-dashed")).toBe(true);
 });

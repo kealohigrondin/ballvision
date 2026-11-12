@@ -43,3 +43,4 @@
 ## Testing
 
 - each test should test singular functions rather than a series of events
+- unit tests should only test UI functions and states, not whether or not certain styles render

@@ -12,7 +12,7 @@ import clsx from "clsx";
 import { useEspnData } from "../context/espnDataContext";
 import { copy } from "../copy";
 import type { LeagueTable as LeagueTableData } from "../data/types";
-import { rankTrendColor, teamColumnTableSx } from "../styles/leagueTable";
+import { leagueTableSx, rankTrendColor } from "../styles/leagueTable";
 import { rankTrend } from "../utils/rankTrend";
 import { TeamLogo } from "./TeamLogo";
 import { TeamScheduleLink } from "./TeamScheduleLink";
@@ -85,7 +85,7 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
       <Table
         size="small"
         aria-label={`league-table-${table.title}`}
-        sx={teamColumnTableSx(1)}
+        sx={leagueTableSx}
       >
         <TableHead>
           <TableRow>

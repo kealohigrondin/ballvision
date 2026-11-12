@@ -9,9 +9,9 @@ import { usePolymarketData } from "../context/polymarketDataContext";
 import { copy } from "../copy";
 import { MastHeadIconButton } from "./MastHeadIconButton";
 
-type SyncControlsProps = Record<string, never>;
+type SyncControlsProps = { showLabels?: boolean };
 
-export const SyncControls = ({}: SyncControlsProps) => {
+export const SyncControls = ({ showLabels = false }: SyncControlsProps) => {
   const { paused, setPaused } = useAppData();
   const { loading, error, updatedAt, refresh: refreshScores } = useEspnData();
   const { refresh: refreshOdds } = usePolymarketData();
@@ -38,7 +38,11 @@ export const SyncControls = ({}: SyncControlsProps) => {
   }, [loading, paused, time]);
 
   return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+    <Stack
+      direction={showLabels ? "column" : "row"}
+      spacing={1}
+      sx={{ alignItems: showLabels ? "flex-start" : "center" }}
+    >
       <Typography component="span" role="status" color="text.secondary">
         {status}
         {error && copy.sync.connectionError}
@@ -47,6 +51,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
         icon={pauseIcon}
         label={pauseLabel}
         onClick={() => setPaused((current) => !current)}
+        showLabel={showLabels}
       />
       <MastHeadIconButton
         icon={RefreshCw}
@@ -56,6 +61,7 @@ export const SyncControls = ({}: SyncControlsProps) => {
           refreshOdds();
         }}
         disabled={loading}
+        showLabel={showLabels}
       />
     </Stack>
   );

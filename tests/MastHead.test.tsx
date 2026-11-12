@@ -1,5 +1,11 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, expect, it } from "vitest";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
+import { afterEach, expect, it, vi } from "vitest";
 
 import MastHead from "../src/components/MastHead";
 import { MASTHEAD_ICON_SIZE } from "../src/components/MastHeadIconButton";
@@ -49,5 +55,82 @@ it("gives every masthead icon button a hover hint matching its accessible name",
     const name = button.getAttribute("aria-label");
     expect(name).toBeTruthy();
     expect(button.getAttribute("title")).toBe(name);
+  }
+});
+
+const stubWindow = (compact: boolean) =>
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn((query: string) => ({
+      matches: compact,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  );
+
+const renderMastHead = () =>
+  render(
+    <AppTheme>
+      <AppDataTestProvider value={createAppData()}>
+        <MastHead />
+      </AppDataTestProvider>
+    </AppTheme>,
+  );
+
+it("puts the masthead controls behind a menu button on phones", () => {
+  stubWindow(true);
+
+  try {
+    renderMastHead();
+    const header = screen.getByRole("banner");
+    expect(header.querySelector("#masthead-menu-button")).toBeTruthy();
+    expect(
+      within(header).queryByRole("button", { name: copy.sync.pause }),
+    ).toBeNull();
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it("shows the masthead controls without a menu button on wider screens", () => {
+  stubWindow(false);
+
+  try {
+    renderMastHead();
+    const header = screen.getByRole("banner");
+    expect(header.querySelector("#masthead-menu-button")).toBeNull();
+    expect(
+      within(header).getByRole("button", { name: copy.sync.pause }),
+    ).toBeTruthy();
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
+it("labels each control in the phone settings menu with its tooltip text", () => {
+  stubWindow(true);
+
+  try {
+    renderMastHead();
+    fireEvent.click(document.getElementById("masthead-menu-button")!);
+    const drawer = document.getElementById("masthead-menu-drawer")!;
+    const labels = within(drawer)
+      .getAllByRole("button")
+      .filter((button) => button.id !== "masthead-menu-close")
+      .map((button) => button.textContent);
+    expect(labels).toEqual([
+      copy.sync.pause,
+      copy.sync.refresh,
+      copy.scoreNotification.enableSound,
+      copy.scoreNotification.test,
+      copy.theme.toLight,
+    ]);
+  } finally {
+    vi.unstubAllGlobals();
   }
 });

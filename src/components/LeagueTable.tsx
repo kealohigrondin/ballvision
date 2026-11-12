@@ -59,7 +59,9 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
             <TeamScheduleLink team={row} />
           </Stack>
         </TableCell>
-        {showPointsColumn && <TableCell align="right">{value ?? "—"}</TableCell>}
+        {showPointsColumn && (
+          <TableCell align="right">{value ?? "—"}</TableCell>
+        )}
         <TableCell align="right">{row.record}</TableCell>
         {ranked && (
           <TableCell

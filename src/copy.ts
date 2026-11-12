@@ -68,8 +68,8 @@ export const copy = {
     clearSearch: "Clear search",
     filter: "Filter games",
     filters: {
-      all: "All games",
-      live: "Live now",
+      all: "All",
+      live: "Live",
       upcoming: "Upcoming",
       final: "Final",
       pinned: "Pinned",
@@ -79,6 +79,10 @@ export const copy = {
     label: "Week",
     previous: "Previous week",
     next: "Next week",
+  },
+  mastHead: {
+    menu: "Menu",
+    closeMenu: "Close menu",
   },
   sync: {
     pause: "Pause auto-refresh",

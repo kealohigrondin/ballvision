@@ -8,6 +8,7 @@ import { useMemo } from "react";
 
 import { copy } from "../copy";
 import type { Week } from "../data/types";
+import { MASTHEAD_ICON_SIZE } from "./MastHeadIconButton";
 
 type WeekSelectProps = {
   weeks: Week[];
@@ -52,7 +53,7 @@ export const WeekSelect = ({
         disabled={selectedIndex <= 0}
         onClick={() => onChange(weeks[selectedIndex - 1])}
       >
-        <ChevronLeft />
+        <ChevronLeft size={MASTHEAD_ICON_SIZE} />
       </IconButton>
       <TextField
         select
@@ -75,7 +76,7 @@ export const WeekSelect = ({
         disabled={selectedIndex < 0 || selectedIndex >= weeks.length - 1}
         onClick={() => onChange(weeks[selectedIndex + 1])}
       >
-        <ChevronRight />
+        <ChevronRight size={MASTHEAD_ICON_SIZE} />
       </IconButton>
     </Stack>
   );

@@ -34,7 +34,11 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
     return {
       value: f,
       label: (
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+        <Stack
+          direction="row"
+          spacing={{ xs: 0.5, sm: 1 }}
+          sx={{ alignItems: "center", whiteSpace: "nowrap" }}
+        >
           <span>{label}</span>
           <span>{counts[f]}</span>
         </Stack>
@@ -109,6 +113,9 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
             value={filter}
             options={filterOptions}
             onChange={onFilter}
+            // On phones, each button sizes to its label so all five fit on
+            // one line across the screen.
+            buttonSx={{ px: { xs: 0.5, sm: 1.5 }, flex: { xs: "1 1 auto" } }}
           />
         </Box>
       </Stack>

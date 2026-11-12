@@ -26,6 +26,19 @@ const openDashboard = async (page: Page) => {
   await expect(page.getByText("Ridge Hawks").first()).toBeVisible();
 };
 
+// Phones keep the theme toggle in the masthead menu.
+const switchToLight = async (page: Page) => {
+  const menu = page.locator("#masthead-menu-button");
+  if (await menu.isVisible()) {
+    await menu.click();
+    await page.getByRole("button", { name: copy.theme.toLight }).click();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#masthead-menu-drawer")).toBeHidden();
+  } else {
+    await page.getByRole("button", { name: copy.theme.toLight }).click();
+  }
+};
+
 test.describe("@screenshots", () => {
   for (const [device, viewport] of Object.entries(viewports)) {
     for (const theme of themes) {
@@ -33,7 +46,7 @@ test.describe("@screenshots", () => {
         await page.setViewportSize(viewport);
         await openDashboard(page);
         if (theme === "light") {
-          await page.getByRole("button", { name: copy.theme.toLight }).click();
+          await switchToLight(page);
         }
         await page.screenshot({ path: `screenshots/${device}-${theme}.png` });
       });
@@ -205,5 +218,39 @@ test.describe("@screenshots rankings panel", () => {
   test("Playoff Committee, dark", async ({ page }) => {
     await openRankings(page, "Playoff Committee Rankings");
     await screenshotLeaguePanel(page, "league-panel-rankings-committee-dark");
+  });
+});
+
+test.describe("@screenshots phone header", () => {
+  test.use({ viewport: viewports.mobile });
+
+  test("masthead", async ({ page }) => {
+    await openDashboard(page);
+    await page
+      .getByRole("banner")
+      .screenshot({ path: "screenshots/masthead-mobile-dark.png" });
+  });
+
+  test("masthead menu, open", async ({ page }) => {
+    await openDashboard(page);
+    await page.locator("#masthead-menu-button").click();
+    const drawer = page.locator("#masthead-menu-drawer");
+    await expect(drawer).toBeVisible();
+    // Let the slide-in finish so the sheet is fully on screen.
+    await expect
+      .poll(() =>
+        drawer.evaluate(
+          (el) => el.getBoundingClientRect().right <= window.innerWidth,
+        ),
+      )
+      .toBe(true);
+    await page.screenshot({ path: "screenshots/masthead-menu-open-dark.png" });
+  });
+
+  test("scores header", async ({ page }) => {
+    await openDashboard(page);
+    await page
+      .locator("#scores-header")
+      .screenshot({ path: "screenshots/scores-header-mobile-dark.png" });
   });
 });

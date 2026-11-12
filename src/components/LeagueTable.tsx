@@ -59,6 +59,8 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
             <TeamScheduleLink team={row} />
           </Stack>
         </TableCell>
+        {showValueColumn && <TableCell align="right">{value ?? "—"}</TableCell>}
+        <TableCell align="right">{row.record}</TableCell>
         {ranked && (
           <TableCell
             align="right"
@@ -68,8 +70,6 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
             {trend.label}
           </TableCell>
         )}
-        {showValueColumn && <TableCell align="right">{value ?? "—"}</TableCell>}
-        <TableCell align="right">{row.record}</TableCell>
       </TableRow>
     );
   });
@@ -98,11 +98,6 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
                 {table.title}
               </Typography>
             </TableCell>
-            {ranked && (
-              <TableCell component="th" scope="col" align="right">
-                {copy.league.trend}
-              </TableCell>
-            )}
             {showValueColumn && (
               <TableCell component="th" scope="col" align="right">
                 {column}
@@ -111,6 +106,11 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
             <TableCell component="th" scope="col" align="right">
               OVR
             </TableCell>
+            {ranked && (
+              <TableCell component="th" scope="col" align="right">
+                {copy.league.trend}
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>{rows}</TableBody>

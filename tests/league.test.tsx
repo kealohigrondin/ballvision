@@ -649,3 +649,17 @@ it("shows the points column for a points-based poll", async () => {
   });
   expect(screen.getByRole("columnheader", { name: "PTS" })).toBeTruthy();
 });
+
+it("puts the trend column last in the Top 25 table", async () => {
+  render(
+    <LeagueTestProvider source={source()} division="fbs">
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  fireEvent.click(navRailButton("rankings"));
+  await screen.findByRole("table", { name: /AP Top 25/ });
+  expect(screen.getAllByRole("columnheader").at(-1)?.textContent).toBe(
+    copy.league.trend,
+  );
+});

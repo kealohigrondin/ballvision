@@ -77,8 +77,6 @@ export const copy = {
   },
   week: {
     label: "Week",
-    previous: "Previous week",
-    next: "Next week",
   },
   mastHead: {
     menu: "Menu",

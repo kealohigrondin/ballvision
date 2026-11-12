@@ -143,10 +143,12 @@ const weekSelect = async () => {
   return select;
 };
 
-const previousButton = () =>
-  screen.getByRole("button", { name: copy.week.previous });
-
-const nextButton = () => screen.getByRole("button", { name: copy.week.next });
+const chooseWeek = async (number: number) => {
+  fireEvent.mouseDown(await weekSelect());
+  fireEvent.click(
+    await screen.findByRole("option", { name: week(number).label }),
+  );
+};
 
 const divisionButton = (division: "fbs" | "fcs" | "nfl") =>
   screen.getByRole("button", { name: copy.scoresHeader.divisions[division] });
@@ -216,30 +218,11 @@ it("loads the week chosen from the week select", async () => {
   expect(select.textContent).toBe(week(0).label);
 });
 
-it("goes back one week and disables back on the first week", async () => {
-  const { lastQuery } = renderApp();
-  await weekSelect();
-  expect(previousButton().hasAttribute("disabled")).toBe(false);
-  fireEvent.click(previousButton());
-  await lastQuery({ week: week(0), division: "fbs" });
-  expect(previousButton().hasAttribute("disabled")).toBe(true);
-});
-
-it("goes forward one week and disables forward on the last week", async () => {
-  const { lastQuery } = renderApp();
-  await weekSelect();
-  expect(nextButton().hasAttribute("disabled")).toBe(false);
-  fireEvent.click(nextButton());
-  await lastQuery({ week: week(2), division: "fbs" });
-  expect(nextButton().hasAttribute("disabled")).toBe(true);
-});
-
 // Division
 
 it("keeps the selected week when switching between college divisions", async () => {
   const { lastQuery } = renderApp();
-  await weekSelect();
-  fireEvent.click(previousButton());
+  await chooseWeek(0);
   await lastQuery({ week: week(0), division: "fbs" });
   fireEvent.click(divisionButton("fcs"));
   await lastQuery({ week: week(0), division: "fcs" });

@@ -6,14 +6,11 @@ import { type LucideIcon, Menu, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
 type MenuDrawerProps = {
-  /** Names the menu button and the drawer, and is the drawer's headline. */
   label: string;
   closeLabel: string;
   children: ReactNode;
-  /** The button's icon; defaults to a menu (hamburger) icon. */
   icon?: LucideIcon;
   iconSize?: number;
-  /** Prefix for the button and drawer ids, e.g. `masthead-menu`. */
   id?: string;
 };
 

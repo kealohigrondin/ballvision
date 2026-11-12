@@ -3,7 +3,6 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import { useMemo } from "react";
 
-import { copy } from "../copy";
 import type { Week } from "../data/types";
 
 type WeekSelectProps = {
@@ -45,7 +44,6 @@ export const WeekSelect = ({
     <TextField
       select
       id="game-week"
-      label={copy.week.label}
       value={selectedId}
       disabled={weeks.length === 0}
       onChange={(event) => {

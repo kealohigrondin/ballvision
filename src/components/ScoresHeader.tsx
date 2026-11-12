@@ -65,8 +65,6 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
           sx={{
             alignItems: "center",
             flexWrap: "wrap",
-            // Phones spread the week select and division toggle across the
-            // row; the search box wraps onto its own full-width line.
             justifyContent: { xs: "space-between", sm: "flex-start" },
           }}
         >
@@ -86,7 +84,6 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
             onChange={onDivision}
           />
           <TextField
-            label={copy.scoresHeader.search}
             placeholder={copy.scoresHeader.searchPlaceholder}
             value={search}
             onChange={(e) => onSearch(e.target.value)}

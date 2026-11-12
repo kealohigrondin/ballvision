@@ -27,7 +27,6 @@ export const MastHeadIconButton = ({
   color,
   showLabel = false,
 }: MastHeadIconButtonProps) => {
-  // With its label shown as text, the button needs no tooltip.
   const button = showLabel ? (
     <Button
       startIcon={<Icon size={MASTHEAD_ICON_SIZE} />}

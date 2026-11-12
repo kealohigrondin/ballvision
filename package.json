@@ -10,7 +10,7 @@
     "test": "vitest run",
     "format": "npx eslint . --fix",
     "format:check": "prettier --check .",
-    "prettier": "prettier --write .",
+    "format:prettier": "prettier --write .",
     "lint": "eslint . && prettier --check .",
     "typecheck": "tsc -b",
     "test:e2e": "playwright test --grep-invert @screenshots",

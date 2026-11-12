@@ -15,8 +15,6 @@ type MastHeadProps = Record<string, never>;
 
 const MastHead = ({}: MastHeadProps) => {
   const compact = useCompactWindow();
-  // Phones tuck the controls into a settings sheet that opens from the
-  // right, where each button shows its label as text.
   const actions = compact ? (
     <MenuDrawer
       id="masthead-menu"
@@ -57,7 +55,13 @@ const MastHead = ({}: MastHeadProps) => {
       >
         <Radio />
         {/* Phones show only the logo; the link keeps its accessible name. */}
-        <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+        <Box
+          component="h1"
+          sx={{
+            fontSize: { xs: "14px", sm: "16px" },
+            display: { xs: "inline", sm: "inline" },
+          }}
+        >
           BALLVISION
         </Box>
       </Link>

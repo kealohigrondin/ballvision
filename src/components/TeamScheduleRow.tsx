@@ -20,10 +20,10 @@ export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
   const dateLabel = Number.isNaN(date.getTime())
     ? "TBD"
     : new Intl.DateTimeFormat(undefined, {
-        month: "short",
-        day: "numeric",
-        timeZone: game.timeConfirmed ? undefined : "UTC",
-      }).format(date);
+      month: "short",
+      day: "numeric",
+      timeZone: game.timeConfirmed ? undefined : "UTC",
+    }).format(date);
 
   return (
     <TableRow>
@@ -40,7 +40,7 @@ export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
             variant="body2"
             sx={{ overflowWrap: "anywhere" }}
           >
-            {prefix} <TeamScheduleLink team={opponent} />
+            {prefix} <TeamScheduleLink team={opponent} abbreviatedName />
           </Typography>
         </Stack>
         {game.neutralSite && (
@@ -51,7 +51,7 @@ export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
       </TableCell>
       <TableCell align="right">
         <Typography variant="body2" sx={{ fontVariantNumeric: "tabular-nums" }}>
-          {scheduleGameStatus(game, teamId)}
+          {scheduleGameStatus(game, teamId, true)}
         </Typography>
         {Boolean(game.broadcast) && date.getTime() > Date.now() && (
           <Typography variant="caption" color="text.secondary">

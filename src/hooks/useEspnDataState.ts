@@ -33,6 +33,8 @@ export const useEspnDataState = ({
     search,
     favoriteIds,
     nflStandingsView,
+    standingsConferenceId,
+    setStandingsConferenceId,
   } = useAppData();
   const scoreboard = useScoreboard(source, { division, week }, paused);
   const calendar = useSeasonCalendar(source, division);
@@ -42,8 +44,7 @@ export const useEspnDataState = ({
     division === "nfl" && selectedView === "rankings"
       ? "standings"
       : selectedView;
-  const [selectedId, setSelectedId] = useState("");
-  const [scheduleConferenceId, setScheduleConferenceId] = useState("");
+  const [pollId, setPollId] = useState("");
   const tableView = view === "rankings" ? "rankings" : "standings";
   const league = useLeagueTables(leagueSource, division, tableView, panelOpen);
   const schedule = useTeamSchedule(
@@ -54,26 +55,32 @@ export const useEspnDataState = ({
 
   const selectTeam = (team: LeagueRow) => {
     schedule.selectTeam(team);
-    setScheduleConferenceId("");
     setView("schedule");
   };
 
-  // NFL standings hold every view's tables; schedules pick from divisions.
-  const scheduleConferences = useMemo(() => {
+  // Every team in the league, sorted by name. NFL standings list each team
+  // once per view, so duplicates are dropped.
+  const scheduleTeams = useMemo(() => {
     if (tableView !== "standings") {
       return [];
     }
-    if (division === "nfl") {
-      return league.tables.filter((table) => table.nflView === "division");
-    }
+    const teams = new Map<string, LeagueRow>();
+    league.tables
+      .flatMap((table) => table.rows)
+      .forEach((row) => {
+        if (!teams.has(row.id)) {
+          teams.set(row.id, row);
+        }
+      });
 
-    return league.tables;
-  }, [tableView, division, league.tables]);
-  const scheduleConference: LeagueTable | undefined =
-    scheduleConferences.find((table) => table.id === scheduleConferenceId) ??
-    scheduleConferences.find((table) =>
-      table.rows.some((row) => row.id === schedule.selectedTeam?.id),
-    );
+    return [...teams.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [tableView, league.tables]);
+
+  // Standings keep their conference in app data; polls stay local.
+  const selectedId = tableView === "standings" ? standingsConferenceId : pollId;
+  const setSelectedId =
+    tableView === "standings" ? setStandingsConferenceId : setPollId;
+
   const selected: LeagueTable | undefined =
     league.tables.find((table) => table.id === selectedId) ??
     league.tables.at(0);
@@ -89,7 +96,7 @@ export const useEspnDataState = ({
     return selected ? [selected] : [];
   }, [division, league.tables, nflStandingsView, selected]);
 
-  const counts = useMemo(
+  const gameCounts = useMemo(
     () => ({
       all: games.length,
       live: games.filter((game) => game.state === "live").length,
@@ -123,14 +130,12 @@ export const useEspnDataState = ({
     refresh: scoreboard.refresh,
     weeks: calendar.weeks,
     currentWeekId: calendar.currentWeekId,
-    counts,
+    counts: gameCounts,
     visibleGames,
     schedule: {
       ...schedule,
       selectTeam,
-      conferences: scheduleConferences,
-      conference: scheduleConference,
-      setConferenceId: setScheduleConferenceId,
+      teams: scheduleTeams,
     },
     league: {
       tables: league.tables,

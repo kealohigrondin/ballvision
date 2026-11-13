@@ -1,7 +1,7 @@
 import type { TeamScheduleGame } from "../data/types";
 import { gameTime, kickoff } from "./gameTime";
 
-export const scheduleGameStatus = (game: TeamScheduleGame, teamId: string) => {
+export const scheduleGameStatus = (game: TeamScheduleGame, teamId: string, timeOnly: boolean = false) => {
   const own = game.home.id === teamId ? game.home : game.away;
   const opponent = game.home.id === teamId ? game.away : game.home;
   const score = `${own.score}–${opponent.score}`;
@@ -21,7 +21,7 @@ export const scheduleGameStatus = (game: TeamScheduleGame, teamId: string) => {
     return `${gameTime(game)} · ${score}`;
   }
   if (game.state === "upcoming") {
-    return game.timeConfirmed ? kickoff(game.start) : "Time TBD";
+    return game.timeConfirmed ? kickoff(game.start, timeOnly) : "Time TBD";
   }
 
   return game.status;

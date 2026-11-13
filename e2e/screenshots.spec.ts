@@ -254,3 +254,88 @@ test.describe("@screenshots phone header", () => {
       .screenshot({ path: "screenshots/scores-header-mobile-dark.png" });
   });
 });
+
+const openSchedulePicker = async (page: Page) => {
+  await openDashboard(page);
+  await mockNflStandings(page);
+  await page
+    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
+    .click();
+  await page.getByRole("button", { name: copy.navRail.schedule }).click();
+  const picker = page.locator("#team-schedule-picker");
+  await expect(picker).toBeEnabled();
+
+  return picker;
+};
+
+// Open states capture the panel so the floating listbox is in frame;
+// closed states capture just the field, padded so its label is not cut off.
+const screenshotSchedulePicker = async (
+  page: Page,
+  name: string,
+  open = true,
+) => {
+  const panel = page.getByRole("complementary", { name: copy.league.panel });
+  const path = `screenshots/${name}.png`;
+  if (open) {
+    await panel.screenshot({ path });
+
+    return;
+  }
+  const box = await panel.locator(".MuiAutocomplete-root").boundingBox();
+  if (!box) {
+    throw new Error("Team schedule picker is not visible.");
+  }
+  const pad = 8;
+  await page.screenshot({
+    path,
+    clip: {
+      x: box.x - pad,
+      y: box.y - pad,
+      width: box.width + pad * 2,
+      height: box.height + pad * 2,
+    },
+  });
+};
+
+test.describe("@screenshots team schedule picker", () => {
+  test.use({ viewport: viewports.desktop });
+
+  test("empty", async ({ page }) => {
+    await openSchedulePicker(page);
+    await screenshotSchedulePicker(page, "team-schedule-picker-empty", false);
+  });
+
+  test("open", async ({ page }) => {
+    const picker = await openSchedulePicker(page);
+    await picker.click();
+    await expect(page.getByRole("option").first()).toBeVisible();
+    await screenshotSchedulePicker(page, "team-schedule-picker-open");
+  });
+
+  test("filtered", async ({ page }) => {
+    const picker = await openSchedulePicker(page);
+    await picker.fill("ch");
+    await expect(page.getByRole("option").first()).toBeVisible();
+    await screenshotSchedulePicker(page, "team-schedule-picker-filtered");
+  });
+
+  test("no matches", async ({ page }) => {
+    const picker = await openSchedulePicker(page);
+    await picker.fill("zzz");
+    await expect(page.getByText(copy.schedule.noTeams)).toBeVisible();
+    await screenshotSchedulePicker(page, "team-schedule-picker-no-matches");
+  });
+
+  test("selected", async ({ page }) => {
+    const picker = await openSchedulePicker(page);
+    await picker.fill("seah");
+    await page.getByRole("option", { name: "Seahawks" }).click();
+    await expect(picker).toHaveValue("Seahawks");
+    await screenshotSchedulePicker(
+      page,
+      "team-schedule-picker-selected",
+      false,
+    );
+  });
+});

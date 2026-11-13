@@ -25,17 +25,17 @@ export const gameTime = (game: Game) => {
   return `Q${game.period} · ${game.clock || "—"}`;
 };
 
-export const kickoff = (start: string) => {
+export const kickoff = (start: string, timeOnly: boolean = false) => {
   const date = new Date(start);
 
   return Number.isNaN(date.getTime())
     ? "Time TBD"
     : new Intl.DateTimeFormat(undefined, {
-        weekday: "short", // Fri
-        month: "short", // Nov
-        day: "numeric", // 12
-        hour: "numeric", // 4
-        minute: "2-digit", // 30
-        hour12: true, // PM
-      }).format(date);
+      weekday: timeOnly ? undefined : "short", // Fri
+      month: timeOnly ? undefined : "short", // Nov
+      day: timeOnly ? undefined : "numeric", // 12
+      hour: "numeric", // 4
+      minute: "2-digit", // 30
+      hour12: true, // PM
+    }).format(date);
 };

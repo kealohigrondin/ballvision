@@ -11,6 +11,7 @@ export const defaultAppPreferences = (): AppPreferences => ({
   search: "",
   paused: false,
   nflStandingsView: "wildcard",
+  standingsConferenceId: "",
 });
 
 const validFilter = (value: unknown): value is Filter =>
@@ -70,6 +71,10 @@ export const loadAppPreferences = (
       nflStandingsView: validNflStandingsView(value.nflStandingsView)
         ? value.nflStandingsView
         : defaults.nflStandingsView,
+      standingsConferenceId:
+        typeof value.standingsConferenceId === "string"
+          ? value.standingsConferenceId
+          : defaults.standingsConferenceId,
     };
   } catch {
     return defaults;

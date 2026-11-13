@@ -343,11 +343,8 @@ it("opens a team schedule from standings and Top 25 links", async () => {
   await screen.findByRole("table", { name: copy.schedule.table("Georgia") });
   expect(navRailButton("schedule").getAttribute("aria-pressed")).toBe("true");
   expect(
-    (screen.getByLabelText(copy.league.conference) as HTMLSelectElement).value,
-  ).toBe("sec");
-  expect(
-    (screen.getByLabelText(copy.schedule.team) as HTMLSelectElement).value,
-  ).toBe("1");
+    (screen.getByLabelText(copy.schedule.team) as HTMLInputElement).value,
+  ).toBe("Georgia");
   expect(load).toHaveBeenLastCalledWith(
     { division: "fbs", teamId: "1" },
     expect.any(AbortSignal),
@@ -375,7 +372,16 @@ it("opens a team schedule from standings and Top 25 links", async () => {
     ),
   );
 });
-it("selects a schedule team from conference and team dropdowns", async () => {
+
+const scheduleTeamOptions = () => {
+  fireEvent.keyDown(screen.getByLabelText(copy.schedule.team), {
+    key: "ArrowDown",
+  });
+
+  return screen.getAllByRole("option").map((option) => option.textContent);
+};
+
+it("lists every college team in the schedule picker regardless of conference", async () => {
   const provider = source();
   vi.mocked(provider.loadStandings).mockResolvedValue([
     {
@@ -389,49 +395,60 @@ it("selects a schedule team from conference and team dropdowns", async () => {
       rows: [{ id: "8", name: "Clemson", record: "5-3" }],
     },
   ]);
-  const load = vi
-    .fn<TeamScheduleSource["load"]>()
-    .mockResolvedValue({ season: "2026", games: [] });
   render(
-    <LeagueTestProvider
-      source={provider}
-      division="fbs"
-      scheduleSource={{ load }}
-    >
+    <LeagueTestProvider source={provider} division="fbs">
       <LeagueNavRail />
       <LeaguePanel />
     </LeagueTestProvider>,
   );
   await screen.findByRole("table", { name: /SEC/ });
   fireEvent.click(navRailButton("schedule"));
-  const team = screen.getByLabelText(copy.schedule.team) as HTMLSelectElement;
-  expect(team.disabled).toBe(true);
-  fireEvent.change(screen.getByLabelText(copy.league.conference), {
-    target: { value: "sec" },
-  });
+  expect(screen.queryByLabelText(copy.league.conference)).toBeNull();
+  expect(scheduleTeamOptions()).toEqual(["Alabama", "Clemson", "Georgia"]);
+});
 
-  const teamNames = () =>
-    Array.from(
-      (screen.getByLabelText(copy.schedule.team) as HTMLSelectElement).options,
-    )
-      .filter((option) => option.value)
-      .map((option) => option.textContent);
-  expect(teamNames()).toEqual(["Alabama", "Georgia"]);
-  fireEvent.change(screen.getByLabelText(copy.league.conference), {
-    target: { value: "acc" },
-  });
-  expect(teamNames()).toEqual(["Clemson"]);
-  fireEvent.change(screen.getByLabelText(copy.schedule.team), {
-    target: { value: "8" },
-  });
-  await screen.findByRole("heading", { name: copy.schedule.table("Clemson") });
+it("lists every NFL team once in the schedule picker regardless of division", async () => {
+  render(
+    <LeagueTestProvider source={source()} division="nfl">
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  await screen.findByRole("table", { name: /league-table-AFC/ });
+  fireEvent.click(navRailButton("schedule"));
+  expect(screen.queryByLabelText(copy.league.division)).toBeNull();
+  expect(scheduleTeamOptions()).toEqual(["Bills", "Chiefs", "Seahawks"]);
+});
+
+it("selects a schedule team by typing its name", async () => {
+  const load = vi
+    .fn<TeamScheduleSource["load"]>()
+    .mockResolvedValue({ season: "2026", games: [] });
+  render(
+    <LeagueTestProvider
+      source={source()}
+      division="nfl"
+      scheduleSource={{ load }}
+    >
+      <LeagueNavRail />
+      <LeaguePanel />
+    </LeagueTestProvider>,
+  );
+  await screen.findByRole("table", { name: /league-table-AFC/ });
+  fireEvent.click(navRailButton("schedule"));
+  const input = screen.getByLabelText(copy.schedule.team);
+  input.focus();
+  fireEvent.change(input, { target: { value: "chi" } });
+  expect(
+    screen.getAllByRole("option").map((option) => option.textContent),
+  ).toEqual(["Chiefs"]);
+  fireEvent.click(screen.getByRole("option", { name: "Chiefs" }));
+  await screen.findByRole("heading", { name: copy.schedule.table("Chiefs") });
   expect(load).toHaveBeenLastCalledWith(
-    { division: "fbs", teamId: "8" },
+    { division: "nfl", teamId: "12" },
     expect.any(AbortSignal),
   );
-  expect(
-    (screen.getByLabelText(copy.league.conference) as HTMLSelectElement).value,
-  ).toBe("acc");
+  expect((input as HTMLInputElement).value).toBe("Chiefs");
 });
 it("retries schedule failures and clears the selected team when switching leagues", async () => {
   const provider = source();
@@ -558,23 +575,6 @@ it("saves the chosen NFL standings view", async () => {
     target: { value: "division" },
   });
   expect(setNflStandingsView).toHaveBeenCalledWith("division");
-});
-
-it("lists only NFL divisions in the team schedule picker", async () => {
-  render(
-    <LeagueTestProvider source={source()} division="nfl">
-      <LeagueNavRail />
-      <LeaguePanel />
-    </LeagueTestProvider>,
-  );
-  await screen.findByRole("table", { name: /league-table-AFC/ });
-  fireEvent.click(navRailButton("schedule"));
-  const picker = screen.getByLabelText(copy.league.division);
-  expect(
-    [...picker.querySelectorAll("option")]
-      .filter((option) => option.value)
-      .map((option) => option.textContent),
-  ).toEqual(["AFC East", "NFC West"]);
 });
 
 it("gives each league table a title id built from its name", async () => {

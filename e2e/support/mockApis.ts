@@ -51,3 +51,35 @@ export const mockRankings = async (page: Page): Promise<void> => {
     json(route, rankings),
   );
 };
+
+const collegeConference = (id: string, name: string, team: string) => ({
+  id,
+  name,
+  standings: {
+    season: 2026,
+    entries: [
+      {
+        team: { id: `${id}-1`, shortDisplayName: team, logos: [] },
+        stats: [
+          { type: "total", summary: "7-1" },
+          { type: "vsconf", summary: "5-1" },
+        ],
+      },
+    ],
+  },
+});
+
+// Serve two college conferences so the conference picker has a choice.
+// Call after mockApis so this route takes priority.
+export const mockCollegeStandings = async (page: Page): Promise<void> => {
+  await page.route(
+    "https://site.web.api.espn.com/**/college-football/standings*",
+    (route) =>
+      json(route, {
+        children: [
+          collegeConference("sec", "SEC", "Ridge Hawks"),
+          collegeConference("acc", "ACC", "Summit Goats"),
+        ],
+      }),
+  );
+};

@@ -349,19 +349,23 @@ it("opens a team schedule from standings and Top 25 links", async () => {
     { division: "fbs", teamId: "1" },
     expect.any(AbortSignal),
   );
-  const opponentLink = screen.getByRole("link", { name: "Clemson" });
+  const opponentLink = screen.getByRole("link", { name: "CLEM" });
   expect(opponentLink.closest("th")?.textContent).toContain(
-    `${copy.schedule.home} Clemson`,
+    `${copy.schedule.home} CLEM`,
   );
-  expect(screen.getByText(scheduleGameStatus(scheduleGame, "1"))).toBeTruthy();
+  expect(
+    screen.getByText(scheduleGameStatus(scheduleGame, "1", true)),
+  ).toBeTruthy();
   fireEvent.click(opponentLink);
   await screen.findByRole("table", { name: copy.schedule.table("Clemson") });
   expect(load).toHaveBeenLastCalledWith(
     { division: "fbs", teamId: "8" },
     expect.any(AbortSignal),
   );
-  expect(screen.getByRole("link", { name: "Georgia" })).toBeTruthy();
-  expect(screen.getByText(scheduleGameStatus(scheduleGame, "8"))).toBeTruthy();
+  expect(screen.getByRole("link", { name: "UGA" })).toBeTruthy();
+  expect(
+    screen.getByText(scheduleGameStatus(scheduleGame, "8", true)),
+  ).toBeTruthy();
   fireEvent.click(navRailButton("rankings"));
   fireEvent.click(await screen.findByRole("link", { name: "Miami" }));
   await screen.findByRole("heading", { name: copy.schedule.table("Miami") });

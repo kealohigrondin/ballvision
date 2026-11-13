@@ -70,7 +70,7 @@ export const copy = {
     filters: {
       all: "All",
       live: "Live",
-      upcoming: "Upcoming",
+      upcoming: "Next",
       final: "Final",
       pinned: "Pinned",
     },

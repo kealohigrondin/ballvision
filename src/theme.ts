@@ -27,9 +27,9 @@ export const createAppTheme = (mode: "light" | "dark") =>
   createTheme({
     cssVariables: true,
     app: {
-      controlHeight: "40px",
-      controlBorderRadius: "20px",
-      paperBorderRadius: "20px",
+      controlHeight: "32px",
+      controlBorderRadius: "4px",
+      paperBorderRadius: "8px",
       boxScoreMinWidth: 325,
       periodColumnPadding: "0.4rem",
       navigationBarHeight: 80,
@@ -47,6 +47,14 @@ export const createAppTheme = (mode: "light" | "dark") =>
               borderRadius: "var(--mui-app-paperBorderRadius)",
             },
             "&:is(article)": { overflow: "hidden" },
+          },
+        },
+      },
+      // Box has no theme styleOverrides, so target its root class globally.
+      MuiCssBaseline: {
+        styleOverrides: {
+          ".MuiBox-root": {
+            borderRadius: "var(--mui-app-paperBorderRadius)",
           },
         },
       },

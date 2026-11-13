@@ -37,7 +37,6 @@ export const NavRailItem = ({
       width: "100%",
       minWidth: 0,
       py: 0.5,
-      borderRadius: 2,
       color: active ? "text.primary" : "text.secondary",
       opacity: disabled ? 0.38 : 1,
       "&:hover .nav-rail-indicator": {
@@ -57,7 +56,6 @@ export const NavRailItem = ({
         placeItems: "center",
         width: 56,
         height: 32,
-        borderRadius: 4,
         transition: "background-color 150ms",
         bgcolor: active ? "primary.main" : "transparent",
         color: active ? "primary.contrastText" : "inherit",

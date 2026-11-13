@@ -2,7 +2,13 @@ import { expect, type Page, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
 import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
-import { mockApis, mockNflStandings, mockRankings } from "./support/mockApis";
+import {
+  mockApis,
+  mockNflStandings,
+  mockRankings,
+  mockSecStandings,
+  mockTeamSchedule,
+} from "./support/mockApis";
 
 // Captures reference screenshots for pull requests. Run with
 // `npm run screenshots`; images are written to ./screenshots.
@@ -337,5 +343,60 @@ test.describe("@screenshots team schedule picker", () => {
       "team-schedule-picker-selected",
       false,
     );
+  });
+});
+
+const openCollegeStandings = async (page: Page) => {
+  await openDashboard(page);
+  await mockSecStandings(page);
+  await page.getByRole("button", { name: copy.navRail.standings }).click();
+};
+
+const openTeamSchedule = async (page: Page, team: string) => {
+  await mockTeamSchedule(page);
+  await page.getByRole("button", { name: copy.navRail.schedule }).click();
+  const picker = page.locator("#team-schedule-picker");
+  await expect(picker).toBeEnabled();
+  await picker.fill(team);
+  await page.getByRole("option", { name: team }).click();
+  await expect(
+    page.getByRole("heading", { name: copy.schedule.table(team) }),
+  ).toBeVisible();
+};
+
+test.describe("@screenshots light NFL division standings", () => {
+  // Tall enough for all eight divisions without scrolling the panel.
+  test.use({ viewport: { width: 1440, height: 2500 } });
+
+  test("NFL division standings", async ({ page }) => {
+    await openNflStandings(page);
+    await page.getByRole("button", { name: copy.theme.toLight }).click();
+    await page.getByLabel(copy.league.standingsView).selectOption("division");
+    await screenshotLeaguePanel(page, "league-panel-nfl-division-light");
+  });
+});
+
+test.describe("@screenshots light league panel", () => {
+  // Short enough that the panel is not mostly empty space.
+  test.use({ viewport: { width: 1440, height: 640 } });
+
+  test("college standings", async ({ page }) => {
+    await openCollegeStandings(page);
+    await page.getByRole("button", { name: copy.theme.toLight }).click();
+    await screenshotLeaguePanel(page, "league-panel-cfb-standings-light");
+  });
+
+  test("NFL team schedule", async ({ page }) => {
+    await openNflStandings(page);
+    await page.getByRole("button", { name: copy.theme.toLight }).click();
+    await openTeamSchedule(page, "Seahawks");
+    await screenshotLeaguePanel(page, "team-schedule-nfl-light");
+  });
+
+  test("college team schedule", async ({ page }) => {
+    await openCollegeStandings(page);
+    await page.getByRole("button", { name: copy.theme.toLight }).click();
+    await openTeamSchedule(page, "Georgia");
+    await screenshotLeaguePanel(page, "team-schedule-cfb-light");
   });
 });

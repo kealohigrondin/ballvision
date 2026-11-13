@@ -31,11 +31,11 @@ export const kickoff = (start: string, timeOnly: boolean = false) => {
   return Number.isNaN(date.getTime())
     ? "Time TBD"
     : new Intl.DateTimeFormat(undefined, {
-      weekday: timeOnly ? undefined : "short", // Fri
-      month: timeOnly ? undefined : "short", // Nov
-      day: timeOnly ? undefined : "numeric", // 12
-      hour: "numeric", // 4
-      minute: "2-digit", // 30
-      hour12: true, // PM
-    }).format(date);
+        weekday: timeOnly ? undefined : "short", // Fri
+        month: timeOnly ? undefined : "short", // Nov
+        day: timeOnly ? undefined : "numeric", // 12
+        hour: "numeric", // 4
+        minute: "2-digit", // 30
+        hour12: true, // PM
+      }).format(date);
 };

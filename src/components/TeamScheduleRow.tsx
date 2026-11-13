@@ -20,10 +20,10 @@ export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
   const dateLabel = Number.isNaN(date.getTime())
     ? "TBD"
     : new Intl.DateTimeFormat(undefined, {
-      month: "short",
-      day: "numeric",
-      timeZone: game.timeConfirmed ? undefined : "UTC",
-    }).format(date);
+        month: "short",
+        day: "numeric",
+        timeZone: game.timeConfirmed ? undefined : "UTC",
+      }).format(date);
 
   return (
     <TableRow>

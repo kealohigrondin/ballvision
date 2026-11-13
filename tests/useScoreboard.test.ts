@@ -1,8 +1,9 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { Game, ScoreboardSource, Week } from "../src/data/types";
-import { useScoreboard } from "../src/hooks/useScoreboard";
+import type { ScoreboardSource } from "@/features/scores/types";
+import { useScoreboard } from "@/features/scores/useScoreboard";
+import type { Game, Week } from "@/shared/types";
 const game = { id: "1" } as Game;
 
 const week = (number: number): Week => ({

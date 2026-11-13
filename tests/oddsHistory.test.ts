@@ -1,10 +1,11 @@
 import { expect, it, vi } from "vitest";
 
+import { historyAt, withLiveOdds } from "@/features/odds/oddsHistory";
 import {
   createPolymarketHistorySource,
   parseOddsHistory,
-} from "../src/data/polymarketHistory";
-import { historyAt, withLiveOdds } from "../src/utils/oddsHistory";
+} from "@/features/odds/polymarketHistory";
+
 import { oddsQuote } from "./helpers/oddsFixture";
 
 it("validates, sorts, and deduplicates prices while preserving zero and one probabilities", () => {

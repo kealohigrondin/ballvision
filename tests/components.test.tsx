@@ -8,23 +8,33 @@ import {
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { GameCard } from "../src/components/GameCard";
-import { SyncControls } from "../src/components/SyncControls";
-import { TeamLogo } from "../src/components/TeamLogo";
-import type { PolymarketData } from "../src/context/polymarketDataContext";
-import { copy } from "../src/copy";
-import type { Game, Team } from "../src/data/types";
-import { AppTheme } from "../src/providers/AppTheme";
-import { gameTime } from "../src/utils/gameTime";
+import { AppTheme } from "@/app/AppTheme";
+import { OddsGameCard } from "@/app/OddsGameCard";
+import { SyncControls } from "@/app/SyncControls";
+import { copy } from "@/copy";
+import type { PolymarketData } from "@/features/odds/polymarketDataContext";
+import { GameCard } from "@/features/scores/GameCard";
+import type { AppData } from "@/shared/appData/appDataContext";
+import { TeamLogo } from "@/shared/components/TeamLogo";
+import { gameTime } from "@/shared/gameTime";
+import type { Game, Team } from "@/shared/types";
+
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { oddsQuote } from "./helpers/oddsFixture";
 import { linkTo } from "./helpers/queries";
 
-const render = (ui: ReactNode, polymarket?: Partial<PolymarketData>) =>
+const render = (
+  ui: ReactNode,
+  polymarket?: Partial<PolymarketData>,
+  appData?: Partial<AppData>,
+) =>
   renderWithoutTheme(ui, {
     wrapper: ({ children }) => (
       <AppTheme>
-        <AppDataTestProvider value={createAppData()} polymarket={polymarket}>
+        <AppDataTestProvider
+          value={createAppData(appData)}
+          polymarket={polymarket}
+        >
           {children}
         </AppDataTestProvider>
       </AppTheme>
@@ -77,8 +87,6 @@ describe("scoreboard presentation", () => {
           away: { ...away, quarters: ["0", "7", "0", "0", "3"] },
           home: { ...home, quarters: ["7", "7", "0", "0", "0"] },
         }}
-        favorite={false}
-        onFavorite={() => {}}
       />,
     );
     const scoreboard = screen.getByRole("table", {
@@ -104,8 +112,8 @@ describe("scoreboard presentation", () => {
   });
 
   it("renders live game context, period scores, and pin action", () => {
-    const onFavorite = vi.fn();
-    render(<GameCard game={game} favorite={false} onFavorite={onFavorite} />);
+    const toggleFavorite = vi.fn();
+    render(<GameCard game={game} />, undefined, { toggleFavorite });
     expect(screen.getByText(gameTime(game))).toBeTruthy();
     expect(screen.getByText(game.broadcast)).toBeTruthy();
     fireEvent.click(
@@ -123,13 +131,13 @@ describe("scoreboard presentation", () => {
         name: copy.gameCard.favorite(false, away.name, home.name),
       }),
     );
-    expect(onFavorite).toHaveBeenCalledOnce();
+    expect(toggleFavorite).toHaveBeenCalledExactlyOnceWith(game.id);
   });
   it("displays only the favored team odds before the pin button and labels stale quotes", () => {
-    const { container } = render(
-      <GameCard game={game} favorite={false} onFavorite={() => {}} />,
-      { quotes: { [game.id]: oddsQuote }, error: true },
-    );
+    const { container } = render(<OddsGameCard game={game} />, {
+      quotes: { [game.id]: oddsQuote },
+      error: true,
+    });
     const link = linkTo(oddsQuote.url);
     expect(link.textContent).toContain("AWY");
     expect(link.textContent).not.toContain("HOM");
@@ -141,7 +149,7 @@ describe("scoreboard presentation", () => {
     );
   });
   it("switches to the home team when it has the higher probability", () => {
-    render(<GameCard game={game} favorite={false} onFavorite={() => {}} />, {
+    render(<OddsGameCard game={game} />, {
       quotes: {
         [game.id]: {
           ...oddsQuote,
@@ -155,7 +163,7 @@ describe("scoreboard presentation", () => {
     expect(link.textContent).not.toContain("AWY");
   });
   it("shows even odds without favoring either team when probabilities tie", () => {
-    render(<GameCard game={game} favorite={false} onFavorite={() => {}} />, {
+    render(<OddsGameCard game={game} />, {
       quotes: {
         [game.id]: { ...oddsQuote, awayProbability: 0.5, homeProbability: 0.5 },
       },
@@ -176,9 +184,9 @@ describe("scoreboard presentation", () => {
           home: { ...home, quarters: [] },
           away: { ...away, quarters: [] },
         }}
-        favorite
-        onFavorite={() => {}}
       />,
+      undefined,
+      { favoriteIds: [game.id] },
     );
     expect(screen.queryByText(game.broadcast)).toBeNull();
     expect(screen.queryByLabelText(copy.gameCard.possession)).toBeNull();
@@ -199,7 +207,7 @@ describe("scoreboard presentation", () => {
           paused: true,
           setPaused: onTogglePause,
         })}
-        espn={{ updatedAt: null }}
+        scores={{ updatedAt: null }}
       >
         <SyncControls />
       </AppDataTestProvider>,
@@ -211,7 +219,7 @@ describe("scoreboard presentation", () => {
         value={createAppData({
           setPaused: onTogglePause,
         })}
-        espn={{ loading: true, updatedAt: null }}
+        scores={{ loading: true, updatedAt: null }}
       >
         <SyncControls />
       </AppDataTestProvider>,

@@ -7,10 +7,11 @@ import {
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import MastHead from "../src/components/MastHead";
-import { MASTHEAD_ICON_SIZE } from "../src/components/MastHeadIconButton";
-import { copy } from "../src/copy";
-import { AppTheme } from "../src/providers/AppTheme";
+import { AppTheme } from "@/app/AppTheme";
+import MastHead from "@/app/MastHead";
+import { copy } from "@/copy";
+import { TOOLBAR_ICON_SIZE } from "@/shared/components/ToolbarIconButton";
+
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 
 afterEach(cleanup);
@@ -36,8 +37,8 @@ it("renders every masthead button as an icon button the size of the pause button
     expect(button.textContent).toBe("");
     const icons = button.querySelectorAll("svg");
     expect(icons).toHaveLength(1);
-    expect(icons[0].getAttribute("width")).toBe(String(MASTHEAD_ICON_SIZE));
-    expect(icons[0].getAttribute("height")).toBe(String(MASTHEAD_ICON_SIZE));
+    expect(icons[0].getAttribute("width")).toBe(String(TOOLBAR_ICON_SIZE));
+    expect(icons[0].getAttribute("height")).toBe(String(TOOLBAR_ICON_SIZE));
   }
 });
 

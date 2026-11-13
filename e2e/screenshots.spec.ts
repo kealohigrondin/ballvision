@@ -60,25 +60,6 @@ test.describe("@screenshots", () => {
   }
 });
 
-// Cards scrolled under the sticky scores header on a phone, where card
-// shadows sit in the gutters beside the header.
-test.describe("@screenshots scrolled scores header", () => {
-  test.use({ viewport: viewports.mobile });
-
-  for (const theme of themes) {
-    test(`mobile scrolled, ${theme}`, async ({ page }) => {
-      await openDashboard(page);
-      if (theme === "light") {
-        await switchToLight(page);
-      }
-      await page.evaluate(() => window.scrollTo(0, 200));
-      await page.screenshot({
-        path: `screenshots/mobile-scrolled-${theme}.png`,
-      });
-    });
-  }
-});
-
 // Real ESPN teams with bundled logos, swapped into the fixture's games.
 // The app picks a logo's league from its ESPN URL, so NFL logos show on the
 // college scoreboard too.
@@ -102,14 +83,14 @@ const logoScoreboard = () => {
 
         return team
           ? {
-              ...competitor,
-              id: team.id,
-              team: {
-                ...competitor.team,
-                shortDisplayName: team.name,
-                logo: `https://a.espncdn.com/i/teamlogos/${team.logo}.png`,
-              },
-            }
+            ...competitor,
+            id: team.id,
+            team: {
+              ...competitor.team,
+              shortDisplayName: team.name,
+              logo: `https://a.espncdn.com/i/teamlogos/${team.logo}.png`,
+            },
+          }
           : competitor;
       }),
     })),

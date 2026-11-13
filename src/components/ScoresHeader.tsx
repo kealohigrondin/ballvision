@@ -55,6 +55,11 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
         zIndex: 1,
         bgcolor: "background.default",
         py: 2,
+        // Game card shadows spill into the 8px gutters beside the column.
+        // Paint the header over those gutters too so cards scrolling under it
+        // don't show their edges on either side.
+        mx: -1,
+        px: 1,
       }}
     >
       <Stack spacing={2}>

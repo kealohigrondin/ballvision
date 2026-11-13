@@ -1,10 +1,10 @@
-import { createTheme } from "@mui/material/styles";
+import { alpha, createTheme } from "@mui/material/styles";
 
 import msSansSerif from "./assets/fonts/ms_sans_serif.woff2";
 import msSansSerifBold from "./assets/fonts/ms_sans_serif_bold.woff2";
 
-// Windows 98 design system colors, from the Windows 98 Design System Figma
-// file. Dark mode keeps the same bevel structure with darker grays.
+// Colors for the Windows 98 style boxes: the app's own palette with
+// Windows 98 bevel structure, from the Windows 98 Design System Figma file.
 type Win98Colors = {
   face: string;
   light: string;
@@ -14,9 +14,9 @@ type Win98Colors = {
   desktop: string;
   field: string;
   text: string;
+  primary: string;
   titleStart: string;
   titleEnd: string;
-  tooltip: string;
 };
 
 type Win98Tokens = {
@@ -28,7 +28,7 @@ type Win98Tokens = {
     field: string;
   };
   titleBar: string;
-  checkered: string;
+  selected: string;
 };
 
 type AppTokens = {
@@ -50,38 +50,47 @@ declare module "@mui/material/styles" {
   }
 }
 
+// Title bars use a gradient that ends on the light theme's green, with
+// white text, in both modes.
+const titleBar = { titleStart: "#0b3d1d", titleEnd: "#16783a" };
+
 const win98Colors: Record<"light" | "dark", Win98Colors> = {
   light: {
-    face: "#bfbfbf",
-    light: "#dbdbdb",
+    face: "#ffffff",
+    light: "#e0e0e0",
     highlight: "#ffffff",
-    shadow: "#808080",
-    darkShadow: "#000000",
-    desktop: "#008080",
+    shadow: "#bdbdbd",
+    darkShadow: "#757575",
+    desktop: "#ffffff",
     field: "#ffffff",
-    text: "#000000",
-    titleStart: "#00007b",
-    titleEnd: "#1085d2",
-    tooltip: "#ffffe1",
+    text: "rgba(0, 0, 0, 0.87)",
+    primary: "#16783a",
+    ...titleBar,
   },
   dark: {
-    face: "#3a3a3a",
-    light: "#4e4e4e",
-    highlight: "#707070",
-    shadow: "#1f1f1f",
+    face: "#1e1e1e",
+    light: "#2e2e2e",
+    highlight: "#4a4a4a",
+    shadow: "#0a0a0a",
     darkShadow: "#000000",
-    desktop: "#002b2b",
-    field: "#202020",
-    text: "#f2f2f2",
-    titleStart: "#00007b",
-    titleEnd: "#1085d2",
-    tooltip: "#3a3a2a",
+    desktop: "#121212",
+    field: "#121212",
+    text: "#ffffff",
+    primary: "#67e68d",
+    ...titleBar,
   },
 };
 
 const win98Tokens = (colors: Win98Colors): Win98Tokens => {
-  const { light, highlight, shadow, darkShadow, face, titleStart, titleEnd } =
-    colors;
+  const {
+    light,
+    highlight,
+    shadow,
+    darkShadow,
+    primary,
+    titleStart,
+    titleEnd,
+  } = colors;
 
   return {
     colors,
@@ -94,8 +103,8 @@ const win98Tokens = (colors: Win98Colors): Win98Tokens => {
       field: `inset -1px -1px ${highlight}, inset 1px 1px ${shadow}, inset -2px -2px ${light}, inset 2px 2px ${darkShadow}`,
     },
     titleBar: `linear-gradient(90deg, ${titleStart}, ${titleEnd})`,
-    // The dithered fill Windows 98 uses for a latched (selected) button.
-    checkered: `repeating-conic-gradient(${face} 0% 25%, ${highlight} 0% 50%) 0 0 / 2px 2px`,
+    // The tint behind a latched (selected) button.
+    selected: alpha(primary, 0.16),
   };
 };
 
@@ -155,17 +164,8 @@ export const createAppTheme = (mode: "light" | "dark") => {
     },
     palette: {
       mode,
-      primary: {
-        main: mode === "light" ? colors.titleStart : "#6fb7ff",
-        contrastText: mode === "light" ? "#ffffff" : "#000000",
-      },
+      primary: { main: colors.primary },
       background: { default: colors.desktop, paper: colors.face },
-      text: {
-        primary: colors.text,
-        secondary: mode === "light" ? "#404040" : "#c0c0c0",
-        disabled: colors.shadow,
-      },
-      divider: colors.shadow,
     },
     components: {
       MuiCssBaseline: {
@@ -265,8 +265,8 @@ export const createAppTheme = (mode: "light" | "dark") => {
             ...raisedButton,
             height: "var(--mui-app-controlHeight)",
             "&.Mui-selected, &.Mui-selected:hover": {
-              color: colors.text,
-              background: win98.checkered,
+              color: colors.primary,
+              backgroundColor: win98.selected,
               boxShadow: bevel.pressed,
             },
           },
@@ -322,20 +322,8 @@ export const createAppTheme = (mode: "light" | "dark") => {
           },
         },
       },
-      MuiMenuItem: {
-        styleOverrides: {
-          root: {
-            "&:hover, &.Mui-focusVisible, &.Mui-selected, &.Mui-selected:hover":
-              {
-                backgroundColor: colors.titleStart,
-                color: "#ffffff",
-              },
-          },
-        },
-      },
       MuiTableCell: {
         styleOverrides: {
-          root: { borderColor: colors.shadow },
           head: { fontWeight: 700 },
         },
       },
@@ -350,12 +338,7 @@ export const createAppTheme = (mode: "light" | "dark") => {
       },
       MuiTooltip: {
         styleOverrides: {
-          tooltip: {
-            borderRadius: 0,
-            backgroundColor: colors.tooltip,
-            color: colors.text,
-            border: `1px solid ${colors.darkShadow}`,
-          },
+          tooltip: { borderRadius: 0 },
         },
       },
       MuiAlert: {
@@ -370,7 +353,6 @@ export const createAppTheme = (mode: "light" | "dark") => {
             backgroundColor: colors.field,
             boxShadow: bevel.field,
           },
-          bar: { backgroundColor: colors.titleStart },
         },
       },
       MuiLink: {

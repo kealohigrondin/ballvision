@@ -37,7 +37,7 @@ export const NavRailItem = ({
       width: "100%",
       minWidth: 0,
       py: 0.5,
-      color: "text.primary",
+      color: active ? "primary.main" : "text.secondary",
       opacity: disabled ? 0.38 : 1,
       "&:hover .nav-rail-indicator": {
         boxShadow: (theme) =>
@@ -56,9 +56,9 @@ export const NavRailItem = ({
         placeItems: "center",
         width: 56,
         height: 32,
-        // Windows 98 toolbar button: flat until hovered, latched when active.
+        // Boxy toolbar button: flat until hovered, latched when active.
         background: (theme) =>
-          active ? theme.app.win98.checkered : "transparent",
+          active ? theme.app.win98.selected : "transparent",
         boxShadow: (theme) => (active ? theme.app.win98.bevel.pressed : "none"),
       }}
     >

@@ -224,6 +224,22 @@ it("returns to the current week when switching to the NFL", async () => {
   await lastQuery({ week: null, division: "nfl" });
 });
 
+// League standings
+
+it("stores the selected standings conference in app data", () => {
+  const { result } = renderContexts();
+  act(() => result.current.espn.league.setSelectedId("acc"));
+  expect(result.current.app.standingsConferenceId).toBe("acc");
+});
+
+it("keeps the standings conference when a Top 25 poll is selected", () => {
+  const { result } = renderContexts();
+  act(() => result.current.app.setStandingsConferenceId("acc"));
+  act(() => result.current.espn.league.setView("rankings"));
+  act(() => result.current.espn.league.setSelectedId("coaches"));
+  expect(result.current.app.standingsConferenceId).toBe("acc");
+});
+
 // Auto-refresh
 
 it("pauses auto-refresh", () => {

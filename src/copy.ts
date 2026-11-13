@@ -133,7 +133,8 @@ export const copy = {
   schedule: {
     team: "Team",
     selectTeam: "Select a team",
-    prompt: "Choose a conference and team to view its schedule.",
+    prompt: "Choose a team to view its schedule.",
+    noTeams: "No matching teams",
     loading: "Loading team schedule…",
     empty: "No games are available for this team’s current season.",
     error:

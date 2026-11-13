@@ -5,8 +5,20 @@ export const scheduleGame: TeamScheduleGame = {
   id: "schedule-game",
   state: "final",
   start: "2026-09-05T19:00:00Z",
-  home: { ...oddsGame.home, id: "1", name: "Georgia", score: "35" },
-  away: { ...oddsGame.away, id: "8", name: "Clemson", score: "14" },
+  home: {
+    ...oddsGame.home,
+    id: "1",
+    name: "Georgia",
+    abbreviation: "UGA",
+    score: "35",
+  },
+  away: {
+    ...oddsGame.away,
+    id: "8",
+    name: "Clemson",
+    abbreviation: "CLEM",
+    score: "14",
+  },
   timeConfirmed: true,
   neutralSite: false,
 };

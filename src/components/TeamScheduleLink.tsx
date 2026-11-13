@@ -7,11 +7,13 @@ import type { LeagueRow } from "../data/types";
 type TeamScheduleLinkProps = {
   team: Pick<LeagueRow, "id" | "name"> & Partial<LeagueRow>;
   isBold?: boolean;
+  abbreviatedName?: boolean;
 };
 
 export const TeamScheduleLink = ({
   team,
   isBold = false,
+  abbreviatedName = false,
 }: TeamScheduleLinkProps) => {
   const {
     schedule: { selectTeam },
@@ -37,7 +39,7 @@ export const TeamScheduleLink = ({
       }}
     >
       <span style={{ fontWeight: isBold ? "bold" : "normal" }}>
-        {team.name}
+        {abbreviatedName ? team.abbreviation || team.name : team.name}
       </span>
     </Link>
   );

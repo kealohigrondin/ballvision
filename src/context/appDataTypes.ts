@@ -10,4 +10,6 @@ export type AppPreferences = {
   search: string;
   paused: boolean;
   nflStandingsView: NflStandingsView;
+  /** College conference shown in standings; `""` shows the first one. */
+  standingsConferenceId: string;
 };

@@ -73,7 +73,7 @@ const barSx: SxProps<Theme> = {
 export const LeagueNavRail = ({}: LeagueNavRailProps) => {
   const { division, panelOpen, setPanelOpen } = useAppData();
   const {
-    league: { view, setView, setSelectedId },
+    league: { view, setView },
   } = useEspnData();
 
   const compact = useCompactWindow();
@@ -86,7 +86,6 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
     }
     if (view !== nextView) {
       setView(nextView);
-      setSelectedId("");
     }
     setPanelOpen(true);
   };

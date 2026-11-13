@@ -21,6 +21,9 @@ export const useAppDataState = () => {
   const [nflStandingsView, setNflStandingsView] = useState<NflStandingsView>(
     initial.nflStandingsView,
   );
+  const [standingsConferenceId, setStandingsConferenceId] = useState(
+    initial.standingsConferenceId,
+  );
   const favorites = useFavorites();
 
   useEffect(() => {
@@ -32,8 +35,18 @@ export const useAppDataState = () => {
       search,
       paused,
       nflStandingsView,
+      standingsConferenceId,
     });
-  }, [panelOpen, week, division, filter, search, paused, nflStandingsView]);
+  }, [
+    panelOpen,
+    week,
+    division,
+    filter,
+    search,
+    paused,
+    nflStandingsView,
+    standingsConferenceId,
+  ]);
 
   // FBS and FCS share the college calendar; NFL weeks mean something else.
   const setDivision = (next: Division) => {
@@ -58,6 +71,8 @@ export const useAppDataState = () => {
     setPaused,
     nflStandingsView,
     setNflStandingsView,
+    standingsConferenceId,
+    setStandingsConferenceId,
     favoriteIds: favorites.ids,
     toggleFavorite: favorites.toggle,
   };

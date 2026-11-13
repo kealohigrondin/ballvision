@@ -1,10 +1,8 @@
 # BALLVISION
 
-Your live game companion. A React + TypeScript football dashboard for FBS, FCS, and the NFL. Runs in browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
+Your live game companion. A React + TypeScript football dashboard for FBS, FCS, and the NFL. Runs in browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change. Same for Polymarket
 
 ## Run locally
-
-This project is intended for local use. Internet access is needed to fetch ESPN scores.
 
 Run `./start.sh` and open http://127.0.0.1:5173. Press Ctrl+C in the terminal to stop. The launcher uses your installed Node.js or the workspace runtime downloaded during setup.
 

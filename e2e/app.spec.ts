@@ -5,6 +5,7 @@ import {
   mockApis,
   mockCollegeStandings,
   mockNflStandings,
+  mockSleeper,
 } from "./support/mockApis";
 
 test.beforeEach(async ({ page }) => {
@@ -109,4 +110,25 @@ test("finds an NFL team by typing in the schedule picker", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: copy.schedule.table("Seahawks") }),
   ).toBeVisible();
+});
+
+test("shows your Sleeper players in the game details of their NFL game", async ({
+  page,
+}) => {
+  await mockSleeper(page);
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
+    .click();
+  await page.getByRole("button", { name: copy.fantasy.account }).click();
+  await page.locator("#sleeper-account-input").fill("AaronY");
+  await page.locator("#sleeper-account-save").click();
+  await page
+    .getByRole("button", { name: copy.gameDetails.toggle })
+    .first()
+    .click();
+
+  await expect(page.locator("#fantasy-player-1001-L1-101")).toContainText(
+    "Riley Hawk",
+  );
 });

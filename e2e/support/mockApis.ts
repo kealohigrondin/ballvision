@@ -295,3 +295,52 @@ export const mockTeamSchedule = async (page: Page): Promise<void> => {
     return json(route, { season: { year: 2026, displayName: "2026" }, events });
   });
 };
+
+const sleeperPlayer = (name: string, position: string, team: string) => ({
+  full_name: name,
+  position,
+  team,
+});
+
+// Serve one Sleeper league whose team has players in the fixture's live
+// game (RDG at RIV). Call after mockApis so these routes take priority.
+export const mockSleeper = async (page: Page): Promise<void> => {
+  const responses: Record<string, unknown> = {
+    "/v1/user/AaronY": { user_id: "me" },
+    "/v1/user/me/leagues/nfl/2026": [
+      { league_id: "L1", name: "Fanal Fantasy 3.0", status: "in_season" },
+    ],
+    "/v1/league/L1/rosters": [{ roster_id: 3, owner_id: "me" }],
+    "/v1/league/L1/matchups/11": [
+      {
+        roster_id: 3,
+        starters: ["101", "102"],
+        players: ["101", "102", "103", "104"],
+        players_points: { "101": 18.42, "102": 7.1, "103": 2.5, "104": 0 },
+      },
+    ],
+    "/v1/players/nfl": {
+      "101": sleeperPlayer("Riley Hawk", "QB", "RDG"),
+      "102": sleeperPlayer("Otto Rivers", "WR", "RIV"),
+      "103": sleeperPlayer("Benny Benchwell", "RB", "RDG"),
+      "104": sleeperPlayer("Lake Ender", "TE", "LAK"),
+    },
+  };
+  await page.route("https://api.sleeper.app/**", (route) =>
+    json(route, responses[new URL(route.request().url()).pathname] ?? null),
+  );
+};
+
+// Start the app on the NFL scoreboard with a saved Sleeper username.
+export const saveSleeperUsername = async (page: Page): Promise<void> => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "ballvision:app-data:v1",
+      JSON.stringify({
+        version: 1,
+        division: "nfl",
+        sleeperUsername: "AaronY",
+      }),
+    );
+  });
+};

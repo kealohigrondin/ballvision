@@ -7,7 +7,9 @@ import {
   mockNflStandings,
   mockRankings,
   mockSecStandings,
+  mockSleeper,
   mockTeamSchedule,
+  saveSleeperUsername,
 } from "./support/mockApis";
 
 // Captures reference screenshots for pull requests. Run with
@@ -398,5 +400,52 @@ test.describe("@screenshots light league panel", () => {
     await page.getByRole("button", { name: copy.theme.toLight }).click();
     await openTeamSchedule(page, "Georgia");
     await screenshotLeaguePanel(page, "team-schedule-cfb-light");
+  });
+});
+
+test.describe("@screenshots fantasy players", () => {
+  test.use({ viewport: viewports.mobile });
+
+  const openLiveGameDetails = async (page: Page) => {
+    await saveSleeperUsername(page);
+    await mockApis(page);
+    await mockSleeper(page);
+    await page.clock.setFixedTime(new Date("2026-11-07T21:00:00Z"));
+    await page.goto("./");
+    await page
+      .getByRole("button", { name: copy.gameDetails.toggle })
+      .first()
+      .click();
+    await expect(page.locator("#fantasy-player-1001-L1-101")).toBeVisible();
+  };
+
+  for (const theme of themes) {
+    test(`game details with fantasy players, ${theme}`, async ({ page }) => {
+      await openLiveGameDetails(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await page
+        .locator("#fantasy-players-1001")
+        .screenshot({ path: `screenshots/fantasy-players-${theme}.png` });
+      await page
+        .locator("article")
+        .first()
+        .screenshot({ path: `screenshots/game-details-fantasy-${theme}.png` });
+    });
+  }
+
+  test("Sleeper account dialog", async ({ page }) => {
+    await openLiveGameDetails(page);
+    await page.locator("#masthead-menu-button").click();
+    await page.getByRole("button", { name: copy.fantasy.account }).click();
+    const dialog = page.getByRole("dialog", { name: copy.fantasy.account });
+    await expect(dialog).toBeVisible();
+    // Let the fade-in finish so the page doesn't show through the dialog.
+    await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await dialog.screenshot({ path: "screenshots/sleeper-account-dialog.png" });
   });
 });

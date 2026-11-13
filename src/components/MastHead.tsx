@@ -8,6 +8,7 @@ import { useCompactWindow } from "../hooks/useCompactWindow";
 import { MASTHEAD_ICON_SIZE } from "./MastHeadIconButton";
 import { MenuDrawer } from "./MenuDrawer";
 import { ScoreNotificationControls } from "./ScoreNotificationControls";
+import { SleeperAccountControl } from "./SleeperAccountControl";
 import { SyncControls } from "./SyncControls";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -25,12 +26,14 @@ const MastHead = ({}: MastHeadProps) => {
     >
       <SyncControls showLabels />
       <ScoreNotificationControls showLabels />
+      <SleeperAccountControl showLabels />
       <ThemeToggle showLabels />
     </MenuDrawer>
   ) : (
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <SyncControls />
       <ScoreNotificationControls />
+      <SleeperAccountControl />
       <ThemeToggle />
     </Stack>
   );

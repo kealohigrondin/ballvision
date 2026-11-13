@@ -1,7 +1,11 @@
 import { expect, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
-import { mockApis, mockNflStandings } from "./support/mockApis";
+import {
+  mockApis,
+  mockCollegeStandings,
+  mockNflStandings,
+} from "./support/mockApis";
 
 test.beforeEach(async ({ page }) => {
   await mockApis(page);
@@ -51,6 +55,19 @@ test("remembers the chosen NFL standings view after a reload", async ({
   );
 });
 
+test("remembers the chosen conference standings after a reload", async ({
+  page,
+}) => {
+  await mockCollegeStandings(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: copy.navRail.standings }).click();
+  const picker = page.getByLabel(copy.league.conference);
+  await expect(picker).toHaveValue("sec");
+  await picker.selectOption("acc");
+  await page.reload();
+  await expect(page.getByLabel(copy.league.conference)).toHaveValue("acc");
+});
+
 test("titles each NFL division table with the division name", async ({
   page,
 }) => {
@@ -63,4 +80,33 @@ test("titles each NFL division table with the division name", async ({
   await page.getByLabel(copy.league.standingsView).selectOption("division");
   const table = page.getByRole("table", { name: /NFC North/ });
   await expect(table.getByRole("columnheader").first()).toHaveText("NFC North");
+});
+
+test("lists every college team in the schedule picker", async ({ page }) => {
+  await mockCollegeStandings(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: copy.navRail.schedule }).click();
+  await expect(page.getByLabel(copy.league.conference)).toHaveCount(0);
+  await page.getByRole("combobox", { name: copy.schedule.team }).click();
+  await expect(page.getByRole("option")).toHaveText([
+    "Ridge Hawks",
+    "Summit Goats",
+  ]);
+});
+
+test("finds an NFL team by typing in the schedule picker", async ({ page }) => {
+  await mockNflStandings(page);
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
+    .click();
+  await page.getByRole("button", { name: copy.navRail.schedule }).click();
+  const team = page.getByRole("combobox", { name: copy.schedule.team });
+  await team.click();
+  await expect(page.getByRole("option")).toHaveCount(32);
+  await team.fill("seah");
+  await page.getByRole("option", { name: "Seahawks" }).click();
+  await expect(
+    page.getByRole("heading", { name: copy.schedule.table("Seahawks") }),
+  ).toBeVisible();
 });

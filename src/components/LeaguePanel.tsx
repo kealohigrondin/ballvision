@@ -107,6 +107,17 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     tables,
   ]);
 
+  const label = useMemo(() => {
+    if (view === "schedule") {
+      return "Team schedule";
+    }
+    if (division === "nfl") {
+      return "NFL standings";
+    }
+
+    return view === "rankings" ? "Top 25" : "Conference standings";
+  }, [division, view]);
+
   const content = useMemo(() => {
     if (view === "schedule") {
       return <TeamSchedule />;
@@ -145,17 +156,6 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
       </Typography>
     );
   }, [loading, visibleTables, view]);
-
-  const label = useMemo(() => {
-    if (view === "schedule") {
-      return "Team schedule";
-    }
-    if (division === "nfl") {
-      return "NFL standings";
-    }
-
-    return view === "rankings" ? "Top 25" : "Conference standings";
-  }, [division, view]);
 
   return (
     <Slide in direction={compact ? "up" : "right"} appear>

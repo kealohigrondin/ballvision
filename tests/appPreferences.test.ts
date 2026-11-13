@@ -35,6 +35,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     first.result.current.setSearch("Seattle");
     first.result.current.setPaused(true);
     first.result.current.setNflStandingsView("conference");
+    first.result.current.setStandingsConferenceId("acc");
   });
   expect(JSON.parse(localStorage.getItem(APP_PREFERENCES_KEY)!)).toEqual({
     version: 1,
@@ -45,6 +46,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     search: "Seattle",
     paused: true,
     nflStandingsView: "conference",
+    standingsConferenceId: "acc",
   });
   first.unmount();
   const next = renderHook(() => useAppDataState());
@@ -56,6 +58,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     search: "Seattle",
     paused: true,
     nflStandingsView: "conference",
+    standingsConferenceId: "acc",
   });
 });
 it("validates restored fields independently, including malformed weeks", () => {
@@ -117,4 +120,15 @@ it("falls back to the wildcard view for an unknown saved NFL view", () => {
       ),
   };
   expect(loadAppPreferences(storage).nflStandingsView).toBe("wildcard");
+});
+
+it("falls back to the first conference for a malformed saved conference", () => {
+  const storage = {
+    getItem: vi
+      .fn()
+      .mockReturnValue(
+        JSON.stringify({ version: 1, standingsConferenceId: 8 }),
+      ),
+  };
+  expect(loadAppPreferences(storage).standingsConferenceId).toBe("");
 });

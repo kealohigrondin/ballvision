@@ -40,7 +40,7 @@ export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
             variant="body2"
             sx={{ overflowWrap: "anywhere" }}
           >
-            {prefix} <TeamScheduleLink team={opponent} />
+            {prefix} <TeamScheduleLink team={opponent} abbreviatedName />
           </Typography>
         </Stack>
         {game.neutralSite && (
@@ -51,7 +51,7 @@ export const TeamScheduleRow = ({ game, teamId }: TeamScheduleRowProps) => {
       </TableCell>
       <TableCell align="right">
         <Typography variant="body2" sx={{ fontVariantNumeric: "tabular-nums" }}>
-          {scheduleGameStatus(game, teamId)}
+          {scheduleGameStatus(game, teamId, true)}
         </Typography>
         {Boolean(game.broadcast) && date.getTime() > Date.now() && (
           <Typography variant="caption" color="text.secondary">

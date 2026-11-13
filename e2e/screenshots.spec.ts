@@ -83,14 +83,14 @@ const logoScoreboard = () => {
 
         return team
           ? {
-            ...competitor,
-            id: team.id,
-            team: {
-              ...competitor.team,
-              shortDisplayName: team.name,
-              logo: `https://a.espncdn.com/i/teamlogos/${team.logo}.png`,
-            },
-          }
+              ...competitor,
+              id: team.id,
+              team: {
+                ...competitor.team,
+                shortDisplayName: team.name,
+                logo: `https://a.espncdn.com/i/teamlogos/${team.logo}.png`,
+              },
+            }
           : competitor;
       }),
     })),

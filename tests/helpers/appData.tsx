@@ -20,7 +20,7 @@ import {
   standingsContext,
   type StandingsData,
 } from "@/features/standings/standingsContext";
-import { statsContext,type StatsData } from "@/features/stats/statsContext";
+import { statsContext, type StatsData } from "@/features/stats/statsContext";
 import { type AppData, appDataContext } from "@/shared/appData/appDataContext";
 
 export const emptyOddsSource: OddsSource = {

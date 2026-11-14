@@ -1,90 +1,57 @@
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import { ChevronDown, MapPin } from "lucide-react";
+import Button from "@mui/material/Button";
+import { ChevronRight } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
 import { copy } from "@/copy";
+import { ResponsiveDialog } from "@/shared/components/ResponsiveDialog";
 import type { Game } from "@/shared/types";
 
-import { GameLeaders } from "./GameLeaders";
-import { PeriodScores } from "./PeriodScores";
+import { GameDetailsBody } from "./GameDetailsBody";
+import { GameHeader } from "./GameHeader";
 
 type GameDetailsProps = {
   game: Game;
-  /** Shown first while an unfinished game's details are open. */
+  /** Shown for unfinished games while the details are open. */
   liveDetails?: ReactNode;
 };
 
+// The card's "Game details" button and the dialog it opens.
 export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
-  const isFinal = game.state === "final";
-  const [expanded, setExpanded] = useState(false);
-  const hasTimeouts =
-    game.state === "live" &&
-    (game.homeTimeouts !== undefined || game.awayTimeouts !== undefined);
-  const leaders = game.leaders ?? [];
-  const hasDetails = Boolean(
-    leaders.length > 0 ||
-    game.lastPlay ||
-    game.home.quarters.length ||
-    game.away.quarters.length ||
-    game.venue ||
-    hasTimeouts,
-  );
+  const [open, setOpen] = useState(false);
+  const dialogId = `game-details-${game.id}`;
 
   return (
-    <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
-      <AccordionSummary
-        expandIcon={<ChevronDown />}
+    <>
+      <Button
+        id={`${dialogId}-button`}
+        fullWidth
+        color="inherit"
+        endIcon={<ChevronRight size={20} />}
+        aria-haspopup="dialog"
+        onClick={() => setOpen(true)}
         sx={{
+          justifyContent: "space-between",
+          minHeight: 36,
           px: 2,
-          m: 0,
-          minHeight: "36px",
-          // MUI adds a larger margin while expanded, so clear both states.
-          "& .MuiAccordionSummary-content, & .MuiAccordionSummary-content.Mui-expanded":
-            { my: 0 },
-          "&.Mui-expanded": { minHeight: "36px" },
+          borderTop: 1,
+          borderColor: "divider",
+          borderRadius: 0,
+          textTransform: "none",
+          fontWeight: 400,
         }}
       >
-        <span>{copy.gameDetails.toggle}</span>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Stack spacing={1}>
-          {game.lastPlay && (
-            <Typography component="div">
-              <Typography
-                component="span"
-                sx={{ display: "block", fontWeight: 600 }}
-              >
-                {copy.gameDetails.lastPlay}
-              </Typography>
-              {game.lastPlay}
-            </Typography>
-          )}
-          {expanded && leaders.length > 0 && (
-            <GameLeaders gameId={game.id} leaders={leaders} />
-          )}
-          {!isFinal && expanded && liveDetails}
-          <PeriodScores home={game.home} away={game.away} />
-          {hasTimeouts && (
-            <Typography>
-              Timeouts: {game.away.abbreviation} {game.awayTimeouts ?? "—"} ·{" "}
-              {game.home.abbreviation} {game.homeTimeouts ?? "—"}
-            </Typography>
-          )}
-          {!isFinal && game.venue && (
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <MapPin size={20} />
-              <Typography>{game.venue}</Typography>
-            </Stack>
-          )}
-          {!hasDetails && (
-            <Typography>{copy.gameDetails.unavailable}</Typography>
-          )}
-        </Stack>
-      </AccordionDetails>
-    </Accordion>
+        {copy.gameDetails.toggle}
+      </Button>
+      <ResponsiveDialog
+        id={dialogId}
+        open={open}
+        onClose={() => setOpen(false)}
+        title={copy.gameDetails.title(game.away.name, game.home.name)}
+        header={<GameHeader game={game} />}
+        closeLabel={copy.gameDetails.close}
+      >
+        <GameDetailsBody game={game} liveDetails={liveDetails} />
+      </ResponsiveDialog>
+    </>
   );
 };

@@ -35,6 +35,8 @@ export const copy = {
   },
   gameDetails: {
     toggle: "Game details",
+    title: (away: string, home: string) => `${away} at ${home}`,
+    close: "Close game details",
     chartUnavailable: "Polymarket chart unavailable for this game.",
     oddsBlocked: "Couldn't reach Polymarket. Disable adblock for this site.",
     lastPlay: "Last play",

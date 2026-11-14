@@ -132,3 +132,25 @@ test("leaves leaders out of an upcoming game's details", async ({ page }) => {
 
   await expect(page.locator("#game-leaders-1002")).toHaveCount(0);
 });
+
+test("opens a game's details in a dialog named for the matchup", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.locator("#game-details-1001-button").click();
+
+  await expect(
+    page.getByRole("dialog", {
+      name: copy.gameDetails.title("River Otters", "Ridge Hawks"),
+    }),
+  ).toBeVisible();
+});
+
+test("closes the game details dialog with the Escape key", async ({ page }) => {
+  await page.goto("./");
+  await page.locator("#game-details-1001-button").click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("dialog")).toBeHidden();
+});

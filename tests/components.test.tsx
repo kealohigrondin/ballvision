@@ -117,6 +117,12 @@ describe("scoreboard presentation", () => {
     expect(screen.getByText(gameTime(game))).toBeTruthy();
     expect(screen.getByText(game.broadcast)).toBeTruthy();
     fireEvent.click(
+      screen.getByRole("button", {
+        name: copy.gameCard.favorite(false, away.name, home.name),
+      }),
+    );
+    expect(toggleFavorite).toHaveBeenCalledExactlyOnceWith(game.id);
+    fireEvent.click(
       screen.getByRole("button", { name: copy.gameDetails.toggle }),
     );
     expect(screen.getByText(game.lastPlay)).toBeTruthy();
@@ -126,12 +132,6 @@ describe("scoreboard presentation", () => {
         hidden: true,
       }),
     ).toBeTruthy();
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: copy.gameCard.favorite(false, away.name, home.name),
-      }),
-    );
-    expect(toggleFavorite).toHaveBeenCalledExactlyOnceWith(game.id);
   });
   it("displays only the favored team odds before the pin button and labels stale quotes", () => {
     const { container } = render(<OddsGameCard game={game} />, {
@@ -190,6 +190,9 @@ describe("scoreboard presentation", () => {
     );
     expect(screen.queryByText(game.broadcast)).toBeNull();
     expect(screen.queryByLabelText(copy.gameCard.possession)).toBeNull();
+    fireEvent.click(
+      screen.getByRole("button", { name: copy.gameDetails.toggle }),
+    );
     expect(screen.getByText(copy.gameDetails.unavailable)).toBeTruthy();
   });
   it("falls back to a team abbreviation if its logo cannot load", () => {

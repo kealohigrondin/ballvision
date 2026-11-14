@@ -436,14 +436,71 @@ test.describe("@screenshots game leaders", () => {
       path: "screenshots/game-leaders-final-dark.png",
     });
   });
+});
 
-  test("expanded live game card", async ({ page }) => {
-    await openDashboard(page);
-    await openDetails(page, 0);
-    await expect(page.locator("#game-leaders-1001 img")).toHaveCount(3);
+test.describe("@screenshots game details dialog", () => {
+  // Opens the live game's details and waits for the dialog to finish
+  // opening and its headshots to load.
+  const openLiveDetails = async (page: Page) => {
     await page
-      .locator("article")
+      .getByRole("button", { name: copy.gameDetails.toggle })
       .first()
-      .screenshot({ path: "screenshots/game-details-leaders-dark.png" });
+      .click();
+    await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await expect(page.locator("#game-leaders-1001 img")).toHaveCount(3);
+  };
+
+  for (const theme of themes) {
+    test(`phone, full screen, ${theme}`, async ({ page }) => {
+      await page.setViewportSize(viewports.mobile);
+      await openDashboard(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await openLiveDetails(page);
+      await page.screenshot({
+        path: `screenshots/game-details-dialog-mobile-${theme}.png`,
+      });
+    });
+  }
+
+  test("desktop, centered", async ({ page }) => {
+    await page.setViewportSize(viewports.desktop);
+    await openDashboard(page);
+    await openLiveDetails(page);
+    await page.screenshot({
+      path: "screenshots/game-details-dialog-desktop-dark.png",
+    });
+  });
+
+  // The header in each game state: 1001 is live, 1002 upcoming, 1003 final.
+  for (const [state, id] of [
+    ["live", "1001"],
+    ["upcoming", "1002"],
+    ["final", "1003"],
+  ] as const) {
+    test(`header, ${state}`, async ({ page }) => {
+      await page.setViewportSize(viewports.desktop);
+      await openDashboard(page);
+      await page.locator(`#game-details-${id}-button`).click();
+      await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+        "opacity",
+        "1",
+      );
+      await page
+        .locator(`#game-header-${id}`)
+        .screenshot({ path: `screenshots/game-header-${state}-dark.png` });
+    });
+  }
+
+  test("closed, card button", async ({ page }) => {
+    await page.setViewportSize(viewports.mobile);
+    await openDashboard(page);
+    await page
+      .locator("#game-details-1001-button")
+      .screenshot({ path: "screenshots/game-details-button-dark.png" });
   });
 });

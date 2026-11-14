@@ -49,7 +49,7 @@ const show = (load: OddsHistorySource["load"], game: Game = oddsGame) =>
     </AppTheme>,
   );
 
-it("loads on expansion, changes history range, allows keyboard inspection, and stops on collapse", async () => {
+it("loads when opened, changes history range, allows keyboard inspection, and stops when closed", async () => {
   const load = vi.fn<OddsHistorySource["load"]>().mockResolvedValue(history);
   show(load);
   expect(load).not.toHaveBeenCalled();
@@ -95,8 +95,9 @@ it("loads on expansion, changes history range, allows keyboard inspection, and s
     ),
   );
   const signal = load.mock.calls.at(-1)![1];
-  fireEvent.click(details);
-  expect(signal.aborted).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: copy.gameDetails.close }));
+  // The dialog's content unmounts once its exit transition ends.
+  await waitFor(() => expect(signal.aborted).toBe(true));
 });
 it("shows a recoverable error and retries", async () => {
   const load = vi
@@ -130,13 +131,17 @@ it("shows an empty state instead of inventing a historical curve", async () => {
 });
 
 it("renders last-play text without nesting paragraphs", () => {
-  const { container } = show(vi.fn().mockResolvedValue(history), {
+  show(vi.fn().mockResolvedValue(history), {
     ...oddsGame,
     lastPlay: "Pass complete for a touchdown.",
   });
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
   expect(screen.getByText(copy.gameDetails.lastPlay)).toBeTruthy();
   expect(screen.getByText("Pass complete for a touchdown.")).toBeTruthy();
-  expect(container.querySelector("p p")).toBeNull();
+  // The dialog renders outside the card, so check the whole document.
+  expect(document.querySelector("p p")).toBeNull();
 });
 
 const showWithoutOdds = (game: Game, error: boolean) =>

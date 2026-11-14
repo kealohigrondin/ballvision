@@ -1,0 +1,133 @@
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import { Search, X } from "lucide-react";
+
+import { copy } from "@/copy";
+import { useAppData } from "@/shared/appData/appDataContext";
+import { SegmentedControl } from "@/shared/components/SegmentedControl";
+
+import { useScoresData } from "./scoresContext";
+import { WeekSelect } from "./WeekSelect";
+
+type ScoresHeaderProps = Record<string, never>;
+
+export const ScoresHeader = ({}: ScoresHeaderProps) => {
+  const {
+    week,
+    setWeek,
+    division,
+    setDivision: onDivision,
+    search,
+    setSearch: onSearch,
+    filter,
+    setFilter: onFilter,
+  } = useAppData();
+  const { counts, weeks, currentWeekId } = useScoresData();
+
+  const filterOptions = (
+    ["all", "live", "upcoming", "final", "pinned"] as const
+  ).map((f) => {
+    const label = copy.scoresHeader.filters[f];
+
+    return {
+      value: f,
+      label: (
+        <Stack
+          direction="row"
+          spacing={{ xs: 0.5, sm: 1 }}
+          sx={{ alignItems: "center", whiteSpace: "nowrap" }}
+        >
+          <span>{label}</span>
+          <span>{counts[f]}</span>
+        </Stack>
+      ),
+    };
+  });
+
+  return (
+    <Box
+      id="scores-header"
+      sx={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
+        bgcolor: "background.default",
+        py: 2,
+        // Game card shadows spill into the 8px gutters beside the column.
+        // Paint the header over those gutters too so cards scrolling under it
+        // don't show their edges on either side.
+        mx: -1,
+        px: 1,
+      }}
+    >
+      <Stack spacing={2}>
+        <Stack
+          direction="row"
+          useFlexGap
+          spacing={1}
+          sx={{
+            alignItems: "center",
+            flexWrap: "wrap",
+            justifyContent: { xs: "space-between", sm: "flex-start" },
+          }}
+        >
+          <WeekSelect
+            weeks={weeks}
+            week={week}
+            currentWeekId={currentWeekId}
+            onChange={setWeek}
+          />
+          <SegmentedControl
+            label={copy.scoresHeader.division}
+            value={division}
+            options={(["fbs", "fcs", "nfl"] as const).map((value) => ({
+              value,
+              label: copy.scoresHeader.divisions[value],
+            }))}
+            onChange={onDivision}
+          />
+          <TextField
+            placeholder={copy.scoresHeader.searchPlaceholder}
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
+            sx={{ ml: { sm: "auto" }, width: { xs: "100%", sm: "auto" } }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+                endAdornment: search && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={copy.scoresHeader.clearSearch}
+                      onClick={() => onSearch("")}
+                    >
+                      <X />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Stack>
+        <Box sx={{ overflowX: "auto", width: "100%" }}>
+          <SegmentedControl
+            fullWidth
+            label={copy.scoresHeader.filter}
+            value={filter}
+            options={filterOptions}
+            onChange={onFilter}
+            // On phones, each button sizes to its label so all five fit on
+            // one line across the screen.
+            buttonSx={{ px: { xs: 0.5, sm: 1.5 }, flex: { xs: "1 1 auto" } }}
+          />
+        </Box>
+      </Stack>
+    </Box>
+  );
+};

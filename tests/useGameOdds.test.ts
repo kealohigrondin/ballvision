@@ -1,8 +1,9 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
-import type { GameOddsMap, OddsSource } from "../src/data/types";
-import { useGameOdds } from "../src/hooks/useGameOdds";
+import type { GameOddsMap, OddsSource } from "@/features/odds/types";
+import { useGameOdds } from "@/features/odds/useGameOdds";
+
 import { oddsGame, oddsQuote } from "./helpers/oddsFixture";
 
 beforeEach(() => vi.useFakeTimers());

@@ -1,11 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import {
-  espnLeagueSource,
-  espnSource,
-  parseCalendar,
-  parseScoreboard,
-} from "../src/data/espn";
+import { espnSource, parseCalendar } from "@/features/scores/espnScoreboard";
+import { espnLeagueSource } from "@/features/standings/espnStandings";
+import { parseScoreboard } from "@/shared/api/espn";
 
 const competitor = (id: string, homeAway: string) => ({
   id,

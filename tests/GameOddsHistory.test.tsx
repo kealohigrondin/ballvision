@@ -8,12 +8,15 @@ import {
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { GameDetails } from "../src/components/GameDetails";
-import { copy } from "../src/copy";
-import type { Game, OddsHistorySource } from "../src/data/types";
-import { AppTheme } from "../src/providers/AppTheme";
-import { PolymarketGameProvider } from "../src/providers/PolymarketGameProvider";
-import { formatProbability } from "../src/utils/odds";
+import { AppTheme } from "@/app/AppTheme";
+import { copy } from "@/copy";
+import { GameOddsDetails } from "@/features/odds/GameOddsDetails";
+import { formatProbability } from "@/features/odds/odds";
+import { PolymarketGameProvider } from "@/features/odds/PolymarketGameProvider";
+import type { OddsHistorySource } from "@/features/odds/types";
+import { GameDetails } from "@/features/scores/GameDetails";
+import type { Game } from "@/shared/types";
+
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { oddsGame, oddsQuote } from "./helpers/oddsFixture";
 
@@ -40,7 +43,7 @@ const show = (load: OddsHistorySource["load"], game: Game = oddsGame) =>
         }}
       >
         <PolymarketGameProvider game={game}>
-          <GameDetails game={game} />
+          <GameDetails game={game} liveDetails={<GameOddsDetails />} />
         </PolymarketGameProvider>
       </AppDataTestProvider>
     </AppTheme>,
@@ -144,7 +147,7 @@ const showWithoutOdds = (game: Game, error: boolean) =>
         polymarket={{ quotes: {}, error }}
       >
         <PolymarketGameProvider game={game}>
-          <GameDetails game={game} />
+          <GameDetails game={game} liveDetails={<GameOddsDetails />} />
         </PolymarketGameProvider>
       </AppDataTestProvider>
     </AppTheme>,

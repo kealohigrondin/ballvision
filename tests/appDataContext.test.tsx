@@ -2,22 +2,23 @@ import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { useAppData } from "../src/context/appDataContext";
-import { useEspnData } from "../src/context/espnDataContext";
-import { usePolymarketData } from "../src/context/polymarketDataContext";
-import { usePolymarketGame } from "../src/context/polymarketGameContext";
-import type {
-  Game,
-  LeagueSource,
-  OddsHistorySource,
-  OddsSource,
-  ScoreboardSource,
-  Week,
-} from "../src/data/types";
-import { AppDataProvider } from "../src/providers/AppDataProvider";
-import { EspnDataProvider } from "../src/providers/EspnDataProvider";
-import { PolymarketDataProvider } from "../src/providers/PolymarketDataProvider";
-import { PolymarketGameProvider } from "../src/providers/PolymarketGameProvider";
+import { GameDataProviders } from "@/app/GameDataProviders";
+import { OddsHistoryProvider } from "@/features/odds/OddsHistoryProvider";
+import { usePolymarketData } from "@/features/odds/polymarketDataContext";
+import { PolymarketDataProvider } from "@/features/odds/PolymarketDataProvider";
+import { usePolymarketGame } from "@/features/odds/polymarketGameContext";
+import { PolymarketGameProvider } from "@/features/odds/PolymarketGameProvider";
+import type { OddsHistorySource, OddsSource } from "@/features/odds/types";
+import { useScoresData } from "@/features/scores/scoresContext";
+import { ScoresProvider } from "@/features/scores/ScoresProvider";
+import type { ScoreboardSource } from "@/features/scores/types";
+import { useStandingsData } from "@/features/standings/standingsContext";
+import { StandingsProvider } from "@/features/standings/StandingsProvider";
+import type { LeagueSource } from "@/features/standings/types";
+import { useAppData } from "@/shared/appData/appDataContext";
+import { AppDataProvider } from "@/shared/appData/AppDataProvider";
+import type { Game, Week } from "@/shared/types";
+
 import { emptyOddsSource } from "./helpers/appData";
 import { oddsQuote } from "./helpers/oddsFixture";
 
@@ -89,20 +90,23 @@ const renderContexts = ({
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <AppDataProvider>
-      <EspnDataProvider source={source} leagueSource={leagueSource}>
-        <PolymarketDataProvider
-          source={oddsSource}
-          historySource={oddsHistorySource}
-        >
-          {children}
-        </PolymarketDataProvider>
-      </EspnDataProvider>
+      <ScoresProvider source={source}>
+        <StandingsProvider source={leagueSource}>
+          <GameDataProviders
+            oddsSource={oddsSource}
+            oddsHistorySource={oddsHistorySource}
+          >
+            {children}
+          </GameDataProviders>
+        </StandingsProvider>
+      </ScoresProvider>
     </AppDataProvider>
   );
   const { result } = renderHook(
     () => ({
       app: useAppData(),
-      espn: useEspnData(),
+      scores: useScoresData(),
+      standings: useStandingsData(),
       odds: usePolymarketData(),
     }),
     { wrapper },
@@ -133,17 +137,17 @@ afterEach(() => {
 
 it("filters games by team search", async () => {
   const { result } = renderContexts({ games: twoGames });
-  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  await waitFor(() => expect(result.current.scores.games).toHaveLength(2));
   act(() => result.current.app.setSearch("Later"));
-  expect(visibleIds(result.current.espn.visibleGames)).toEqual(["Later"]);
+  expect(visibleIds(result.current.scores.visibleGames)).toEqual(["Later"]);
 });
 
 it("shows every game again when the search is cleared", async () => {
   const { result } = renderContexts({ games: twoGames });
-  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  await waitFor(() => expect(result.current.scores.games).toHaveLength(2));
   act(() => result.current.app.setSearch("Later"));
   act(() => result.current.app.setSearch(""));
-  expect(visibleIds(result.current.espn.visibleGames)).toEqual([
+  expect(visibleIds(result.current.scores.visibleGames)).toEqual([
     "Live",
     "Later",
   ]);
@@ -151,15 +155,15 @@ it("shows every game again when the search is cleared", async () => {
 
 it("filters games by state", async () => {
   const { result } = renderContexts({ games: twoGames });
-  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  await waitFor(() => expect(result.current.scores.games).toHaveLength(2));
   act(() => result.current.app.setFilter("upcoming"));
-  expect(visibleIds(result.current.espn.visibleGames)).toEqual(["Later"]);
+  expect(visibleIds(result.current.scores.visibleGames)).toEqual(["Later"]);
 });
 
 it("counts games by state", async () => {
   const { result } = renderContexts({ games: twoGames });
-  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
-  expect(result.current.espn.counts).toMatchObject({
+  await waitFor(() => expect(result.current.scores.games).toHaveLength(2));
+  expect(result.current.scores.counts).toMatchObject({
     all: 2,
     live: 1,
     upcoming: 1,
@@ -170,18 +174,18 @@ it("counts games by state", async () => {
 
 it("shows only pinned games under the pinned filter", async () => {
   const { result } = renderContexts({ games: twoGames });
-  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  await waitFor(() => expect(result.current.scores.games).toHaveLength(2));
   act(() => result.current.app.toggleFavorite("Later"));
   act(() => result.current.app.setFilter("pinned"));
-  expect(visibleIds(result.current.espn.visibleGames)).toEqual(["Later"]);
+  expect(visibleIds(result.current.scores.visibleGames)).toEqual(["Later"]);
 });
 
 it("unpins a pinned game", async () => {
   const { result } = renderContexts({ games: twoGames });
-  await waitFor(() => expect(result.current.espn.games).toHaveLength(2));
+  await waitFor(() => expect(result.current.scores.games).toHaveLength(2));
   act(() => result.current.app.toggleFavorite("Later"));
   act(() => result.current.app.toggleFavorite("Later"));
-  expect(result.current.espn.counts.pinned).toBe(0);
+  expect(result.current.scores.counts.pinned).toBe(0);
 });
 
 // Week selection
@@ -194,7 +198,7 @@ it("loads the current FBS week on start", async () => {
 it("loads the FBS season calendar on start", async () => {
   const { result, source } = renderContexts();
   await waitFor(() =>
-    expect(result.current.espn.currentWeekId).toBe(calendar.currentWeekId),
+    expect(result.current.scores.currentWeekId).toBe(calendar.currentWeekId),
   );
   expect(source.loadCalendar).toHaveBeenLastCalledWith(
     "fbs",
@@ -228,15 +232,15 @@ it("returns to the current week when switching to the NFL", async () => {
 
 it("stores the selected standings conference in app data", () => {
   const { result } = renderContexts();
-  act(() => result.current.espn.league.setSelectedId("acc"));
+  act(() => result.current.standings.setSelectedId("acc"));
   expect(result.current.app.standingsConferenceId).toBe("acc");
 });
 
 it("keeps the standings conference when a Top 25 poll is selected", () => {
   const { result } = renderContexts();
   act(() => result.current.app.setStandingsConferenceId("acc"));
-  act(() => result.current.espn.league.setView("rankings"));
-  act(() => result.current.espn.league.setSelectedId("coaches"));
+  act(() => result.current.app.setPanelView("rankings"));
+  act(() => result.current.standings.setSelectedId("coaches"));
   expect(result.current.app.standingsConferenceId).toBe("acc");
 });
 
@@ -252,7 +256,7 @@ it("reloads scores when the scores are refreshed", async () => {
   const { result, source } = renderContexts();
   await waitFor(() => expect(source.load).toHaveBeenCalled());
   const calls = vi.mocked(source.load).mock.calls.length;
-  act(() => result.current.espn.refresh());
+  act(() => result.current.scores.refresh());
   await waitFor(() =>
     expect(vi.mocked(source.load).mock.calls.length).toBeGreaterThan(calls),
   );
@@ -283,30 +287,27 @@ it("reloads odds when the odds are refreshed", async () => {
 });
 
 // Renders the providers plus a single game's odds context.
-const renderGameOdds = (loadHistory: OddsHistorySource["load"]) => {
+const renderGameOdds = (
+  loadHistory: OddsHistorySource["load"],
+  historyOpen = false,
+) => {
   const live = game("Live", "live");
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <AppDataProvider>
-      <EspnDataProvider
-        source={{
-          load: vi.fn().mockResolvedValue([live]),
-          loadCalendar: vi.fn().mockResolvedValue(calendar),
-        }}
-        leagueSource={{
-          loadStandings: vi.fn().mockResolvedValue([]),
-          loadRankings: vi.fn().mockResolvedValue([]),
-        }}
+      <PolymarketDataProvider
+        games={[live]}
+        source={{ load: vi.fn().mockResolvedValue({ Live: oddsQuote }) }}
+        historySource={{ load: loadHistory }}
       >
-        <PolymarketDataProvider
-          source={{ load: vi.fn().mockResolvedValue({ Live: oddsQuote }) }}
-          historySource={{ load: loadHistory }}
-        >
-          <PolymarketGameProvider game={live}>
-            {children}
-          </PolymarketGameProvider>
-        </PolymarketDataProvider>
-      </EspnDataProvider>
+        <PolymarketGameProvider game={live}>
+          {historyOpen ? (
+            <OddsHistoryProvider>{children}</OddsHistoryProvider>
+          ) : (
+            children
+          )}
+        </PolymarketGameProvider>
+      </PolymarketDataProvider>
     </AppDataProvider>
   );
 
@@ -327,13 +328,39 @@ it("does not load odds history until it is opened", async () => {
 
 it("loads odds history for the game's tokens when opened", async () => {
   const loadHistory = vi.fn().mockResolvedValue(history);
-  const result = renderGameOdds(loadHistory);
+  const result = renderGameOdds(loadHistory, true);
   await waitFor(() => expect(result.current.quote).toBe(oddsQuote));
-  act(() => result.current.setHistoryOpen(true));
   await waitFor(() =>
     expect(loadHistory).toHaveBeenCalledWith(
       { awayTokenId: "222", homeTokenId: "111", range: "1h" },
       expect.any(AbortSignal),
     ),
   );
+});
+
+// Team selection and panel view
+
+it("shows the schedule page when a team is selected", () => {
+  const { result } = renderContexts();
+  act(() =>
+    result.current.app.selectTeam({ id: "1", name: "Georgia", record: "7-1" }),
+  );
+  expect(result.current.app.selectedTeam?.id).toBe("1");
+  expect(result.current.app.panelView).toBe("schedule");
+});
+
+it("clears the selected team when the division changes", () => {
+  const { result } = renderContexts();
+  act(() =>
+    result.current.app.selectTeam({ id: "1", name: "Georgia", record: "7-1" }),
+  );
+  act(() => result.current.app.setDivision("fcs"));
+  expect(result.current.app.selectedTeam).toBeUndefined();
+});
+
+it("falls back to standings when the NFL is on the rankings page", () => {
+  const { result } = renderContexts();
+  act(() => result.current.app.setPanelView("rankings"));
+  act(() => result.current.app.setDivision("nfl"));
+  expect(result.current.app.panelView).toBe("standings");
 });

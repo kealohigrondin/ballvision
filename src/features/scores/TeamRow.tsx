@@ -1,0 +1,136 @@
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import { useMemo } from "react";
+
+import { copy } from "@/copy";
+import { TeamLogo } from "@/shared/components/TeamLogo";
+import { TeamScheduleLink } from "@/shared/components/TeamScheduleLink";
+import type { Team } from "@/shared/types";
+
+type TeamRowProps = {
+  team: Team;
+  possession: boolean;
+  isScheduled: boolean;
+  periods: readonly number[];
+  isWinner: boolean;
+  isFinal: boolean;
+};
+
+export const TeamRow = ({
+  team,
+  possession,
+  isScheduled,
+  periods,
+  isWinner,
+  isFinal,
+}: TeamRowProps) => {
+  const scoreStyles = useMemo(() => {
+    return {
+      fontVariantNumeric: "tabular-nums",
+      fontWeight: "600",
+      fontSize: "1.25rem",
+      color: isFinal && !isWinner ? "text.secondary" : "text.primary",
+      borderRight: isFinal && isWinner ? "4px solid" : "none",
+      borderColor: isFinal && isWinner ? "success.main" : "none",
+      paddingRight: isFinal && isWinner ? "2px" : "6px",
+    };
+  }, [isFinal, isWinner]);
+
+  const periodCells = periods.map((period) => (
+    <TableCell className="team-period" key={period} align="right">
+      {team.quarters[period] ?? ""}
+    </TableCell>
+  ));
+
+  return (
+    <TableRow className="team-row">
+      <TableCell component="th" scope="row" className="team-identity-cell">
+        <Stack
+          direction="row"
+          className="team-identity"
+          sx={{ alignItems: "center", gap: 1, minWidth: 0, width: "100%" }}
+        >
+          <Box
+            sx={{
+              width: "1ch",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {possession && (
+              <Typography
+                component="span"
+                className="possession"
+                title={copy.gameCard.possession}
+                aria-label={copy.gameCard.possession}
+                sx={{
+                  color: "primary.main",
+                }}
+              >
+                ◆
+              </Typography>
+            )}
+          </Box>
+          <TeamLogo team={team} size={36} />
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              component="div"
+              className="team-name"
+              sx={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontSize: "14px !important",
+              }}
+            >
+              {Boolean(team.rank) && (
+                <Typography
+                  component="span"
+                  className="rank"
+                  sx={{
+                    color: "text.secondary",
+                    mr: 0.5,
+                  }}
+                >
+                  {team.rank}
+                </Typography>
+              )}
+              <TeamScheduleLink team={team} isBold />
+            </Typography>
+            <Typography
+              component="span"
+              className="record"
+              sx={{
+                color: "text.secondary",
+                display: "block",
+                fontSize: "11px",
+              }}
+            >
+              {team.record}
+            </Typography>
+          </Box>
+        </Stack>
+      </TableCell>
+      {isScheduled ? null : (
+        <>
+          {periodCells}
+          <TableCell className="team-total" align="right">
+            <Typography
+              variant="body1"
+              component="span"
+              className="score"
+              sx={scoreStyles}
+            >
+              {team.score}
+            </Typography>
+          </TableCell>
+        </>
+      )}
+    </TableRow>
+  );
+};

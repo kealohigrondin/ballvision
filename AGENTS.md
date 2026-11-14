@@ -28,8 +28,6 @@
 
 ## Data
 
-- Keep ESPN-specific logic in src/data/espn.ts.
-- Keep network and refresh logic out of UI components.
 - Add meaningful tests for behavior changes and bug fixes.
 - for api calls, prefer storing the data in context and access via providers rather than prop drilling
 

@@ -1,8 +1,8 @@
 import { expect, it } from "vitest";
 
-import { copy } from "../src/copy";
-import { parseRankings } from "../src/data/espn";
-import { rankTrend } from "../src/utils/rankTrend";
+import { copy } from "@/copy";
+import { parseRankings } from "@/features/standings/espnStandings";
+import { rankTrend } from "@/features/standings/rankTrend";
 
 const poll = (ranks: { current: number; previous?: number }[]) => ({
   rankings: [

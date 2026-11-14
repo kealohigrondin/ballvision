@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 
-import { parseNflStandings } from "../src/data/espn";
+import { parseNflStandings } from "@/features/standings/espnStandings";
 
 type TeamSpec = { id: string; name: string; seed: number; winPercent: number };
 

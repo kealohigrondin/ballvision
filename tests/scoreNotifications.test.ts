@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import type { Game } from "../src/data/types";
 import {
   baselineScores,
   detectScoreChanges,
   notificationSoundKind,
-} from "../src/utils/scoreNotifications";
+} from "@/features/notifications/scoreNotifications";
+import type { Game } from "@/shared/types";
+
 import { oddsGame } from "./helpers/oddsFixture";
 
 const game = (

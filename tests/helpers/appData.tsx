@@ -11,6 +11,10 @@ import {
   polymarketDataContext,
 } from "../../src/context/polymarketDataContext";
 import { scoreNotificationContext } from "../../src/context/scoreNotificationContext";
+import {
+  type SleeperData,
+  sleeperDataContext,
+} from "../../src/context/sleeperDataContext";
 import type { OddsSource, ScoreboardSource } from "../../src/data/types";
 
 export const emptyOddsSource: OddsSource = {
@@ -38,6 +42,8 @@ export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   setNflStandingsView: vi.fn(),
   standingsConferenceId: "",
   setStandingsConferenceId: vi.fn(),
+  sleeperUsername: "",
+  setSleeperUsername: vi.fn(),
   favoriteIds: [],
   toggleFavorite: vi.fn(),
   ...overrides,
@@ -90,11 +96,22 @@ export const createPolymarketData = (
   ...overrides,
 });
 
+export const createSleeperData = (
+  overrides: Partial<SleeperData> = {},
+): SleeperData => ({
+  leagues: [],
+  loading: false,
+  error: false,
+  refresh: vi.fn(),
+  ...overrides,
+});
+
 type AppDataTestProviderProps = {
   children: ReactNode;
   value: AppData;
   espn?: Partial<EspnData>;
   polymarket?: Partial<PolymarketData>;
+  sleeper?: Partial<SleeperData>;
 };
 
 export const AppDataTestProvider = ({
@@ -102,27 +119,30 @@ export const AppDataTestProvider = ({
   value,
   espn,
   polymarket,
+  sleeper,
 }: AppDataTestProviderProps) => (
   <appDataContext.Provider value={value}>
     <espnDataContext.Provider value={createEspnData(espn)}>
       <polymarketDataContext.Provider value={createPolymarketData(polymarket)}>
-        <scoreNotificationContext.Provider
-          value={{
-            current: undefined,
-            pending: 0,
-            dismiss: vi.fn(),
-            dismissAll: vi.fn(),
-            preview: vi.fn(),
-            previewAvailable: false,
-            soundArmed: false,
-            muted: false,
-            audioUnavailable: false,
-            enableSound: vi.fn().mockResolvedValue(undefined),
-            toggleMute: vi.fn(),
-          }}
-        >
-          {children}
-        </scoreNotificationContext.Provider>
+        <sleeperDataContext.Provider value={createSleeperData(sleeper)}>
+          <scoreNotificationContext.Provider
+            value={{
+              current: undefined,
+              pending: 0,
+              dismiss: vi.fn(),
+              dismissAll: vi.fn(),
+              preview: vi.fn(),
+              previewAvailable: false,
+              soundArmed: false,
+              muted: false,
+              audioUnavailable: false,
+              enableSound: vi.fn().mockResolvedValue(undefined),
+              toggleMute: vi.fn(),
+            }}
+          >
+            {children}
+          </scoreNotificationContext.Provider>
+        </sleeperDataContext.Provider>
       </polymarketDataContext.Provider>
     </espnDataContext.Provider>
   </appDataContext.Provider>

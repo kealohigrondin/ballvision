@@ -7,8 +7,11 @@ import { ChevronDown, MapPin } from "lucide-react";
 import { useMemo } from "react";
 
 import { usePolymarketGame } from "../context/polymarketGameContext";
+import { useSleeperData } from "../context/sleeperDataContext";
 import { copy } from "../copy";
 import type { Game } from "../data/types";
+import { fantasyLeaguesForGame } from "../utils/fantasyPlayers";
+import { FantasyPlayerList } from "./FantasyPlayerList";
 import { GameOddsHistory } from "./GameOddsHistory";
 import { PeriodScores } from "./PeriodScores";
 
@@ -23,6 +26,12 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
     setHistoryOpen: setExpanded,
     error: oddsError,
   } = usePolymarketGame();
+  const { leagues } = useSleeperData();
+
+  const fantasyLeagues = useMemo(
+    () => fantasyLeaguesForGame(leagues, game),
+    [leagues, game],
+  );
 
   const oddsMessage = useMemo(() => {
     // A failed Polymarket request on a game that should have a market usually
@@ -41,7 +50,8 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
     game.home.quarters.length ||
     game.away.quarters.length ||
     game.venue ||
-    hasTimeouts,
+    hasTimeouts ||
+    fantasyLeagues.length > 0,
   );
 
   return (
@@ -51,6 +61,9 @@ export const GameDetails = ({ game }: GameDetailsProps) => {
       </AccordionSummary>
       <AccordionDetails>
         <Stack spacing={1}>
+          {fantasyLeagues.length > 0 && (
+            <FantasyPlayerList leagues={fantasyLeagues} id={game.id} />
+          )}
           {!isFinal && expanded && odds !== undefined && <GameOddsHistory />}
           {!isFinal && expanded && !odds && (
             <Typography variant="body2" color="text.secondary">

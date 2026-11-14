@@ -36,6 +36,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     first.result.current.setPaused(true);
     first.result.current.setNflStandingsView("conference");
     first.result.current.setStandingsConferenceId("acc");
+    first.result.current.setSleeperUsername("AaronY");
   });
   expect(JSON.parse(localStorage.getItem(APP_PREFERENCES_KEY)!)).toEqual({
     version: 1,
@@ -47,6 +48,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     paused: true,
     nflStandingsView: "conference",
     standingsConferenceId: "acc",
+    sleeperUsername: "AaronY",
   });
   first.unmount();
   const next = renderHook(() => useAppDataState());
@@ -59,6 +61,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     paused: true,
     nflStandingsView: "conference",
     standingsConferenceId: "acc",
+    sleeperUsername: "AaronY",
   });
 });
 it("validates restored fields independently, including malformed weeks", () => {
@@ -131,4 +134,13 @@ it("falls back to the first conference for a malformed saved conference", () => 
       ),
   };
   expect(loadAppPreferences(storage).standingsConferenceId).toBe("");
+});
+
+it("falls back to no Sleeper username when the stored one is not text", () => {
+  const storage = {
+    getItem: vi
+      .fn()
+      .mockReturnValue(JSON.stringify({ version: 1, sleeperUsername: 42 })),
+  };
+  expect(loadAppPreferences(storage).sleeperUsername).toBe("");
 });

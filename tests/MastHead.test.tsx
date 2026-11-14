@@ -30,6 +30,7 @@ it("renders every masthead button as an icon button the size of the pause button
     copy.sync.refresh,
     copy.scoreNotification.enableSound,
     copy.scoreNotification.test,
+    copy.fantasy.account,
     copy.theme.toLight,
   ]);
   for (const button of buttons) {
@@ -128,6 +129,7 @@ it("labels each control in the phone settings menu with its tooltip text", () =>
       copy.sync.refresh,
       copy.scoreNotification.enableSound,
       copy.scoreNotification.test,
+      copy.fantasy.account,
       copy.theme.toLight,
     ]);
   } finally {

@@ -12,4 +12,6 @@ export type AppPreferences = {
   nflStandingsView: NflStandingsView;
   /** College conference shown in standings; `""` shows the first one. */
   standingsConferenceId: string;
+  /** Sleeper username whose fantasy players show in game details. */
+  sleeperUsername: string;
 };

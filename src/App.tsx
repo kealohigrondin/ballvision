@@ -1,5 +1,6 @@
 import { Dashboard } from "./components/Dashboard";
 import type {
+  FantasySource,
   LeagueSource,
   OddsHistorySource,
   OddsSource,
@@ -10,6 +11,7 @@ import { AppDataProvider } from "./providers/AppDataProvider";
 import { EspnDataProvider } from "./providers/EspnDataProvider";
 import { PolymarketDataProvider } from "./providers/PolymarketDataProvider";
 import { ScoreNotificationProvider } from "./providers/ScoreNotificationProvider";
+import { SleeperDataProvider } from "./providers/SleeperDataProvider";
 
 type AppProps = {
   source?: ScoreboardSource;
@@ -17,6 +19,7 @@ type AppProps = {
   scheduleSource?: TeamScheduleSource;
   oddsSource?: OddsSource;
   oddsHistorySource?: OddsHistorySource;
+  fantasySource?: FantasySource;
 };
 
 const App = ({
@@ -25,6 +28,7 @@ const App = ({
   scheduleSource,
   oddsSource,
   oddsHistorySource,
+  fantasySource,
 }: AppProps) => (
   <AppDataProvider>
     <EspnDataProvider
@@ -36,9 +40,11 @@ const App = ({
         source={oddsSource}
         historySource={oddsHistorySource}
       >
-        <ScoreNotificationProvider>
-          <Dashboard />
-        </ScoreNotificationProvider>
+        <SleeperDataProvider source={fantasySource}>
+          <ScoreNotificationProvider>
+            <Dashboard />
+          </ScoreNotificationProvider>
+        </SleeperDataProvider>
       </PolymarketDataProvider>
     </EspnDataProvider>
   </AppDataProvider>

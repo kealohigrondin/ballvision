@@ -1,21 +1,37 @@
 {
   "leagues": [
     {
-      "season": { "year": 2026, "type": 2 },
+      "season": {
+        "year": 2026,
+        "type": 2
+      },
       "calendar": [
         {
           "label": "Regular Season",
           "value": "2",
           "entries": [
-            { "label": "Week 10", "value": "10", "detail": "Oct 31-Nov 6" },
-            { "label": "Week 11", "value": "11", "detail": "Nov 7-13" }
+            {
+              "label": "Week 10",
+              "value": "10",
+              "detail": "Oct 31-Nov 6"
+            },
+            {
+              "label": "Week 11",
+              "value": "11",
+              "detail": "Nov 7-13"
+            }
           ]
         }
       ]
     }
   ],
-  "season": { "year": 2026, "type": 2 },
-  "week": { "number": 11 },
+  "season": {
+    "year": 2026,
+    "type": 2
+  },
+  "week": {
+    "number": 11
+  },
   "events": [
     {
       "id": "1001",
@@ -23,16 +39,27 @@
       "status": {
         "displayClock": "4:12",
         "period": 3,
-        "type": { "state": "in", "detail": "4:12 - 3rd Quarter" }
+        "type": {
+          "state": "in",
+          "detail": "4:12 - 3rd Quarter"
+        }
       },
       "competitions": [
         {
-          "venue": { "fullName": "Harbor Field" },
-          "broadcasts": [{ "names": ["ABC"] }],
+          "venue": {
+            "fullName": "Harbor Field"
+          },
+          "broadcasts": [
+            {
+              "names": ["ABC"]
+            }
+          ],
           "situation": {
             "possession": "11",
             "downDistanceText": "2nd & 7 at RIV 34",
-            "lastPlay": { "text": "Ridge Hawks rush for 6 yards." },
+            "lastPlay": {
+              "text": "Ridge Hawks rush for 6 yards."
+            },
             "homeTimeouts": 2,
             "awayTimeouts": 3
           },
@@ -41,9 +68,26 @@
               "id": "11",
               "homeAway": "home",
               "score": "24",
-              "linescores": [{ "value": 7 }, { "value": 10 }, { "value": 7 }],
-              "records": [{ "type": "total", "summary": "8-1" }],
-              "curatedRank": { "current": 6 },
+              "linescores": [
+                {
+                  "value": 7
+                },
+                {
+                  "value": 10
+                },
+                {
+                  "value": 7
+                }
+              ],
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "8-1"
+                }
+              ],
+              "curatedRank": {
+                "current": 6
+              },
               "team": {
                 "shortDisplayName": "Ridge Hawks",
                 "location": "Ridge",
@@ -55,14 +99,100 @@
               "id": "12",
               "homeAway": "away",
               "score": "17",
-              "linescores": [{ "value": 3 }, { "value": 14 }, { "value": 0 }],
-              "records": [{ "type": "total", "summary": "6-3" }],
+              "linescores": [
+                {
+                  "value": 3
+                },
+                {
+                  "value": 14
+                },
+                {
+                  "value": 0
+                }
+              ],
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "6-3"
+                }
+              ],
               "team": {
                 "shortDisplayName": "River Otters",
                 "location": "River",
                 "abbreviation": "RIV",
                 "color": "b45309"
               }
+            }
+          ],
+          "leaders": [
+            {
+              "name": "passingYards",
+              "leaders": [
+                {
+                  "displayValue": "14/21, 188 YDS, 2 TD",
+                  "team": {
+                    "id": "11"
+                  },
+                  "athlete": {
+                    "id": "9001",
+                    "shortName": "R. Hawk",
+                    "jersey": "7",
+                    "position": {
+                      "abbreviation": "QB"
+                    },
+                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9001.png",
+                    "team": {
+                      "id": "11"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "rushingYards",
+              "leaders": [
+                {
+                  "displayValue": "12 CAR, 64 YDS",
+                  "team": {
+                    "id": "12"
+                  },
+                  "athlete": {
+                    "id": "9002",
+                    "shortName": "O. Rivers",
+                    "jersey": "22",
+                    "position": {
+                      "abbreviation": "RB"
+                    },
+                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9002.png",
+                    "team": {
+                      "id": "12"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "receivingYards",
+              "leaders": [
+                {
+                  "displayValue": "5 REC, 71 YDS, 1 TD",
+                  "team": {
+                    "id": "11"
+                  },
+                  "athlete": {
+                    "id": "9003",
+                    "shortName": "T. Ridge",
+                    "jersey": "1",
+                    "position": {
+                      "abbreviation": "WR"
+                    },
+                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9003.png",
+                    "team": {
+                      "id": "11"
+                    }
+                  }
+                }
+              ]
             }
           ]
         }
@@ -80,13 +210,24 @@
       },
       "competitions": [
         {
-          "venue": { "fullName": "Summit Stadium" },
-          "broadcasts": [{ "names": ["ESPN"] }],
+          "venue": {
+            "fullName": "Summit Stadium"
+          },
+          "broadcasts": [
+            {
+              "names": ["ESPN"]
+            }
+          ],
           "competitors": [
             {
               "id": "21",
               "homeAway": "home",
-              "records": [{ "type": "total", "summary": "7-2" }],
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "7-2"
+                }
+              ],
               "team": {
                 "shortDisplayName": "Summit Goats",
                 "location": "Summit",
@@ -97,13 +238,43 @@
             {
               "id": "22",
               "homeAway": "away",
-              "records": [{ "type": "total", "summary": "5-4" }],
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "5-4"
+                }
+              ],
               "team": {
                 "shortDisplayName": "Prairie Bison",
                 "location": "Prairie",
                 "abbreviation": "PRA",
                 "color": "7c3aed"
               }
+            }
+          ],
+          "leaders": [
+            {
+              "name": "passingYards",
+              "leaders": [
+                {
+                  "displayValue": "2263 YDS, 18 TD, 5 INT",
+                  "team": {
+                    "id": "21"
+                  },
+                  "athlete": {
+                    "id": "9004",
+                    "shortName": "S. Peak",
+                    "jersey": "12",
+                    "position": {
+                      "abbreviation": "QB"
+                    },
+                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9004.png",
+                    "team": {
+                      "id": "21"
+                    }
+                  }
+                }
+              ]
             }
           ]
         }
@@ -114,24 +285,47 @@
       "date": "2026-11-07T17:00Z",
       "status": {
         "period": 4,
-        "type": { "state": "post", "completed": true, "detail": "Final" }
+        "type": {
+          "state": "post",
+          "completed": true,
+          "detail": "Final"
+        }
       },
       "competitions": [
         {
-          "venue": { "fullName": "Lakeside Bowl" },
-          "broadcasts": [{ "names": ["FOX"] }],
+          "venue": {
+            "fullName": "Lakeside Bowl"
+          },
+          "broadcasts": [
+            {
+              "names": ["FOX"]
+            }
+          ],
           "competitors": [
             {
               "id": "31",
               "homeAway": "home",
               "score": "31",
               "linescores": [
-                { "value": 7 },
-                { "value": 7 },
-                { "value": 10 },
-                { "value": 7 }
+                {
+                  "value": 7
+                },
+                {
+                  "value": 7
+                },
+                {
+                  "value": 10
+                },
+                {
+                  "value": 7
+                }
               ],
-              "records": [{ "type": "total", "summary": "4-5" }],
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "4-5"
+                }
+              ],
               "team": {
                 "shortDisplayName": "Lake Herons",
                 "location": "Lake",
@@ -144,18 +338,102 @@
               "homeAway": "away",
               "score": "28",
               "linescores": [
-                { "value": 0 },
-                { "value": 14 },
-                { "value": 7 },
-                { "value": 7 }
+                {
+                  "value": 0
+                },
+                {
+                  "value": 14
+                },
+                {
+                  "value": 7
+                },
+                {
+                  "value": 7
+                }
               ],
-              "records": [{ "type": "total", "summary": "3-6" }],
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "3-6"
+                }
+              ],
               "team": {
                 "shortDisplayName": "Canyon Foxes",
                 "location": "Canyon",
                 "abbreviation": "CAN",
                 "color": "be123c"
               }
+            }
+          ],
+          "leaders": [
+            {
+              "name": "passingYards",
+              "leaders": [
+                {
+                  "displayValue": "22/30, 241 YDS, 1 TD",
+                  "team": {
+                    "id": "31"
+                  },
+                  "athlete": {
+                    "id": "9005",
+                    "shortName": "L. Shore",
+                    "jersey": "9",
+                    "position": {
+                      "abbreviation": "QB"
+                    },
+                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9005.png",
+                    "team": {
+                      "id": "31"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "rushingYards",
+              "leaders": [
+                {
+                  "displayValue": "18 CAR, 97 YDS, 1 TD",
+                  "team": {
+                    "id": "32"
+                  },
+                  "athlete": {
+                    "id": "9006",
+                    "shortName": "C. Mesa",
+                    "jersey": "4",
+                    "position": {
+                      "abbreviation": "RB"
+                    },
+                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9006.png",
+                    "team": {
+                      "id": "32"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "receivingYards",
+              "leaders": [
+                {
+                  "displayValue": "7 REC, 102 YDS",
+                  "team": {
+                    "id": "31"
+                  },
+                  "athlete": {
+                    "id": "9007",
+                    "shortName": "H. Pond",
+                    "jersey": "81",
+                    "position": {
+                      "abbreviation": "TE"
+                    },
+                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9007.png",
+                    "team": {
+                      "id": "31"
+                    }
+                  }
+                }
+              ]
             }
           ]
         }

@@ -9,6 +9,7 @@ import { type ReactNode, useState } from "react";
 import { copy } from "@/copy";
 import type { Game } from "@/shared/types";
 
+import { GameLeaders } from "./GameLeaders";
 import { PeriodScores } from "./PeriodScores";
 
 type GameDetailsProps = {
@@ -23,7 +24,9 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
   const hasTimeouts =
     game.state === "live" &&
     (game.homeTimeouts !== undefined || game.awayTimeouts !== undefined);
+  const leaders = game.leaders ?? [];
   const hasDetails = Boolean(
+    leaders.length > 0 ||
     game.lastPlay ||
     game.home.quarters.length ||
     game.away.quarters.length ||
@@ -33,12 +36,22 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
 
   return (
     <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
-      <AccordionSummary expandIcon={<ChevronDown />} sx={{ px: 2, m: 0 }}>
+      <AccordionSummary
+        expandIcon={<ChevronDown />}
+        sx={{
+          px: 2,
+          m: 0,
+          minHeight: "36px",
+          // MUI adds a larger margin while expanded, so clear both states.
+          "& .MuiAccordionSummary-content, & .MuiAccordionSummary-content.Mui-expanded":
+            { my: 0 },
+          "&.Mui-expanded": { minHeight: "36px" },
+        }}
+      >
         <span>{copy.gameDetails.toggle}</span>
       </AccordionSummary>
       <AccordionDetails>
         <Stack spacing={1}>
-          {!isFinal && expanded && liveDetails}
           {game.lastPlay && (
             <Typography component="div">
               <Typography
@@ -50,6 +63,10 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
               {game.lastPlay}
             </Typography>
           )}
+          {expanded && leaders.length > 0 && (
+            <GameLeaders gameId={game.id} leaders={leaders} />
+          )}
+          {!isFinal && expanded && liveDetails}
           <PeriodScores home={game.home} away={game.away} />
           {hasTimeouts && (
             <Typography>

@@ -400,3 +400,50 @@ test.describe("@screenshots light league panel", () => {
     await screenshotLeaguePanel(page, "team-schedule-cfb-light");
   });
 });
+
+test.describe("@screenshots game leaders", () => {
+  test.use({ viewport: viewports.mobile });
+
+  // Opens the details of the card at `index`: 0 is live, 2 is final.
+  const openDetails = async (page: Page, index: number) => {
+    await page
+      .getByRole("button", { name: copy.gameDetails.toggle })
+      .nth(index)
+      .click();
+  };
+
+  for (const theme of themes) {
+    test(`live game, ${theme}`, async ({ page }) => {
+      await openDashboard(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await openDetails(page, 0);
+      const leaders = page.locator("#game-leaders-1001");
+      await expect(leaders.locator("img")).toHaveCount(3);
+      await leaders.screenshot({
+        path: `screenshots/game-leaders-live-${theme}.png`,
+      });
+    });
+  }
+
+  test("final game", async ({ page }) => {
+    await openDashboard(page);
+    await openDetails(page, 2);
+    const leaders = page.locator("#game-leaders-1003");
+    await expect(leaders.locator("img")).toHaveCount(3);
+    await leaders.screenshot({
+      path: "screenshots/game-leaders-final-dark.png",
+    });
+  });
+
+  test("expanded live game card", async ({ page }) => {
+    await openDashboard(page);
+    await openDetails(page, 0);
+    await expect(page.locator("#game-leaders-1001 img")).toHaveCount(3);
+    await page
+      .locator("article")
+      .first()
+      .screenshot({ path: "screenshots/game-details-leaders-dark.png" });
+  });
+});

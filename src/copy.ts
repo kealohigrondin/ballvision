@@ -40,6 +40,14 @@ export const copy = {
     lastPlay: "Last play",
     unavailable: "Additional details are not available yet.",
   },
+  gameLeaders: {
+    title: "Game leaders",
+    categories: { passing: "PASS", rushing: "RUSH", receiving: "REC" },
+    detail: (position: string, jersey: string, team: string) =>
+      [[position, jersey && `#${jersey}`].filter(Boolean).join(" "), team]
+        .filter(Boolean)
+        .join(" - "),
+  },
   odds: {
     loading: "Odds…",
     missing: "Odds —",

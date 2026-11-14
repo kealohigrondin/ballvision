@@ -110,3 +110,25 @@ test("finds an NFL team by typing in the schedule picker", async ({ page }) => {
     page.getByRole("heading", { name: copy.schedule.table("Seahawks") }),
   ).toBeVisible();
 });
+
+test("shows a live game's leaders in its game details", async ({ page }) => {
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: copy.gameDetails.toggle })
+    .first()
+    .click();
+
+  await expect(page.locator("#game-leader-1001-passing")).toContainText(
+    "14/21, 188 YDS, 2 TD",
+  );
+});
+
+test("leaves leaders out of an upcoming game's details", async ({ page }) => {
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: copy.gameDetails.toggle })
+    .nth(1)
+    .click();
+
+  await expect(page.locator("#game-leaders-1002")).toHaveCount(0);
+});

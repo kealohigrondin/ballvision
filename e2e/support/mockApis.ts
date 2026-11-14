@@ -1,9 +1,15 @@
+import { fileURLToPath } from "node:url";
+
 import type { Page, Route } from "@playwright/test";
 
 import nflConferences from "../fixtures/nfl-standings-conferences.json" with { type: "json" };
 import nflDivisions from "../fixtures/nfl-standings-divisions.json" with { type: "json" };
 import rankings from "../fixtures/rankings.json" with { type: "json" };
 import scoreboard from "../fixtures/scoreboard.json" with { type: "json" };
+
+const headshot = fileURLToPath(
+  new URL("../fixtures/headshot.png", import.meta.url),
+);
 
 const json = (route: Route, body: unknown) =>
   route.fulfill({ status: 200, contentType: "application/json", json: body });
@@ -28,6 +34,10 @@ export const mockApis = async (page: Page): Promise<void> => {
   );
   await page.route(/^https:\/\/(gamma-api|clob)\.polymarket\.com\//, (route) =>
     json(route, []),
+  );
+  // Player headshots, resized by ESPN's image service.
+  await page.route(/^https:\/\/a\.espncdn\.com\/combiner\/i\?/, (route) =>
+    route.fulfill({ path: headshot, contentType: "image/png" }),
   );
 };
 

@@ -14,6 +14,20 @@ export interface Team {
   conferenceId?: string;
   quarters: string[];
 }
+export type LeaderCategory = "passing" | "rushing" | "receiving";
+/** A game's top player in one stat category, with their stats in this game. */
+export interface GameLeader {
+  category: LeaderCategory;
+  id: string;
+  name: string;
+  position: string;
+  jersey: string;
+  /** The player's team abbreviation. */
+  team: string;
+  headshot?: string;
+  /** ESPN's stat summary, e.g. "8/9, 60 YDS". */
+  stats: string;
+}
 export interface Game {
   id: string;
   home: Team;
@@ -31,6 +45,8 @@ export interface Game {
   redZone: boolean;
   homeTimeouts?: number;
   awayTimeouts?: number;
+  /** Passing, rushing and receiving leaders, for games that have started. */
+  leaders?: GameLeader[];
 }
 export interface Week {
   id: string;

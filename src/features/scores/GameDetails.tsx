@@ -9,6 +9,7 @@ import { type ReactNode, useState } from "react";
 import { copy } from "@/copy";
 import type { Game } from "@/shared/types";
 
+import { GameLeaders } from "./GameLeaders";
 import { PeriodScores } from "./PeriodScores";
 
 type GameDetailsProps = {
@@ -23,7 +24,9 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
   const hasTimeouts =
     game.state === "live" &&
     (game.homeTimeouts !== undefined || game.awayTimeouts !== undefined);
+  const leaders = game.leaders ?? [];
   const hasDetails = Boolean(
+    leaders.length > 0 ||
     game.lastPlay ||
     game.home.quarters.length ||
     game.away.quarters.length ||
@@ -39,6 +42,9 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
       <AccordionDetails>
         <Stack spacing={1}>
           {!isFinal && expanded && liveDetails}
+          {expanded && leaders.length > 0 && (
+            <GameLeaders gameId={game.id} leaders={leaders} />
+          )}
           {game.lastPlay && (
             <Typography component="div">
               <Typography

@@ -1,9 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 
-import { TeamLogo } from "../src/components/TeamLogo";
-import { ColorModeContext } from "../src/context/ColorModeContext";
-import { parseScoreboard, parseStandings } from "../src/data/espn";
+import { parseStandings } from "@/features/standings/espnStandings";
+import { parseScoreboard } from "@/shared/api/espn";
+import { ColorModeContext } from "@/shared/ColorModeContext";
+import { TeamLogo } from "@/shared/components/TeamLogo";
 
 afterEach(cleanup);
 

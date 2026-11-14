@@ -1,13 +1,13 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { useAppDataState } from "../src/hooks/useAppDataState";
 import {
   APP_PREFERENCES_KEY,
   defaultAppPreferences,
   loadAppPreferences,
   saveAppPreferences,
-} from "../src/utils/appPreferences";
+} from "@/shared/appData/appPreferences";
+import { useAppDataState } from "@/shared/appData/useAppDataState";
 
 const week = {
   id: "2026-2-10",

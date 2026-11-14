@@ -8,20 +8,21 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import App from "../src/App";
-import { LeagueNavRail } from "../src/components/LeagueNavRail";
-import { LeaguePanel } from "../src/components/LeaguePanel";
-import type { AppData } from "../src/context/appDataContext";
-import { copy } from "../src/copy";
-import { parseRankings, parseStandings } from "../src/data/espn";
-import type {
-  LeagueSource,
-  LeagueTable,
-  ScoreboardSource,
-  TeamScheduleSource,
-} from "../src/data/types";
-import { AppTheme } from "../src/providers/AppTheme";
-import { scheduleGameStatus } from "../src/utils/teamSchedule";
+import App from "@/app/App";
+import { AppTheme } from "@/app/AppTheme";
+import { LeagueNavRail } from "@/app/LeagueNavRail";
+import { LeaguePanel } from "@/app/LeaguePanel";
+import { copy } from "@/copy";
+import { scheduleGameStatus } from "@/features/schedule/scheduleStatus";
+import type { TeamScheduleSource } from "@/features/schedule/types";
+import type { ScoreboardSource } from "@/features/scores/types";
+import {
+  parseRankings,
+  parseStandings,
+} from "@/features/standings/espnStandings";
+import type { LeagueSource, LeagueTable } from "@/features/standings/types";
+import type { AppData } from "@/shared/appData/appDataContext";
+
 import { emptyOddsSource } from "./helpers/appData";
 import { LeagueTestProvider } from "./helpers/LeagueTestProvider";
 import { oddsGame } from "./helpers/oddsFixture";

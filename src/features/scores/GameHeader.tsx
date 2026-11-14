@@ -55,6 +55,11 @@ export const GameHeader = ({ game }: GameHeaderProps) => {
         px: 2,
         pt: 7,
         pb: 2,
+        // Square corners: the dialog clips the top, and the bottom meets the
+        // body. The divider sits on the header so it never runs past a curve.
+        borderRadius: 0,
+        borderBottom: 1,
+        borderColor: "divider",
         display: "grid",
         alignItems: "center",
         columnGap: { xs: 1, sm: 2 },

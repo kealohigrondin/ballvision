@@ -28,7 +28,8 @@ type ResponsiveDialogProps = {
   title: string;
   /**
    * Replaces the visible heading and spans the dialog's full width; it sets
-   * its own padding and leaves room for the close button at the top right.
+   * its own padding and bottom border, and leaves room for the close button
+   * at the top right. The dialog's rounded corners clip its top.
    * The title still names the dialog.
    */
   header?: ReactNode;
@@ -64,7 +65,15 @@ export const ResponsiveDialog = ({
       maxWidth="sm"
       aria-labelledby={`${id}-title`}
       transitionDuration={reduceMotion ? 0 : undefined}
-      slotProps={{ paper: { id } }}
+      slotProps={{
+        paper: {
+          id,
+          // Match the app's card radius; full-screen dialogs stay square.
+          sx: compact
+            ? {}
+            : { borderRadius: "var(--mui-app-paperBorderRadius)" },
+        },
+      }}
     >
       <DialogTitle id={`${id}-title`} sx={header ? visuallyHidden : { pr: 8 }}>
         {title}
@@ -86,7 +95,8 @@ export const ResponsiveDialog = ({
         <X size={20} />
       </IconButton>
       {header}
-      <DialogContent dividers>{children}</DialogContent>
+      {/* A custom header draws its own bottom border. */}
+      <DialogContent dividers={!header}>{children}</DialogContent>
     </Dialog>
   );
 };

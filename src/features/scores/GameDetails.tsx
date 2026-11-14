@@ -38,12 +38,13 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
     <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
       <AccordionSummary
         expandIcon={<ChevronDown />}
-
         sx={{
           px: 2,
           m: 0,
           minHeight: "36px",
-          "&.MuiAccordionSummary-content": { my: 0 },
+          // MUI adds a larger margin while expanded, so clear both states.
+          "& .MuiAccordionSummary-content, & .MuiAccordionSummary-content.Mui-expanded":
+            { my: 0 },
           "&.Mui-expanded": { minHeight: "36px" },
         }}
       >

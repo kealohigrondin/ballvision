@@ -1,6 +1,4 @@
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
 import { TeamLogo } from "@/shared/components/TeamLogo";
@@ -11,23 +9,11 @@ type GameHeaderTeamProps = {
   id: string;
 };
 
-// One team in a game header: its logo on a round backdrop, with its rank,
-// name and record underneath.
+// One team in a game header: its logo with its rank, name and record
+// underneath.
 export const GameHeaderTeam = ({ team, id }: GameHeaderTeamProps) => (
   <Stack id={id} spacing={0.5} sx={{ alignItems: "center", minWidth: 0 }}>
-    <Box
-      sx={{
-        display: "grid",
-        placeItems: "center",
-        width: 64,
-        height: 64,
-        borderRadius: "50%",
-        // A neutral backdrop keeps the logo visible on its own team color.
-        bgcolor: (theme) => alpha(theme.palette.background.paper, 0.7),
-      }}
-    >
-      <TeamLogo team={team} size={44} />
-    </Box>
+    <TeamLogo team={team} size={56} />
     <Typography
       component="span"
       sx={{ fontWeight: 600, textAlign: "center", lineHeight: 1.2 }}

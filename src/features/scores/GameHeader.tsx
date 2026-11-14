@@ -13,7 +13,7 @@ import { PeriodScores } from "./PeriodScores";
 
 type GameHeaderProps = { game: Game };
 
-// A scoreboard header for one game on a gradient of the two team colors:
+// A scoreboard header for one game, banded in the two team colors:
 // both teams with their scores, the game clock, the score by period and the
 // broadcast network. Wraps the period
 // table onto its own row in narrow windows.
@@ -48,10 +48,10 @@ export const GameHeader = ({ game }: GameHeaderProps) => {
     <Box
       id={`game-header-${game.id}`}
       sx={{
-        // The away team's color fading into the home team's, softened over
-        // the dialog surface so the text stays readable in both themes.
-        background: (theme) =>
-          `linear-gradient(90deg, ${alpha(game.away.color, 0.55)}, ${alpha(game.home.color, 0.55)}), ${theme.palette.background.paper}`,
+        // Three bands: the away team's color, the dialog's own surface behind
+        // the clock and box score, and the home team's color. The team
+        // colors are translucent so text stays readable in both themes.
+        background: `linear-gradient(90deg, ${alpha(game.away.color, 0.6)} 0%, transparent 35%, transparent 65%, ${alpha(game.home.color, 0.6)} 100%)`,
         px: 2,
         pt: 7,
         pb: 2,

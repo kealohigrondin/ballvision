@@ -36,15 +36,21 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
 
   return (
     <Accordion expanded={expanded} onChange={(_, open) => setExpanded(open)}>
-      <AccordionSummary expandIcon={<ChevronDown />} sx={{ px: 2, m: 0 }}>
+      <AccordionSummary
+        expandIcon={<ChevronDown />}
+
+        sx={{
+          px: 2,
+          m: 0,
+          minHeight: "36px",
+          "&.MuiAccordionSummary-content": { my: 0 },
+          "&.Mui-expanded": { minHeight: "36px" },
+        }}
+      >
         <span>{copy.gameDetails.toggle}</span>
       </AccordionSummary>
       <AccordionDetails>
         <Stack spacing={1}>
-          {!isFinal && expanded && liveDetails}
-          {expanded && leaders.length > 0 && (
-            <GameLeaders gameId={game.id} leaders={leaders} />
-          )}
           {game.lastPlay && (
             <Typography component="div">
               <Typography
@@ -56,6 +62,10 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
               {game.lastPlay}
             </Typography>
           )}
+          {expanded && leaders.length > 0 && (
+            <GameLeaders gameId={game.id} leaders={leaders} />
+          )}
+          {!isFinal && expanded && liveDetails}
           <PeriodScores home={game.home} away={game.away} />
           {hasTimeouts && (
             <Typography>

@@ -1,4 +1,3 @@
-import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -27,7 +26,11 @@ type ResponsiveDialogProps = {
   onClose: () => void;
   /** The dialog's name; shown as its heading unless a header is given. */
   title: string;
-  /** Replaces the visible heading; the title still names the dialog. */
+  /**
+   * Replaces the visible heading and spans the dialog's full width; it sets
+   * its own padding and leaves room for the close button at the top right.
+   * The title still names the dialog.
+   */
   header?: ReactNode;
   closeLabel: string;
   /** Prefix for element ids, unique per dialog on the page. */
@@ -71,11 +74,18 @@ export const ResponsiveDialog = ({
         aria-label={closeLabel}
         title={closeLabel}
         onClick={onClose}
-        sx={{ position: "absolute", top: 8, right: 8, width: 48, height: 48 }}
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          zIndex: 1,
+          width: 48,
+          height: 48,
+        }}
       >
         <X size={20} />
       </IconButton>
-      {header && <Box sx={{ px: 2, pt: 7, pb: 2 }}>{header}</Box>}
+      {header}
       <DialogContent dividers>{children}</DialogContent>
     </Dialog>
   );

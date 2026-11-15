@@ -443,7 +443,7 @@
       }
     },
     "23": {
-      "name": "San Jos\u00e9 State Spartans",
+      "name": "San José State Spartans",
       "abbreviation": "SJSU",
       "light": "src/assets/logos/fbs/23-light.png",
       "dark": "src/assets/logos/fbs/23-dark.png",
@@ -3280,6 +3280,525 @@
         "light": "https://a.espncdn.com/i/teamlogos/ncaa/500/110242.png",
         "dark": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/110242.png",
         "darkVariant": "dark"
+      }
+    }
+  },
+  "soccer": {
+    "83": {
+      "name": "Barcelona",
+      "abbreviation": "BAR",
+      "light": "src/assets/logos/soccer/83-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/83.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "86": {
+      "name": "Real Madrid",
+      "abbreviation": "RMA",
+      "light": "src/assets/logos/soccer/86-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/86.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "102": {
+      "name": "Villarreal",
+      "abbreviation": "VIL",
+      "light": "src/assets/logos/soccer/102-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/102.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "104": {
+      "name": "AS Roma",
+      "abbreviation": "ROMA",
+      "light": "src/assets/logos/soccer/104-light.png",
+      "dark": "src/assets/logos/soccer/104-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/104.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/104.png",
+        "darkVariant": "dark"
+      }
+    },
+    "110": {
+      "name": "Internazionale",
+      "abbreviation": "INT",
+      "light": "src/assets/logos/soccer/110-light.png",
+      "dark": "src/assets/logos/soccer/110-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/110.png",
+        "darkVariant": "dark"
+      }
+    },
+    "114": {
+      "name": "Napoli",
+      "abbreviation": "NAP",
+      "light": "src/assets/logos/soccer/114-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/114.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "124": {
+      "name": "Borussia Dortmund",
+      "abbreviation": "DOR",
+      "light": "src/assets/logos/soccer/124-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/124.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/124.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "132": {
+      "name": "Bayern Munich",
+      "abbreviation": "MUN",
+      "light": "src/assets/logos/soccer/132-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/132.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "134": {
+      "name": "VfB Stuttgart",
+      "abbreviation": "VFB",
+      "light": "src/assets/logos/soccer/134-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/134.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/134.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "142": {
+      "name": "Feyenoord Rotterdam",
+      "abbreviation": "FEY",
+      "light": "src/assets/logos/soccer/142-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/142.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/142.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "148": {
+      "name": "PSV Eindhoven",
+      "abbreviation": "PSV",
+      "light": "src/assets/logos/soccer/148-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/148.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/148.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "160": {
+      "name": "Paris Saint-Germain",
+      "abbreviation": "PSG",
+      "light": "src/assets/logos/soccer/160-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/160.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "166": {
+      "name": "Lille",
+      "abbreviation": "LILL",
+      "light": "src/assets/logos/soccer/166-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/166.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/166.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "175": {
+      "name": "Lens",
+      "abbreviation": "RCL",
+      "light": "src/assets/logos/soccer/175-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/175.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/175.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "244": {
+      "name": "Real Betis",
+      "abbreviation": "BET",
+      "light": "src/assets/logos/soccer/244-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/244.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "306": {
+      "name": "Hull City",
+      "abbreviation": "HUL",
+      "light": "src/assets/logos/soccer/306-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/306.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/306.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "331": {
+      "name": "Brighton & Hove Albion",
+      "abbreviation": "BHA",
+      "light": "src/assets/logos/soccer/331-light.png",
+      "dark": "src/assets/logos/soccer/331-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/331.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/331.png",
+        "darkVariant": "dark"
+      }
+    },
+    "337": {
+      "name": "Brentford",
+      "abbreviation": "BRE",
+      "light": "src/assets/logos/soccer/337-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/337.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/337.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "349": {
+      "name": "AFC Bournemouth",
+      "abbreviation": "BOU",
+      "light": "src/assets/logos/soccer/349-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/349.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/349.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "357": {
+      "name": "Leeds United",
+      "abbreviation": "LEE",
+      "light": "src/assets/logos/soccer/357-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/357.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/357.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "359": {
+      "name": "Arsenal",
+      "abbreviation": "ARS",
+      "light": "src/assets/logos/soccer/359-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/359.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "360": {
+      "name": "Manchester United",
+      "abbreviation": "MAN",
+      "light": "src/assets/logos/soccer/360-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/360.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "361": {
+      "name": "Newcastle United",
+      "abbreviation": "NEW",
+      "light": "src/assets/logos/soccer/361-light.png",
+      "dark": "src/assets/logos/soccer/361-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/361.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/361.png",
+        "darkVariant": "dark"
+      }
+    },
+    "362": {
+      "name": "Aston Villa",
+      "abbreviation": "AVL",
+      "light": "src/assets/logos/soccer/362-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/362.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/362.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "363": {
+      "name": "Chelsea",
+      "abbreviation": "CHE",
+      "light": "src/assets/logos/soccer/363-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/363.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/363.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "364": {
+      "name": "Liverpool",
+      "abbreviation": "LIV",
+      "light": "src/assets/logos/soccer/364-light.png",
+      "dark": "src/assets/logos/soccer/364-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/364.png",
+        "darkVariant": "dark"
+      }
+    },
+    "366": {
+      "name": "Sunderland",
+      "abbreviation": "SUN",
+      "light": "src/assets/logos/soccer/366-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/366.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/366.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "367": {
+      "name": "Tottenham Hotspur",
+      "abbreviation": "TOT",
+      "light": "src/assets/logos/soccer/367-light.png",
+      "dark": "src/assets/logos/soccer/367-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/367.png",
+        "darkVariant": "dark"
+      }
+    },
+    "368": {
+      "name": "Everton",
+      "abbreviation": "EVE",
+      "light": "src/assets/logos/soccer/368-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/368.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/368.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "370": {
+      "name": "Fulham",
+      "abbreviation": "FUL",
+      "light": "src/assets/logos/soccer/370-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/370.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/370.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "373": {
+      "name": "Ipswich Town",
+      "abbreviation": "IPS",
+      "light": "src/assets/logos/soccer/373-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/373.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/373.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "382": {
+      "name": "Manchester City",
+      "abbreviation": "MNC",
+      "light": "src/assets/logos/soccer/382-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/382.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "384": {
+      "name": "Crystal Palace",
+      "abbreviation": "CRY",
+      "light": "src/assets/logos/soccer/384-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/384.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/384.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "388": {
+      "name": "Coventry City",
+      "abbreviation": "COV",
+      "light": "src/assets/logos/soccer/388-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/388.png",
+        "darkVariant": "none"
+      }
+    },
+    "393": {
+      "name": "Nottingham Forest",
+      "abbreviation": "NFO",
+      "light": "src/assets/logos/soccer/393-light.png",
+      "dark": "src/assets/logos/soccer/393-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/393.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/393.png",
+        "darkVariant": "dark"
+      }
+    },
+    "432": {
+      "name": "Galatasaray",
+      "abbreviation": "GAL",
+      "light": "src/assets/logos/soccer/432-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/432.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/432.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "436": {
+      "name": "Fenerbahce",
+      "abbreviation": "FEN",
+      "light": "src/assets/logos/soccer/436-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/436.png",
+        "darkVariant": "none"
+      }
+    },
+    "437": {
+      "name": "FC Porto",
+      "abbreviation": "FCP",
+      "light": "src/assets/logos/soccer/437-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/437.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/437.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "493": {
+      "name": "Shakhtar Donetsk",
+      "abbreviation": "SHK",
+      "light": "src/assets/logos/soccer/493-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/493.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/493.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "494": {
+      "name": "Slavia Prague",
+      "abbreviation": "SLP",
+      "light": "src/assets/logos/soccer/494-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/494.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/494.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "510": {
+      "name": "Viking FK",
+      "abbreviation": "VFK",
+      "light": "src/assets/logos/soccer/510-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/510.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/510.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "521": {
+      "name": "Slovan Bratislava",
+      "abbreviation": "SLB",
+      "light": "src/assets/logos/soccer/521-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/521.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/521.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "570": {
+      "name": "Club Brugge",
+      "abbreviation": "BRU",
+      "light": "src/assets/logos/soccer/570-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/570.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/570.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "887": {
+      "name": "AEK Athens",
+      "abbreviation": "AEK",
+      "light": "src/assets/logos/soccer/887-light.png",
+      "dark": "src/assets/logos/soccer/887-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/887.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/887.png",
+        "darkVariant": "dark"
+      }
+    },
+    "1068": {
+      "name": "Atlético Madrid",
+      "abbreviation": "ATM",
+      "light": "src/assets/logos/soccer/1068-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/1068.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "2250": {
+      "name": "Sporting CP",
+      "abbreviation": "SCP",
+      "light": "src/assets/logos/soccer/2250-light.png",
+      "dark": "src/assets/logos/soccer/2250-dark.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/2250.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/2250.png",
+        "darkVariant": "dark"
+      }
+    },
+    "2572": {
+      "name": "Como",
+      "abbreviation": "COMO",
+      "light": "src/assets/logos/soccer/2572-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/2572.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/2572.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "2980": {
+      "name": "Bodo/Glimt",
+      "abbreviation": "BODO",
+      "light": "src/assets/logos/soccer/2980-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/2980.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/2980.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "4411": {
+      "name": "LASK Linz",
+      "abbreviation": "LAS",
+      "light": "src/assets/logos/soccer/4411-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/4411.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/4411.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "11420": {
+      "name": "RB Leipzig",
+      "abbreviation": "RBL",
+      "light": "src/assets/logos/soccer/11420-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/11420.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/11420.png",
+        "darkVariant": "same as light"
+      }
+    },
+    "21922": {
+      "name": "Sabah FK",
+      "abbreviation": "SAB",
+      "light": "src/assets/logos/soccer/21922-light.png",
+      "source": {
+        "light": "https://a.espncdn.com/i/teamlogos/soccer/500/21922.png",
+        "dark": "https://a.espncdn.com/i/teamlogos/soccer/500-dark/21922.png",
+        "darkVariant": "same as light"
       }
     }
   }

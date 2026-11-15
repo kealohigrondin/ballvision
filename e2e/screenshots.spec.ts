@@ -1,12 +1,14 @@
 import { expect, type Page, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
+import eplScoreboard from "./fixtures/epl-scoreboard.json" with { type: "json" };
 import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
 import {
   mockApis,
   mockNflStandings,
   mockRankings,
   mockSecStandings,
+  mockSoccer,
   mockTeamSchedule,
 } from "./support/mockApis";
 
@@ -154,9 +156,7 @@ test.describe("@screenshots team logo", () => {
 const openNflStandings = async (page: Page) => {
   await openDashboard(page);
   await mockNflStandings(page);
-  await page
-    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
-    .click();
+  await page.locator("#league-tab-nfl").click();
   await page.getByRole("button", { name: copy.navRail.standings }).click();
 };
 
@@ -264,9 +264,7 @@ test.describe("@screenshots phone header", () => {
 const openSchedulePicker = async (page: Page) => {
   await openDashboard(page);
   await mockNflStandings(page);
-  await page
-    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
-    .click();
+  await page.locator("#league-tab-nfl").click();
   await page.getByRole("button", { name: copy.navRail.schedule }).click();
   const picker = page.locator("#team-schedule-picker");
   await expect(picker).toBeEnabled();
@@ -502,5 +500,168 @@ test.describe("@screenshots game details dialog", () => {
     await page
       .locator("#game-details-1001-button")
       .screenshot({ path: "screenshots/game-details-button-dark.png" });
+  });
+});
+
+// League tabs and soccer. The Premier League fixture holds finals (one a 1-1
+// draw), a match in its 67th minute and upcoming fixtures.
+const eplEvent = (match: (state: string, scores: string[]) => boolean) => {
+  const event = eplScoreboard.events.find((candidate) =>
+    match(
+      candidate.status.type.state,
+      candidate.competitions[0].competitors.map((team) => team.score),
+    ),
+  );
+  if (!event) {
+    throw new Error("The Premier League fixture is missing a game state.");
+  }
+
+  return event;
+};
+
+const soccerCards = {
+  live: eplEvent((state) => state === "in"),
+  upcoming: eplEvent((state) => state === "pre"),
+  win: eplEvent((state, [a, b]) => state === "post" && a !== b),
+  draw: eplEvent((state, [a, b]) => state === "post" && a === b),
+};
+
+const openLeague = async (page: Page, league: "ncaaf" | "epl" | "ucl") => {
+  await page.clock.setFixedTime(new Date("2026-11-15T21:00:00Z"));
+  await mockApis(page);
+  await mockSoccer(page);
+  await page.goto("./");
+  await expect(page.getByText("Ridge Hawks").first()).toBeVisible();
+  if (league !== "ncaaf") {
+    await page.locator(`#league-tab-${league}`).click();
+  }
+  await expect(page.locator(`#league-tab-${league}`)).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+};
+
+test.describe("@screenshots league tabs", () => {
+  for (const [device, viewport] of [
+    ["desktop", viewports.desktop],
+    ["mobile", viewports.mobile],
+  ] as const) {
+    test.describe(device, () => {
+      test.use({ viewport });
+
+      for (const league of ["ncaaf", "epl"] as const) {
+        test(`masthead, ${league}`, async ({ page }) => {
+          await openLeague(page, league);
+          await page.getByRole("banner").screenshot({
+            path: `screenshots/masthead-${league}-${device}-dark.png`,
+            animations: "disabled",
+          });
+        });
+      }
+    });
+  }
+
+  test("masthead, light", async ({ page }) => {
+    await page.setViewportSize(viewports.desktop);
+    await openLeague(page, "ucl");
+    await switchToLight(page);
+    await page.getByRole("banner").screenshot({
+      path: "screenshots/masthead-ucl-desktop-light.png",
+      animations: "disabled",
+    });
+  });
+
+  for (const league of ["ncaaf", "epl"] as const) {
+    test(`scores header, ${league}`, async ({ page }) => {
+      await page.setViewportSize(viewports.desktop);
+      await openLeague(page, league);
+      await page.locator("#scores-header").screenshot({
+        path: `screenshots/scores-header-${league}-dark.png`,
+        animations: "disabled",
+      });
+    });
+  }
+
+  test("Premier League scoreboard, mobile", async ({ page }) => {
+    await page.setViewportSize(viewports.mobile);
+    await openLeague(page, "epl");
+    await expect(
+      page.locator(`#game-card-${soccerCards.live.id}`),
+    ).toBeVisible();
+    await page.screenshot({
+      path: "screenshots/epl-mobile-dark.png",
+      animations: "disabled",
+    });
+  });
+});
+
+test.describe("@screenshots soccer game card", () => {
+  test.use({ viewport: viewports.desktop });
+
+  for (const [state, event] of Object.entries(soccerCards)) {
+    test(`${state}, dark`, async ({ page }) => {
+      await openLeague(page, "epl");
+      await page.locator(`#game-card-${event.id}`).screenshot({
+        path: `screenshots/game-card-soccer-${state}-dark.png`,
+      });
+    });
+  }
+
+  test("live, light", async ({ page }) => {
+    await openLeague(page, "epl");
+    await switchToLight(page);
+    await page.locator(`#game-card-${soccerCards.live.id}`).screenshot({
+      path: "screenshots/game-card-soccer-live-light.png",
+    });
+  });
+});
+
+// Nottingham Forest's crest has its own dark variant; Bournemouth's is the
+// same in both themes, so dark mode shows its light file.
+test.describe("@screenshots soccer team logo", () => {
+  test.use({ viewport: viewports.desktop });
+
+  const logo = (page: Page, abbreviation: string) =>
+    page
+      .locator(`#game-card-${soccerCards.upcoming.id} .team-logo`)
+      .filter({ has: page.locator(`img[src*="/${abbreviation}-"]`) });
+
+  for (const theme of themes) {
+    test(`with a dark variant, ${theme}`, async ({ page }) => {
+      await openLeague(page, "epl");
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await logo(page, "393").screenshot({
+        path: `screenshots/team-logo-soccer-dark-variant-${theme}.png`,
+      });
+    });
+  }
+
+  test("without a dark variant, dark", async ({ page }) => {
+    await openLeague(page, "epl");
+    await logo(page, "349").screenshot({
+      path: "screenshots/team-logo-soccer-same-dark.png",
+    });
+  });
+});
+
+test.describe("@screenshots soccer league table", () => {
+  // Tall enough for the Champions League's 36 teams without scrolling.
+  test.use({ viewport: { width: 1440, height: 1900 } });
+
+  for (const league of ["epl", "ucl"] as const) {
+    test(`${league}, dark`, async ({ page }) => {
+      await openLeague(page, league);
+      await page.getByRole("button", { name: copy.navRail.standings }).click();
+      await screenshotLeaguePanel(page, `league-table-${league}-dark`);
+    });
+  }
+
+  test("epl, light", async ({ page }) => {
+    await openLeague(page, "epl");
+    await switchToLight(page);
+    await page.getByRole("button", { name: copy.navRail.standings }).click();
+    await screenshotLeaguePanel(page, "league-table-epl-light");
   });
 });

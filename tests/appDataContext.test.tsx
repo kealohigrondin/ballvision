@@ -364,3 +364,40 @@ it("falls back to standings when the NFL is on the rankings page", () => {
   act(() => result.current.app.setDivision("nfl"));
   expect(result.current.app.panelView).toBe("standings");
 });
+
+// League tabs
+
+it("loads the Premier League's current month when switching to the EPL tab", async () => {
+  const { result, lastQuery } = renderContexts();
+  act(() => result.current.app.setWeek(week(0)));
+  act(() => result.current.app.setLeague("epl"));
+  await lastQuery({ week: null, division: "epl" });
+});
+
+it("names the league of the current division", () => {
+  const { result } = renderContexts();
+  act(() => result.current.app.setDivision("fcs"));
+  expect(result.current.app.league).toBe("ncaaf");
+});
+
+it("returns college football to the division last chosen in it", () => {
+  const { result } = renderContexts();
+  act(() => result.current.app.setDivision("fcs"));
+  act(() => result.current.app.setLeague("ucl"));
+  act(() => result.current.app.setLeague("ncaaf"));
+  expect(result.current.app.division).toBe("fcs");
+});
+
+it("keeps the chosen week when selecting the tab already shown", async () => {
+  const { result, lastQuery } = renderContexts();
+  act(() => result.current.app.setWeek(week(0)));
+  act(() => result.current.app.setLeague("ncaaf"));
+  await lastQuery({ week: week(0), division: "fbs" });
+});
+
+it("falls back to standings when a soccer league is on the rankings page", () => {
+  const { result } = renderContexts();
+  act(() => result.current.app.setPanelView("rankings"));
+  act(() => result.current.app.setLeague("epl"));
+  expect(result.current.app.panelView).toBe("standings");
+});

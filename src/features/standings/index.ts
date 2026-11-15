@@ -2,6 +2,7 @@ export {
   espnLeagueSource,
   parseNflStandings,
   parseRankings,
+  parseSoccerStandings,
   parseStandings,
 } from "./espnStandings";
 export { LeagueTable } from "./LeagueTable";

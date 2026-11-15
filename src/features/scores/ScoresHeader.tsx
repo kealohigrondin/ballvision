@@ -8,11 +8,18 @@ import { Search, X } from "lucide-react";
 import { copy } from "@/copy";
 import { useAppData } from "@/shared/appData/appDataContext";
 import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { collegeDivisions } from "@/shared/leagues";
 
 import { useScoresData } from "./scoresContext";
 import { WeekSelect } from "./WeekSelect";
 
 type ScoresHeaderProps = Record<string, never>;
+
+// College football is the only league split into divisions.
+const collegeDivisionOptions = collegeDivisions.map((value) => ({
+  value,
+  label: copy.scoresHeader.divisions[value],
+}));
 
 export const ScoresHeader = ({}: ScoresHeaderProps) => {
   const {
@@ -20,6 +27,7 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
     setWeek,
     division,
     setDivision: onDivision,
+    league,
     search,
     setSearch: onSearch,
     filter,
@@ -80,15 +88,15 @@ export const ScoresHeader = ({}: ScoresHeaderProps) => {
             currentWeekId={currentWeekId}
             onChange={setWeek}
           />
-          <SegmentedControl
-            label={copy.scoresHeader.division}
-            value={division}
-            options={(["fbs", "fcs", "nfl"] as const).map((value) => ({
-              value,
-              label: copy.scoresHeader.divisions[value],
-            }))}
-            onChange={onDivision}
-          />
+          {league === "ncaaf" && (
+            <SegmentedControl
+              id="division-control"
+              label={copy.scoresHeader.division}
+              value={division}
+              options={collegeDivisionOptions}
+              onChange={onDivision}
+            />
+          )}
           <TextField
             placeholder={copy.scoresHeader.searchPlaceholder}
             value={search}

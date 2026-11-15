@@ -72,7 +72,7 @@ export const copy = {
   },
   scoresHeader: {
     division: "Division",
-    divisions: { fbs: "FBS", fcs: "FCS", nfl: "NFL" },
+    divisions: { fbs: "FBS", fcs: "FCS" },
     search: "Search teams",
     searchPlaceholder: "Find your team…",
     clearSearch: "Clear search",
@@ -91,6 +91,8 @@ export const copy = {
   mastHead: {
     settings: "Settings",
     closeSettings: "Close settings",
+    leaguesLabel: "Leagues",
+    leagues: { ncaaf: "NCAAF", nfl: "NFL", epl: "EPL", ucl: "UCL" },
   },
   sync: {
     pause: "Pause auto-refresh",
@@ -126,8 +128,24 @@ export const copy = {
     division: "Division",
     conference: "Conference",
     poll: "Poll",
+    stage: "Stage",
+    titles: {
+      schedule: "Team schedule",
+      nfl: "NFL standings",
+      soccer: "League table",
+      rankings: "Top 25",
+      conference: "Conference standings",
+    },
     standingsView: "Standings view",
     trend: "TREND",
+    columns: {
+      conference: "CONF",
+      overall: "OVR",
+      points: "PTS",
+      played: "P",
+      winDrawLoss: "W-D-L",
+      goalDifference: "GD",
+    },
     trendNew: "NEW",
     trendUnchanged: "-",
     nflViews: {

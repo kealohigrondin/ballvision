@@ -7,6 +7,7 @@ import { copy } from "@/copy";
 import { useAppData } from "@/shared/appData/appDataContext";
 import { NavRailItem } from "@/shared/components/NavRailItem";
 import { useCompactWindow } from "@/shared/hooks/useCompactWindow";
+import { hasRankings } from "@/shared/leagues";
 import type { PanelView } from "@/shared/types";
 
 type LeagueNavRailProps = Record<string, never>;
@@ -99,7 +100,7 @@ export const LeagueNavRail = ({}: LeagueNavRailProps) => {
       icon={destination.icon}
       showLabel={compact}
       active={panelOpen && view === destination.view}
-      disabled={destination.view === "rankings" && division === "nfl"}
+      disabled={destination.view === "rankings" && !hasRankings(division)}
       controls="league-panel"
       onClick={() => open(destination.view)}
     />

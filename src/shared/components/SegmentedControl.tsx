@@ -8,6 +8,7 @@ type SegmentedControlProps<Value extends string> = {
   value: Value;
   options: readonly { value: Value; label: ReactNode }[];
   onChange: (value: Value) => void;
+  id?: string;
   className?: string;
   fullWidth?: boolean;
   sx?: SxProps<Theme>;
@@ -19,6 +20,7 @@ export const SegmentedControl = <Value extends string>({
   value,
   options,
   onChange,
+  id,
   className,
   fullWidth = false,
   sx,
@@ -42,6 +44,7 @@ export const SegmentedControl = <Value extends string>({
         }
       }}
       aria-label={label}
+      id={id}
       className={className}
       sx={sx}
     >

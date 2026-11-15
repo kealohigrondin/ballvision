@@ -124,22 +124,6 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     tables,
   ]);
 
-  const label = useMemo(() => {
-    if (view === "schedule") {
-      return copy.league.titles.schedule;
-    }
-    if (division === "nfl") {
-      return copy.league.titles.nfl;
-    }
-    if (sportOf(division) === "soccer") {
-      return copy.league.titles.soccer;
-    }
-
-    return view === "rankings"
-      ? copy.league.titles.rankings
-      : copy.league.titles.conference;
-  }, [division, view]);
-
   const content = useMemo(() => {
     if (view === "schedule") {
       return <TeamSchedule />;
@@ -217,15 +201,6 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
           </Alert>
         )}
         {content}
-        <Typography
-          component="p"
-          className="league-note"
-          color="text.secondary"
-          sx={{ mt: 2 }}
-        >
-          {label} · {division.toUpperCase()} · Current season. Updates every 5
-          minutes; records may lag live games.
-        </Typography>
       </Paper>
     </Slide>
   );

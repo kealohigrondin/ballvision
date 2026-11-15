@@ -10,6 +10,8 @@ import {
 import { gameTime, periodLabel } from "@/shared/gameTime";
 import type { Game } from "@/shared/types";
 
+import eplStandings from "../e2e/fixtures/epl-standings.json";
+import uclStandings from "../e2e/fixtures/ucl-standings.json";
 import { oddsGame } from "./helpers/oddsFixture";
 import { rawScheduleEvent, scheduleGame } from "./helpers/scheduleFixture";
 
@@ -80,8 +82,40 @@ describe("parseSoccerStandings", () => {
     );
     expect(table.rows.map((row) => row.dividerAfter)).toEqual([
       undefined,
-      "solid",
+      "dashed",
       undefined,
+    ]);
+  });
+
+  // Lines come from real ESPN tables captured in the e2e fixtures.
+  const dividers = (payload: unknown) =>
+    parseSoccerStandings(payload)[0].rows.flatMap((row) =>
+      row.dividerAfter
+        ? [`${row.rank}/${(row.rank ?? 0) + 1} ${row.dividerAfter}`]
+        : [],
+    );
+
+  it("keeps only the Champions League elimination line solid", () => {
+    expect(dividers(uclStandings)).toEqual([
+      "8/9 dashed",
+      "16/17 dashed",
+      "24/25 solid",
+    ]);
+  });
+
+  it("keeps only the Premier League relegation line solid", () => {
+    expect(dividers(eplStandings)).toEqual([
+      "4/5 dashed",
+      "5/6 dashed",
+      "17/18 solid",
+    ]);
+  });
+
+  it("lists each qualification zone's positions", () => {
+    expect(parseSoccerStandings(eplStandings)[0].zones).toEqual([
+      { note: "Champions League", first: 1, last: 4 },
+      { note: "Europa League", first: 5, last: 5 },
+      { note: "Relegation", first: 18, last: 20 },
     ]);
   });
 

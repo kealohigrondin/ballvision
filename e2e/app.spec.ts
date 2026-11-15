@@ -6,6 +6,7 @@ import {
   mockApis,
   mockCollegeStandings,
   mockNflStandings,
+  mockSleeper,
   mockSoccer,
 } from "./support/mockApis";
 
@@ -173,6 +174,39 @@ test("shows the stadium in place of kickoff on an upcoming game's card", async (
   ).toContainText("Summit Stadium");
 });
 
+test.describe("Sleeper fantasy players", () => {
+  // Saves a username on the NFL tab and opens the live game's details.
+  test.beforeEach(async ({ page }) => {
+    await mockSleeper(page);
+    await page.goto("./");
+    await page.locator("#league-tab-nfl").click();
+    await page.getByRole("button", { name: copy.fantasy.account }).click();
+    await page.locator("#sleeper-account-input").fill("AaronY");
+    await page.locator("#sleeper-account-save").click();
+    await page.locator("#game-details-1001-button").click();
+  });
+
+  test("shows your players in the details of their NFL game", async ({
+    page,
+  }) => {
+    await expect(page.locator("#fantasy-player-1001-L1-101")).toContainText(
+      "Riley Hawk",
+    );
+  });
+
+  test("lists your players below the last play and above the stats", async ({
+    page,
+  }) => {
+    const top = async (selector: string) =>
+      (await page.locator(selector).boundingBox())?.y ?? NaN;
+    await expect(page.locator("#game-leaders-1001")).toBeVisible();
+    const players = await top("#fantasy-players-1001");
+
+    expect(players).toBeGreaterThan(await top("#game-last-play-1001"));
+    expect(players).toBeLessThan(await top("#game-leaders-1001"));
+  });
+});
+
 test.describe("league tabs", () => {
   test.beforeEach(async ({ page }) => {
     // Soccer weeks follow the clock: on Nov 15, the Premier League's next
@@ -245,5 +279,16 @@ test.describe("league tabs", () => {
     await expect(
       page.locator("#league-table-title-2026-27-english-premier-league"),
     ).toBeVisible();
+  });
+
+  test("lists what each run of table positions earns", async ({ page }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-epl").click();
+    await page.getByRole("button", { name: copy.navRail.standings }).click();
+    await expect(
+      page.locator("#league-zones-2026-27-english-premier-league"),
+    ).toHaveText(
+      /1–4\s*Champions League\s*5\s*Europa League\s*18–20\s*Relegation/,
+    );
   });
 });

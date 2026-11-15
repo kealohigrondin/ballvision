@@ -110,6 +110,17 @@ export const copy = {
     leaguesLabel: "Leagues",
     leagues: { ncaaf: "NCAAF", nfl: "NFL", epl: "EPL", ucl: "UCL" },
   },
+  fantasy: {
+    title: "My fantasy players",
+    bench: "Bench",
+    playerDetails: (position: string, team: string) => `${position} · ${team}`,
+    points: (points: number) => `${points.toFixed(1)} pts`,
+    account: "Sleeper account",
+    usernameLabel: "Sleeper username",
+    usernameHelp: "Shows your fantasy players in NFL game details.",
+    save: "Save",
+    cancel: "Cancel",
+  },
   sync: {
     pause: "Pause auto-refresh",
     resume: "Resume auto-refresh",
@@ -162,6 +173,9 @@ export const copy = {
       winDrawLoss: "W-D-L",
       goalDifference: "GD",
     },
+    zones: "Table positions",
+    zonePositions: (first: number, last: number) =>
+      first === last ? `${first}` : `${first}–${last}`,
     trendNew: "NEW",
     trendUnchanged: "-",
     nflViews: {

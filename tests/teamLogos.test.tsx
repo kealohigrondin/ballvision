@@ -54,6 +54,19 @@ it("uses the bundled logos for an FCS team", () => {
   expect(utrgv.logo).toContain("assets/logos/fcs/292-light");
 });
 
+it("uses the bundled light and dark logos for a Division II or III team", () => {
+  const adrian = homeTeam("2003", { logo: espnLogo("ncaa", "2003") });
+  expect([adrian.logo, adrian.logoDark]).toEqual([
+    expect.stringContaining("assets/logos/ncaa/2003-light"),
+    expect.stringContaining("assets/logos/ncaa/2003-dark"),
+  ]);
+});
+
+it("bundles no dark logo for a lower-division team ESPN draws the same in both themes", () => {
+  const adamsState = homeTeam("2001", { logo: espnLogo("ncaa", "2001") });
+  expect(adamsState.logoDark).toBeUndefined();
+});
+
 it("tells an NFL team from a college team with the same ESPN id", () => {
   const bills = homeTeam("2", { logo: espnLogo("nfl", "buf") });
   const auburn = homeTeam("2", { logo: espnLogo("ncaa", "2") });

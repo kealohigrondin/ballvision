@@ -1,4 +1,4 @@
-import type { Division, Game, GameState, Team } from "@/shared/types";
+import type { Division, Game, GameState, Sport, Team } from "@/shared/types";
 
 export type Json = Record<string, unknown>;
 
@@ -118,6 +118,36 @@ const gameSituation = (situation: Json, competitors: Json[]): string => {
   return abbreviation ? `${abbreviation} - ${playType}` : playType;
 };
 
+// Soccer has no downs; its situation is the latest goal, e.g.
+// "ARS - Goal · B. Saka 34'".
+const latestGoal = (competition: Json, competitors: Json[]): string => {
+  const goal = list(competition.details)
+    .map(obj)
+    .filter((detail) => detail.scoringPlay === true)
+    .at(-1);
+  if (!goal) {
+    return "";
+  }
+  const team = competitors.find(
+    (competitor) => str(competitor.id) === str(obj(goal.team).id),
+  );
+  const scorer = obj(list(goal.athletesInvolved)[0]);
+  const play = [
+    str(obj(team?.team).abbreviation),
+    str(obj(goal.type).text),
+  ].filter(Boolean);
+  const who = [
+    str(scorer.shortName, str(scorer.displayName)),
+    str(obj(goal.clock).displayValue),
+  ].filter(Boolean);
+
+  return [play.join(" - "), who.join(" ")].filter(Boolean).join(" · ");
+};
+
+// ESPN event uids start with the sport, e.g. "s:600~l:700~e:1" for soccer.
+const eventSport = (event: Json): Sport =>
+  str(event.uid).startsWith("s:600~") ? "soccer" : "football";
+
 export const parseScoreboard = (payload: unknown): Game[] => {
   const root = obj(payload);
   if (!Array.isArray(root.events)) {
@@ -154,8 +184,10 @@ export const parseScoreboard = (payload: unknown): Game[] => {
       return "other";
     };
     const state: GameState = getState();
+    const sport = eventSport(e);
     games.push({
       id: str(e.id),
+      ...(sport === "soccer" && { sport }),
       home: team(home),
       away: team(away),
       state,
@@ -174,7 +206,8 @@ export const parseScoreboard = (payload: unknown): Game[] => {
         .join(" / "),
       venue: str(obj(c.venue).fullName),
       possession: str(s.possession),
-      situation: gameSituation(s, teams),
+      situation:
+        sport === "soccer" ? latestGoal(c, teams) : gameSituation(s, teams),
       lastPlay: str(obj(s.lastPlay).text),
       redZone: s.isRedZone === true,
       homeTimeouts: number(s.homeTimeouts),
@@ -192,9 +225,17 @@ export const parseScoreboard = (payload: unknown): Game[] => {
   });
 };
 
-/** ESPN's API path segment for a division. */
-export const espnSport = (division: Division) =>
-  division === "nfl" ? "nfl" : "college-football";
+const espnPaths: Record<Division, string> = {
+  fbs: "football/college-football",
+  fcs: "football/college-football",
+  nfl: "football/nfl",
+  epl: "soccer/eng.1",
+  ucl: "soccer/uefa.champions",
+};
+
+/** ESPN's `{sport}/{league}` API path for a division, e.g. "soccer/eng.1". */
+export const espnLeaguePath = (division: Division): string =>
+  espnPaths[division];
 
 export const fetchEspnJson = async (
   url: string | URL,

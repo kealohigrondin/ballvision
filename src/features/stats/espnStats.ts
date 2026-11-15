@@ -1,5 +1,5 @@
 import {
-  espnSport,
+  espnLeaguePath,
   fetchEspnJson,
   list,
   number,
@@ -65,7 +65,7 @@ export const parseTeamStats = (payload: unknown, teamId: string): TeamStats => {
 
 export const espnTeamStatsSource: TeamStatsSource = {
   load: async ({ division, teamId }, signal) => {
-    const url = `https://site.api.espn.com/apis/site/v2/sports/football/${espnSport(division)}/teams/${encodeURIComponent(teamId)}/statistics`;
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${espnLeaguePath(division)}/teams/${encodeURIComponent(teamId)}/statistics`;
 
     return parseTeamStats(await fetchEspnJson(url, signal), teamId);
   },

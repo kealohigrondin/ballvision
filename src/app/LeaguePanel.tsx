@@ -13,6 +13,7 @@ import { TeamSchedule, TeamSchedulePicker } from "@/features/schedule";
 import { LeagueTable, useStandingsData } from "@/features/standings";
 import { useAppData } from "@/shared/appData/appDataContext";
 import { useCompactWindow } from "@/shared/hooks/useCompactWindow";
+import { sportOf } from "@/shared/leagues";
 import type { NflStandingsView } from "@/shared/types";
 
 type LeaguePanelProps = Record<string, never>;
@@ -73,7 +74,21 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     teams,
   } = useStandingsData();
 
-  // NFL picks a standings view; college picks one conference or poll.
+  // A single table (the Premier League's) leaves nothing to pick.
+  const hasPickerChoice = division === "nfl" || tables.length > 1;
+
+  const pickerLabel = useMemo(() => {
+    if (view === "rankings") {
+      return copy.league.poll;
+    }
+
+    return sportOf(division) === "soccer"
+      ? copy.league.stage
+      : copy.league.conference;
+  }, [division, view]);
+
+  // NFL picks a standings view; college picks one conference or poll and
+  // soccer one stage's table.
   const picker = useMemo(() => {
     if (division === "nfl") {
       return {
@@ -90,7 +105,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     }
 
     return {
-      label: view === "standings" ? copy.league.conference : copy.league.poll,
+      label: pickerLabel,
       value: selected?.id ?? "",
       onChange: setSelectedId,
       options: tables.map((table) => (
@@ -103,7 +118,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
     division,
     nflStandingsView,
     setNflStandingsView,
-    view,
+    pickerLabel,
     selected,
     setSelectedId,
     tables,
@@ -111,13 +126,18 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
 
   const label = useMemo(() => {
     if (view === "schedule") {
-      return "Team schedule";
+      return copy.league.titles.schedule;
     }
     if (division === "nfl") {
-      return "NFL standings";
+      return copy.league.titles.nfl;
+    }
+    if (sportOf(division) === "soccer") {
+      return copy.league.titles.soccer;
     }
 
-    return view === "rankings" ? "Top 25" : "Conference standings";
+    return view === "rankings"
+      ? copy.league.titles.rankings
+      : copy.league.titles.conference;
   }, [division, view]);
 
   const content = useMemo(() => {
@@ -170,7 +190,7 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
         aria-label={copy.league.panel}
       >
         {view === "schedule" && <TeamSchedulePicker teams={teams} />}
-        {view !== "schedule" && tables.length > 0 && (
+        {view !== "schedule" && hasPickerChoice && (
           <TextField
             select
             fullWidth

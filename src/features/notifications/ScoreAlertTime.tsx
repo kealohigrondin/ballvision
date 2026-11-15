@@ -14,7 +14,8 @@ export const ScoreAlertTime = ({}: ScoreAlertTimeProps) => {
     return null;
   }
   const { game } = current;
-  const label = game.period > 0 ? periodLabel(game.period) : game.status;
+  const label =
+    game.period > 0 ? periodLabel(game.period, game.sport) : game.status;
 
   return (
     <Stack

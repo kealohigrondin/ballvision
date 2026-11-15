@@ -1,3 +1,4 @@
+import { isDivision } from "@/shared/leagues";
 import type { Filter, NflStandingsView, Week } from "@/shared/types";
 
 import type { AppPreferences } from "./appDataTypes";
@@ -59,12 +60,7 @@ export const loadAppPreferences = (
           ? value.panelOpen
           : defaults.panelOpen,
       week: validWeek(value.week) ? value.week : defaults.week,
-      division:
-        value.division === "fbs" ||
-        value.division === "fcs" ||
-        value.division === "nfl"
-          ? value.division
-          : defaults.division,
+      division: isDivision(value.division) ? value.division : defaults.division,
       filter: validFilter(value.filter) ? value.filter : defaults.filter,
       search: typeof value.search === "string" ? value.search : defaults.search,
       paused:

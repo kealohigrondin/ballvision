@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { hasRankings, leagueOf } from "@/shared/leagues";
 import type {
   Division,
   Filter,
+  League,
   NflStandingsView,
   PanelView,
   TeamRef,
@@ -17,6 +19,10 @@ export const useAppDataState = () => {
   const [panelOpen, setPanelOpen] = useState(initial.panelOpen);
   const [week, setWeek] = useState<Week | null>(initial.week);
   const [division, setDivisionState] = useState<Division>(initial.division);
+  // The college division the NCAAF tab returns to.
+  const [collegeDivision, setCollegeDivision] = useState<Division>(
+    leagueOf(initial.division) === "ncaaf" ? initial.division : "fbs",
+  );
   const [filter, setFilter] = useState<Filter>(initial.filter);
   const [search, setSearch] = useState(initial.search);
   const [paused, setPaused] = useState(initial.paused);
@@ -52,22 +58,35 @@ export const useAppDataState = () => {
     standingsConferenceId,
   ]);
 
-  // The NFL has no polls, so its panel falls back to standings.
+  // Only college football has polls; other leagues fall back to standings.
   const panelView =
-    division === "nfl" && selectedPanelView === "rankings"
+    !hasRankings(division) && selectedPanelView === "rankings"
       ? "standings"
       : selectedPanelView;
 
+  const league = leagueOf(division);
+
   const setDivision = (next: Division) => {
-    // FBS and FCS share the college calendar; NFL weeks mean something else.
-    if ((next === "nfl") !== (division === "nfl")) {
+    // FBS and FCS share the college calendar; other leagues' weeks mean
+    // something else.
+    if (leagueOf(next) !== league) {
       setWeek(null);
     }
     // Team ids only mean something within one division.
     if (next !== division) {
       setSelectedTeam(undefined);
     }
+    if (leagueOf(next) === "ncaaf") {
+      setCollegeDivision(next);
+    }
     setDivisionState(next);
+  };
+
+  // Switches masthead tabs; college football returns to its last division.
+  const setLeague = (next: League) => {
+    if (next !== league) {
+      setDivision(next === "ncaaf" ? collegeDivision : next);
+    }
   };
 
   // Picks a team and shows its page in the league panel.
@@ -85,6 +104,8 @@ export const useAppDataState = () => {
     setWeek,
     division,
     setDivision,
+    league,
+    setLeague,
     filter,
     setFilter,
     search,

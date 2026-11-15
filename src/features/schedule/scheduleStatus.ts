@@ -16,8 +16,9 @@ export const scheduleGameStatus = (
     if (!Number.isFinite(ownScore) || !Number.isFinite(otherScore)) {
       return game.status;
     }
+    // Soccer calls a tie a draw.
     if (ownScore === otherScore) {
-      return `T ${score}`;
+      return `${game.sport === "soccer" ? "D" : "T"} ${score}`;
     }
 
     return `${ownScore > otherScore ? "W" : "L"} ${score}`;

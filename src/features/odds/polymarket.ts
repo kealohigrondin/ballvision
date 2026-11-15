@@ -1,3 +1,4 @@
+import { sportOf } from "@/shared/leagues";
 import type { Game, Team } from "@/shared/types";
 
 import type { GameOddsMap, OddsSource } from "./types";
@@ -170,6 +171,10 @@ export const createPolymarketSource = (
 
   return {
     load: async ({ division, games }, signal) => {
+      // Soccer markets are three-way (home, draw, away), not moneylines.
+      if (sportOf(division) !== "football") {
+        return {};
+      }
       const activeGames = games.filter(
         (game) => game.state === "live" || game.state === "upcoming",
       );

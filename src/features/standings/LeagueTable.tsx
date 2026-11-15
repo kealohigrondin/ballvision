@@ -8,6 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
+import { type ReactNode, useMemo } from "react";
 
 import { copy } from "@/copy";
 import { TeamLogo } from "@/shared/components/TeamLogo";
@@ -16,64 +17,111 @@ import { TeamScheduleLink } from "@/shared/components/TeamScheduleLink";
 import { leagueTableSx, rankTrendColor } from "./leagueTableStyles";
 import { rankTrend } from "./rankTrend";
 import { useStandingsData } from "./standingsContext";
-import type { LeagueTable as LeagueTableData } from "./types";
+import type { LeagueRow, LeagueTable as LeagueTableData } from "./types";
 
 type LeagueTableProps = { table: LeagueTableData };
 
+type LeagueColumn = {
+  key: string;
+  header: string;
+  cell: (row: LeagueRow) => ReactNode;
+  id?: (row: LeagueRow) => string;
+  color?: (row: LeagueRow) => string;
+};
+
+const { columns: headers } = copy.league;
+
+const recordColumn: LeagueColumn = {
+  key: "record",
+  header: headers.overall,
+  cell: (row) => row.record,
+};
+
+// Soccer tables: played, W-D-L, goal difference and league points.
+const soccerColumns: LeagueColumn[] = [
+  { key: "played", header: headers.played, cell: (row) => row.played },
+  { ...recordColumn, header: headers.winDrawLoss },
+  {
+    key: "goalDifference",
+    header: headers.goalDifference,
+    cell: (row) => row.goalDifference,
+  },
+  { key: "points", header: headers.points, cell: (row) => row.points },
+];
+
+// A league table: conference standings, a Top 25 poll or a soccer table.
 export const LeagueTable = ({ table }: LeagueTableProps) => {
   const { view } = useStandingsData();
   const ranked = view === "rankings";
-  const column = ranked ? "PTS" : "CONF";
-  // Polls without voting points (the playoff committee) skip that column.
-  const showPointsColumn =
-    !ranked || table.rows.some((row) => row.points !== undefined);
-  const rows = table.rows.map((row) => {
-    const value = ranked ? row.points : row.conferenceRecord;
-    const trend = rankTrend(row);
 
-    return (
-      <TableRow
-        key={row.id}
-        className={clsx(
-          row.dividerAfter && "league-row-divider",
-          row.dividerAfter === "dashed" && "league-row-divider-dashed",
-        )}
-      >
-        <TableCell component="th" scope="row">
-          <Stack
-            direction="row"
-            className="league-team"
-            spacing={1}
-            sx={{ alignItems: "center", minWidth: 0 }}
-          >
-            {row.rank !== undefined && (
-              <Box component="span" className="league-rank">
-                {row.rank}
-              </Box>
-            )}
-            <TeamLogo
-              team={{ ...row, abbreviation: row.abbreviation || row.name }}
-              size={24}
-            />
-            <TeamScheduleLink team={row} />
-          </Stack>
+  const columns = useMemo((): LeagueColumn[] => {
+    if (table.soccer) {
+      return soccerColumns;
+    }
+    // Polls without voting points (the playoff committee) skip that column.
+    const showPointsColumn =
+      !ranked || table.rows.some((row) => row.points !== undefined);
+    const pointsColumn: LeagueColumn = ranked
+      ? { key: "points", header: headers.points, cell: (row) => row.points }
+      : {
+          key: "conference",
+          header: headers.conference,
+          cell: (row) => row.conferenceRecord,
+        };
+    const trendColumn: LeagueColumn = {
+      key: "trend",
+      header: copy.league.trend,
+      cell: (row) => rankTrend(row).label,
+      id: (row) => `league-trend-${row.id}`,
+      color: (row) => rankTrendColor[rankTrend(row).direction],
+    };
+
+    return [
+      ...(showPointsColumn ? [pointsColumn] : []),
+      recordColumn,
+      ...(ranked ? [trendColumn] : []),
+    ];
+  }, [table.soccer, table.rows, ranked]);
+
+  const rows = table.rows.map((row) => (
+    <TableRow
+      key={row.id}
+      className={clsx(
+        row.dividerAfter && "league-row-divider",
+        row.dividerAfter === "dashed" && "league-row-divider-dashed",
+      )}
+    >
+      <TableCell component="th" scope="row" title={row.note}>
+        <Stack
+          direction="row"
+          className="league-team"
+          spacing={1}
+          sx={{ alignItems: "center", minWidth: 0 }}
+        >
+          {row.rank !== undefined && (
+            <Box component="span" className="league-rank">
+              {row.rank}
+            </Box>
+          )}
+          <TeamLogo
+            team={{ ...row, abbreviation: row.abbreviation || row.name }}
+            size={24}
+          />
+          <TeamScheduleLink team={row} />
+        </Stack>
+      </TableCell>
+      {columns.map((column) => (
+        <TableCell
+          key={column.key}
+          align="right"
+          id={column.id?.(row)}
+          sx={{ color: column.color?.(row) }}
+        >
+          {column.cell(row) ?? "—"}
         </TableCell>
-        {showPointsColumn && (
-          <TableCell align="right">{value ?? "—"}</TableCell>
-        )}
-        <TableCell align="right">{row.record}</TableCell>
-        {ranked && (
-          <TableCell
-            align="right"
-            id={`league-trend-${row.id}`}
-            sx={{ color: rankTrendColor[trend.direction] }}
-          >
-            {trend.label}
-          </TableCell>
-        )}
-      </TableRow>
-    );
-  });
+      ))}
+    </TableRow>
+  ));
 
   // IDs can't contain spaces, so "AFC East" becomes "afc-east".
   const titleId = table.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
@@ -99,19 +147,16 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
                 {table.title}
               </Typography>
             </TableCell>
-            {showPointsColumn && (
-              <TableCell component="th" scope="col" align="right">
-                {column}
+            {columns.map((column) => (
+              <TableCell
+                key={column.key}
+                component="th"
+                scope="col"
+                align="right"
+              >
+                {column.header}
               </TableCell>
-            )}
-            <TableCell component="th" scope="col" align="right">
-              OVR
-            </TableCell>
-            {ranked && (
-              <TableCell component="th" scope="col" align="right">
-                {copy.league.trend}
-              </TableCell>
-            )}
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>{rows}</TableBody>

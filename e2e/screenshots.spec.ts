@@ -616,6 +616,36 @@ test.describe("@screenshots soccer game card", () => {
   });
 });
 
+// Nottingham Forest's crest has its own dark variant; Bournemouth's is the
+// same in both themes, so dark mode shows its light file.
+test.describe("@screenshots soccer team logo", () => {
+  test.use({ viewport: viewports.desktop });
+
+  const logo = (page: Page, abbreviation: string) =>
+    page
+      .locator(`#game-card-${soccerCards.upcoming.id} .team-logo`)
+      .filter({ has: page.locator(`img[src*="/${abbreviation}-"]`) });
+
+  for (const theme of themes) {
+    test(`with a dark variant, ${theme}`, async ({ page }) => {
+      await openLeague(page, "epl");
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await logo(page, "393").screenshot({
+        path: `screenshots/team-logo-soccer-dark-variant-${theme}.png`,
+      });
+    });
+  }
+
+  test("without a dark variant, dark", async ({ page }) => {
+    await openLeague(page, "epl");
+    await logo(page, "349").screenshot({
+      path: "screenshots/team-logo-soccer-same-dark.png",
+    });
+  });
+});
+
 test.describe("@screenshots soccer league table", () => {
   // Tall enough for the Champions League's 36 teams without scrolling.
   test.use({ viewport: { width: 1440, height: 1900 } });

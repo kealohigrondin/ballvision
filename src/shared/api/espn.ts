@@ -41,18 +41,25 @@ const localLogoFiles = import.meta.glob<string>("/src/assets/logos/*/*.png", {
 const localLogo = (league: string, id: string, variant: "light" | "dark") =>
   localLogoFiles[`/src/assets/logos/${league}/${id}-${variant}.png`];
 
-// ESPN team ids repeat between the NFL and college, so the league comes from
-// ESPN's logo URL. College ids are unique across FBS and FCS.
+// ESPN's logo URL path for each league's bundled logo folders. Soccer ids
+// are shared across competitions, so the Premier League and Champions League
+// use one folder.
+const logoFolders: readonly (readonly [string, readonly string[]])[] = [
+  ["/teamlogos/nfl/", ["nfl"]],
+  ["/teamlogos/ncaa/", ["fbs", "fcs"]],
+  ["/teamlogos/soccer/", ["soccer"]],
+];
+
+// ESPN team ids repeat between leagues, so the league comes from ESPN's logo
+// URL. College ids are unique across FBS and FCS. Teams without a dark file
+// of their own (most soccer crests) show their light logo in dark mode.
 export const teamLogos = (
   id: string,
   espnLogo?: string,
   espnLogoDark?: string,
 ): { logo?: string; logoDark?: string } => {
-  const leagues = espnLogo?.includes("/teamlogos/nfl/")
-    ? ["nfl"]
-    : espnLogo?.includes("/teamlogos/ncaa/")
-      ? ["fbs", "fcs"]
-      : [];
+  const leagues =
+    logoFolders.find(([path]) => espnLogo?.includes(path))?.[1] ?? [];
   const league = leagues.find((name) => localLogo(name, id, "light"));
   if (!league) {
     return { logo: espnLogo, logoDark: espnLogoDark };

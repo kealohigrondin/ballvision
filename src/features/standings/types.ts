@@ -21,7 +21,15 @@ export interface LeagueRow {
   goalDifference?: string;
   /** Soccer: what this table position earns, e.g. "Champions League". */
   note?: string;
-  /** Draws a separator below this row, e.g. at a playoff cut line. */
+  /**
+   * Soccer: the note of the group this row closes, shown in a small row
+   * under it, e.g. "Champions League" after the last qualifying team.
+   */
+  noteAfter?: string;
+  /**
+   * Draws a separator below this row (below its note row, if it has one),
+   * e.g. at a playoff cut line.
+   */
   dividerAfter?: "solid" | "dashed";
 }
 export interface LeagueTable {

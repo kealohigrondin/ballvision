@@ -100,9 +100,19 @@ export const parseStandings = (
   return root.children.flatMap(collect);
 };
 
+// Soccer dividers come where ESPN's qualification note changes. A line is
+// dashed when it leads into one of these notes (a step within the same
+// tier, or the relegation zone) and solid otherwise.
+const dashedBeforeNotes = new Set([
+  "Knockout phase playoffs - seeded", // Champions League 8/9
+  "Knockout phase playoffs - unseeded", // Champions League 16/17
+  "Relegation", // Premier League 17/18
+]);
+
 // Soccer league tables: one per stage (the Premier League's single table,
-// the Champions League's league phase), in table order. A solid line marks
-// each change of qualification zone, such as the Champions League places.
+// the Champions League's league phase), in table order. A line marks each
+// change of qualification zone, and the last team of each noted zone
+// carries the note to show under it.
 export const parseSoccerStandings = (payload: unknown): LeagueTable[] => {
   const root = obj(payload);
   if (!Array.isArray(root.children)) {
@@ -143,10 +153,18 @@ export const parseSoccerStandings = (payload: unknown): LeagueTable[] => {
       soccer: true,
       rows: rows.map((row, index) => {
         const next = rows[index + 1];
+        const closesGroup = next?.note !== row.note;
 
-        return next && next.note !== row.note
-          ? { ...row, dividerAfter: "solid" as const }
-          : row;
+        return {
+          ...row,
+          ...(closesGroup && row.note && { noteAfter: row.note }),
+          ...(closesGroup &&
+            next && {
+              dividerAfter: dashedBeforeNotes.has(next.note ?? "")
+                ? ("dashed" as const)
+                : ("solid" as const),
+            }),
+        };
       }),
     };
   });
@@ -199,14 +217,12 @@ export const parseNflStandings = (
     };
   });
 
-  // Seeds 1-4 win their divisions and 5-7 are wild cards: a dashed line
-  // separates the two, and a solid one marks the playoff cut.
-  const dividerAfterSeed = (seed: number) => {
-    if (seed === 4) {
-      return "dashed" as const;
-    }
-
-    return seed === 7 ? ("solid" as const) : undefined;
+  // Seeds 1-4 win their divisions and 5-7 are wild cards. ESPN gives NFL
+  // teams no qualification notes, so the lines come from seeds: dashed
+  // within the playoff field, solid at the playoff cut.
+  const dividerAfterSeed: Readonly<Record<number, "dashed" | "solid">> = {
+    4: "dashed", // division winners | wild cards
+    7: "solid", // playoff cut
   };
   const wildcard: LeagueTable[] = conferences.map((conference) => ({
     id: `${conference.id}-wildcard`,
@@ -218,7 +234,7 @@ export const parseNflStandings = (
       .map(({ row, seed }) => ({
         ...row,
         rank: Number.isFinite(seed) ? seed : undefined,
-        dividerAfter: dividerAfterSeed(seed),
+        dividerAfter: dividerAfterSeed[seed],
       })),
   }));
   // Seeds already include the NFL tiebreakers, so they settle equal records.

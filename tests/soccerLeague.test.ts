@@ -10,6 +10,8 @@ import {
 import { gameTime, periodLabel } from "@/shared/gameTime";
 import type { Game } from "@/shared/types";
 
+import eplStandings from "../e2e/fixtures/epl-standings.json";
+import uclStandings from "../e2e/fixtures/ucl-standings.json";
 import { oddsGame } from "./helpers/oddsFixture";
 import { rawScheduleEvent, scheduleGame } from "./helpers/scheduleFixture";
 
@@ -83,6 +85,56 @@ describe("parseSoccerStandings", () => {
       "solid",
       undefined,
     ]);
+  });
+
+  // Lines come from real ESPN tables captured in the e2e fixtures.
+  const dividers = (payload: unknown) =>
+    parseSoccerStandings(payload)[0].rows.flatMap((row) =>
+      row.dividerAfter
+        ? [`${row.rank}/${(row.rank ?? 0) + 1} ${row.dividerAfter}`]
+        : [],
+    );
+
+  it("dashes the Champions League lines within the knockout playoffs", () => {
+    expect(dividers(uclStandings)).toEqual([
+      "8/9 dashed",
+      "16/17 dashed",
+      "24/25 solid",
+    ]);
+  });
+
+  it("dashes the Premier League relegation line and keeps the others solid", () => {
+    expect(dividers(eplStandings)).toEqual([
+      "4/5 solid",
+      "5/6 solid",
+      "17/18 dashed",
+    ]);
+  });
+
+  it("puts each zone's note under its last team", () => {
+    const [table] = parseSoccerStandings(
+      standingsPayload([
+        standingsEntry({ id: "a", rank: 1, note: "Round of 16" }),
+        standingsEntry({ id: "b", rank: 2, note: "Round of 16" }),
+        standingsEntry({ id: "c", rank: 3 }),
+      ]),
+    );
+    expect(table.rows.map((row) => row.noteAfter)).toEqual([
+      undefined,
+      "Round of 16",
+      undefined,
+    ]);
+  });
+
+  it("notes the last zone of the table without a line under it", () => {
+    const [table] = parseSoccerStandings(
+      standingsPayload([
+        standingsEntry({ id: "a", rank: 1 }),
+        standingsEntry({ id: "b", rank: 2, note: "Relegation" }),
+      ]),
+    );
+    expect(table.rows[1]).toMatchObject({ noteAfter: "Relegation" });
+    expect(table.rows[1].dividerAfter).toBeUndefined();
   });
 
   it("rejects a payload without tables", () => {

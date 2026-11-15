@@ -8,12 +8,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
-import { type ReactNode, useMemo } from "react";
+import { Fragment, type ReactNode, useMemo } from "react";
 
 import { copy } from "@/copy";
 import { TeamLogo } from "@/shared/components/TeamLogo";
 import { TeamScheduleLink } from "@/shared/components/TeamScheduleLink";
 
+import { LeagueNoteRow } from "./LeagueNoteRow";
 import { leagueTableSx, rankTrendColor } from "./leagueTableStyles";
 import { rankTrend } from "./rankTrend";
 import { useStandingsData } from "./standingsContext";
@@ -83,48 +84,60 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
     ];
   }, [table.soccer, table.rows, ranked]);
 
-  const rows = table.rows.map((row) => (
-    <TableRow
-      key={row.id}
-      className={clsx(
-        row.dividerAfter && "league-row-divider",
-        row.dividerAfter === "dashed" && "league-row-divider-dashed",
-      )}
-    >
-      <TableCell component="th" scope="row" title={row.note}>
-        <Stack
-          direction="row"
-          className="league-team"
-          spacing={1}
-          sx={{ alignItems: "center", minWidth: 0 }}
-        >
-          {row.rank !== undefined && (
-            <Box component="span" className="league-rank">
-              {row.rank}
-            </Box>
-          )}
-          <TeamLogo
-            team={{ ...row, abbreviation: row.abbreviation || row.name }}
-            size={24}
-          />
-          <TeamScheduleLink team={row} />
-        </Stack>
-      </TableCell>
-      {columns.map((column) => (
-        <TableCell
-          key={column.key}
-          align="right"
-          id={column.id?.(row)}
-          sx={{ color: column.color?.(row) }}
-        >
-          {column.cell(row) ?? "—"}
-        </TableCell>
-      ))}
-    </TableRow>
-  ));
-
   // IDs can't contain spaces, so "AFC East" becomes "afc-east".
   const titleId = table.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+  const rows = table.rows.map((row) => {
+    const divider = clsx(
+      row.dividerAfter && "league-row-divider",
+      row.dividerAfter === "dashed" && "league-row-divider-dashed",
+    );
+
+    // The divider goes under the row's note when it has one.
+    return (
+      <Fragment key={row.id}>
+        <TableRow className={row.noteAfter ? "" : divider}>
+          <TableCell component="th" scope="row" title={row.note}>
+            <Stack
+              direction="row"
+              className="league-team"
+              spacing={1}
+              sx={{ alignItems: "center", minWidth: 0 }}
+            >
+              {row.rank !== undefined && (
+                <Box component="span" className="league-rank">
+                  {row.rank}
+                </Box>
+              )}
+              <TeamLogo
+                team={{ ...row, abbreviation: row.abbreviation || row.name }}
+                size={24}
+              />
+              <TeamScheduleLink team={row} />
+            </Stack>
+          </TableCell>
+          {columns.map((column) => (
+            <TableCell
+              key={column.key}
+              align="right"
+              id={column.id?.(row)}
+              sx={{ color: column.color?.(row) }}
+            >
+              {column.cell(row) ?? "—"}
+            </TableCell>
+          ))}
+        </TableRow>
+        {row.noteAfter && (
+          <LeagueNoteRow
+            id={`league-note-${titleId}-${row.id}`}
+            note={row.noteAfter}
+            colSpan={columns.length + 1}
+            className={divider}
+          />
+        )}
+      </Fragment>
+    );
+  });
 
   return (
     <TableContainer

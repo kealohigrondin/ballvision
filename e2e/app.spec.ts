@@ -232,4 +232,15 @@ test.describe("league tabs", () => {
       page.locator("#league-table-title-2026-27-english-premier-league"),
     ).toBeVisible();
   });
+
+  test("names each qualification zone under its last team", async ({
+    page,
+  }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-epl").click();
+    await page.getByRole("button", { name: copy.navRail.standings }).click();
+    await expect(
+      page.locator("#league-note-2026-27-english-premier-league-364"),
+    ).toHaveText("Champions League");
+  });
 });

@@ -3,7 +3,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { copy } from "@/copy";
-import { TeamSwatch } from "@/shared/components/TeamSwatch";
 
 import { usePolymarketGame } from "./polymarketGameContext";
 
@@ -42,14 +41,6 @@ export const GameOdds = ({}: GameOddsProps) => {
         rel="noopener noreferrer"
         sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}
       >
-        {/* The favored team's swatch, hatched for away and solid for home
-            as in the team stats. */}
-        {!even && (
-          <TeamSwatch
-            color={awayFavored ? game.away.color : game.home.color}
-            hatched={awayFavored}
-          />
-        )}
         <Typography
           component="span"
           sx={{ fontVariantNumeric: "tabular-nums" }}

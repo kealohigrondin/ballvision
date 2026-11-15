@@ -1,5 +1,5 @@
 import {
-  espnSport,
+  espnLeaguePath,
   fetchEspnJson,
   type Json,
   list,
@@ -185,7 +185,7 @@ export const parseGameSummary = (
 export const espnGameSummarySource: GameSummarySource = {
   load: async ({ division, gameId, awayId, homeId }, signal) => {
     const url = new URL(
-      `https://site.api.espn.com/apis/site/v2/sports/football/${espnSport(division)}/summary`,
+      `https://site.api.espn.com/apis/site/v2/sports/${espnLeaguePath(division)}/summary`,
     );
     url.searchParams.set("event", gameId);
 

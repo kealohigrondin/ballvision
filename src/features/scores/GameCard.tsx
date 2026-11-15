@@ -38,7 +38,11 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
   const homeHasPossession = isLive && game.possession === game.home.id;
   const isScheduled = game.state === "upcoming";
   const isFinal = game.state === "final";
-  const isHomeWinner = isFinal && game.home.score > game.away.score;
+  // Scores are text, so compare them as numbers; a draw has no winner.
+  const homeScore = Number(game.home.score);
+  const awayScore = Number(game.away.score);
+  const isHomeWinner = isFinal && homeScore > awayScore;
+  const isAwayWinner = isFinal && awayScore > homeScore;
   const isInRedZone = game.redZone && isLive;
   const favoriteLabel = copy.gameCard.favorite(
     favorite,
@@ -73,14 +77,18 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
     );
   }, [isLive, isScheduled, game.situation, game.venue]);
 
+  // Football scores by quarter; ESPN reports no soccer periods.
   const periods = Array.from(
     {
-      length: Math.max(
-        4,
-        game.period,
-        game.home.quarters.length,
-        game.away.quarters.length,
-      ),
+      length:
+        game.sport === "soccer"
+          ? 0
+          : Math.max(
+              4,
+              game.period,
+              game.home.quarters.length,
+              game.away.quarters.length,
+            ),
     },
     (_, index) => index,
   );
@@ -106,6 +114,7 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
   return (
     <Paper
       component="article"
+      id={`game-card-${game.id}`}
       className={clsx(isInRedZone && "red-zone")}
       sx={{
         container: "game-card / inline-size",
@@ -164,7 +173,7 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
                     align="right"
                     sx={{ width: 56 }}
                   >
-                    {copy.periodScores.total}
+                    {periods.length > 0 && copy.periodScores.total}
                   </TableCell>
                 </>
               )}
@@ -176,7 +185,7 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
               possession={awayHasPossession}
               isScheduled={isScheduled}
               periods={periods}
-              isWinner={!isHomeWinner}
+              isWinner={isAwayWinner}
               isFinal={isFinal}
             />
             <TeamRow

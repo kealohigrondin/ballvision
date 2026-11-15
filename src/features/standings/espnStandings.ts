@@ -1,4 +1,5 @@
 import {
+  espnLeaguePath,
   fetchEspnJson,
   image,
   type Json,
@@ -8,6 +9,7 @@ import {
   str,
   teamLogos,
 } from "@/shared/api/espn";
+import { hasRankings, sportOf } from "@/shared/leagues";
 import type { Division } from "@/shared/types";
 
 import type { LeagueRow, LeagueSource, LeagueTable } from "./types";
@@ -96,6 +98,58 @@ export const parseStandings = (
   };
 
   return root.children.flatMap(collect);
+};
+
+// Soccer league tables: one per stage (the Premier League's single table,
+// the Champions League's league phase), in table order. A solid line marks
+// each change of qualification zone, such as the Champions League places.
+export const parseSoccerStandings = (payload: unknown): LeagueTable[] => {
+  const root = obj(payload);
+  if (!Array.isArray(root.children)) {
+    throw new Error("Unexpected ESPN standings response.");
+  }
+
+  return root.children.map((raw) => {
+    const group = obj(raw),
+      standings = obj(group.standings);
+    const rows = list(standings.entries)
+      .map((rawEntry) => {
+        const entry = obj(rawEntry),
+          t = obj(entry.team),
+          stats = list(entry.stats).map(obj);
+
+        const stat = (name: string) =>
+          str(stats.find((s) => s.name === name)?.displayValue, "—");
+
+        return {
+          ...leagueTeamIdentity(t),
+          id: str(t.id),
+          name: str(t.shortDisplayName, str(t.displayName, str(t.location))),
+          rank: number(Number(stat("rank"))),
+          record: str(stats.find((s) => s.type === "total")?.summary, "—"),
+          points: stat("points"),
+          played: stat("gamesPlayed"),
+          goalDifference: stat("pointDifferential"),
+          note: str(obj(entry.note).description) || undefined,
+        };
+      })
+      .filter((row) => row.id && row.name)
+      .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity));
+
+    return {
+      id: str(group.id, str(group.name)),
+      title: str(group.name, "League table"),
+      subtitle: str(standings.seasonDisplayName, str(standings.season)),
+      soccer: true,
+      rows: rows.map((row, index) => {
+        const next = rows[index + 1];
+
+        return next && next.note !== row.note
+          ? { ...row, dividerAfter: "solid" as const }
+          : row;
+      }),
+    };
+  });
 };
 
 // NFL standings come from two ESPN payloads: the conference level (AFC and
@@ -249,6 +303,14 @@ export const parseRankings = (
 
 export const espnLeagueSource: LeagueSource = {
   loadStandings: async (division, signal) => {
+    if (sportOf(division) === "soccer") {
+      return parseSoccerStandings(
+        await fetchEspnJson(
+          `https://site.api.espn.com/apis/v2/sports/${espnLeaguePath(division)}/standings`,
+          signal,
+        ),
+      );
+    }
     if (division === "nfl") {
       const nflUrl = (level: string) =>
         `https://site.web.api.espn.com/apis/v2/sports/football/nfl/standings?level=${level}&type=0`;
@@ -274,7 +336,7 @@ export const espnLeagueSource: LeagueSource = {
     );
   },
   loadRankings: async (division, signal) => {
-    if (division === "nfl") {
+    if (!hasRankings(division)) {
       return [];
     }
 

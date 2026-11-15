@@ -10,15 +10,17 @@ import { useGameSummary } from "./useGameSummary";
 type GameSummaryProviderProps = { game: Game; children: ReactNode };
 
 // Loads a game's leaders and team stats only while this provider is mounted,
-// i.e. while its details dialog is open. Upcoming games load nothing.
+// i.e. while its details dialog is open.
 export const GameSummaryProvider = ({
   game,
   children,
 }: GameSummaryProviderProps) => {
   const { division, paused } = useAppData();
   const { summarySource } = useScoresData();
+  // Leaders and team stats are football stats, and before kickoff ESPN lists
+  // season totals instead, so soccer and upcoming games load nothing.
   const query =
-    game.state === "upcoming"
+    game.state === "upcoming" || game.sport === "soccer"
       ? undefined
       : {
           division,

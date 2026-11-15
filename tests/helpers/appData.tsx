@@ -40,6 +40,8 @@ export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   setWeek: vi.fn(),
   division: "fbs",
   setDivision: vi.fn(),
+  league: "ncaaf",
+  setLeague: vi.fn(),
   filter: "all",
   setFilter: vi.fn(),
   search: "",

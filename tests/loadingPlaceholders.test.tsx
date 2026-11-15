@@ -133,3 +133,21 @@ it("explains a missing market once odds have loaded", () => {
   showOdds(false);
   expect(screen.getByText(copy.gameDetails.chartUnavailable)).toBeTruthy();
 });
+
+it("loads no football summary for a soccer match", () => {
+  const load = vi.fn(() => new Promise<GameSummary>(() => undefined));
+  render(
+    <AppTheme>
+      <AppDataTestProvider
+        value={createAppData({ paused: true })}
+        scores={{ summarySource: { load } }}
+      >
+        <GameDetails game={{ ...game, sport: "soccer" }} />
+      </AppDataTestProvider>
+    </AppTheme>,
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: copy.gameDetails.toggle }),
+  );
+  expect(load).not.toHaveBeenCalled();
+});

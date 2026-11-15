@@ -1,4 +1,9 @@
-export type Division = "fbs" | "fcs" | "nfl";
+/** One ESPN scoreboard feed. FBS and FCS are both college football. */
+export type Division = "fbs" | "fcs" | "nfl" | "epl" | "ucl";
+/** The leagues offered as masthead tabs; college football spans FBS and FCS. */
+export type League = "ncaaf" | "nfl" | "epl" | "ucl";
+/** The rules a game is played by, which decide its clock and box score. */
+export type Sport = "football" | "soccer";
 export type GameState = "live" | "upcoming" | "final" | "other";
 export interface Team {
   id: string;
@@ -16,6 +21,8 @@ export interface Team {
 }
 export interface Game {
   id: string;
+  /** Unset for football. */
+  sport?: Sport;
   home: Team;
   away: Team;
   state: GameState;

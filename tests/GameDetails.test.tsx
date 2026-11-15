@@ -13,6 +13,8 @@ import { GameHeader } from "@/features/scores/GameHeader";
 import { ResponsiveDialog } from "@/shared/components/ResponsiveDialog";
 import type { Game, Team } from "@/shared/types";
 
+import { AppDataTestProvider, createAppData } from "./helpers/appData";
+
 afterEach(cleanup);
 
 const team = (name: string): Team => ({
@@ -40,15 +42,23 @@ const game: Game = {
   redZone: false,
 };
 
+// The details read app data and the game summary from context.
+const renderDetails = () =>
+  render(
+    <AppDataTestProvider value={createAppData({ paused: true })}>
+      <GameDetails game={game} />
+    </AppDataTestProvider>,
+  );
+
 const openDetails = () => {
-  render(<GameDetails game={game} />);
+  renderDetails();
   fireEvent.click(
     screen.getByRole("button", { name: copy.gameDetails.toggle }),
   );
 };
 
 it("keeps the details out of the page until they are opened", () => {
-  render(<GameDetails game={game} />);
+  renderDetails();
   expect(screen.queryByText(game.lastPlay)).toBeNull();
 });
 

@@ -19,8 +19,8 @@ import type { Game } from "@/shared/types";
 
 import { compactBoxScoreSx } from "./boxScore";
 import { GameDetails } from "./GameDetails";
-import { GameSummary } from "./GameSummary";
 import { TeamRow } from "./TeamRow";
+import { VenueLabel } from "./VenueLabel";
 
 type GameCardProps = {
   game: Game;
@@ -53,16 +53,25 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
   );
   const time = isScheduled ? kickoff(game.start) : gameTime(game);
 
+  // Live games show down and distance; others show where they're played.
   const situation = useMemo(() => {
     if (isLive) {
-      return game.situation || copy.gameCard.inProgress;
+      return (
+        <Typography component="span">
+          {game.situation || copy.gameCard.inProgress}
+        </Typography>
+      );
     }
-    if (game.state === "final") {
-      return "";
+    if (game.venue) {
+      return <VenueLabel venue={game.venue} />;
     }
 
-    return copy.gameCard.kickoff;
-  }, [isLive, game.situation, game.state]);
+    return (
+      <Typography component="span">
+        {isScheduled ? copy.gameCard.kickoff : ""}
+      </Typography>
+    );
+  }, [isLive, isScheduled, game.situation, game.venue]);
 
   const periods = Array.from(
     {
@@ -192,14 +201,14 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
         }}
       >
         <Stack className="card-situation" spacing={0.5} sx={{ minWidth: 0 }}>
-          <Typography component="span">{situation}</Typography>
+          {situation}
         </Stack>
         <Stack
           direction="row"
           spacing={1}
           sx={{ alignItems: "center", minWidth: 0 }}
         >
-          {isLive || isScheduled ? odds : <GameSummary venue={game.venue} />}
+          {!isFinal && odds}
           <IconButton
             className={clsx("icon-button", "favorite", favorite && "selected")}
             onClick={() => toggleFavorite(game.id)}

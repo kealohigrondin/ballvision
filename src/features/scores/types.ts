@@ -16,3 +16,47 @@ export interface ScoreboardSource {
     signal: AbortSignal,
   ): Promise<SeasonCalendar>;
 }
+
+export type LeaderCategory = "passing" | "rushing" | "receiving";
+/** A team's top player in one stat category, with their stats in the game. */
+export interface GameLeader {
+  category: LeaderCategory;
+  id: string;
+  name: string;
+  position: string;
+  jersey: string;
+  /** The player's team abbreviation. */
+  team: string;
+  headshot?: string;
+  /** ESPN's stat summary, e.g. "8/9, 60 YDS". */
+  stats: string;
+}
+export type TeamStatKey =
+  | "totalYards"
+  | "turnovers"
+  | "firstDowns"
+  | "penalties"
+  | "thirdDown"
+  | "fourthDown"
+  | "possession";
+/** One team stat for both teams: shown as text, compared by value. */
+export interface TeamStatLine {
+  key: TeamStatKey;
+  away: string;
+  home: string;
+  awayValue: number;
+  homeValue: number;
+}
+export interface GameSummary {
+  leaders: { away: GameLeader[]; home: GameLeader[] };
+  stats: TeamStatLine[];
+}
+export interface GameSummaryQuery {
+  division: Division;
+  gameId: string;
+  awayId: string;
+  homeId: string;
+}
+export interface GameSummarySource {
+  load(query: GameSummaryQuery, signal: AbortSignal): Promise<GameSummary>;
+}

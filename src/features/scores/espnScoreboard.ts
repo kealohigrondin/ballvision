@@ -9,7 +9,6 @@ import {
 } from "@/shared/api/espn";
 import type { Division, Week } from "@/shared/types";
 
-import { withGameLeaders } from "./espnLeaders";
 import type { ScoreboardSource, SeasonCalendar } from "./types";
 
 export const parseCalendar = (payload: unknown): SeasonCalendar => {
@@ -86,9 +85,7 @@ export const espnSource: ScoreboardSource = {
       }),
     });
 
-    const payload = await fetchEspnJson(url, signal);
-
-    return withGameLeaders(payload, parseScoreboard(payload));
+    return parseScoreboard(await fetchEspnJson(url, signal));
   },
   // Every scoreboard response carries the season calendar, so the smallest
   // slate is enough to list the selectable weeks.

@@ -41,6 +41,22 @@ export const copy = {
     oddsBlocked: "Couldn't reach Polymarket. Disable adblock for this site.",
     lastPlay: "Last play",
     unavailable: "Additional details are not available yet.",
+    statsError: "Couldn't load leaders and team stats.",
+  },
+  gameHeader: {
+    ballOn: (yardLine: string) => `Ball on the ${yardLine}`,
+  },
+  teamStats: {
+    title: "Team stats",
+    labels: {
+      totalYards: "Total Yards",
+      turnovers: "Turnovers",
+      firstDowns: "1st Downs",
+      penalties: "Penalties",
+      thirdDown: "3rd Down",
+      fourthDown: "4th Down",
+      possession: "Possession",
+    },
   },
   gameLeaders: {
     title: "Game leaders",

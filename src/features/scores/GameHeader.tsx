@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 import { alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
@@ -7,6 +8,8 @@ import { useMemo } from "react";
 import { gameTime, kickoff } from "@/shared/gameTime";
 import type { Game, Team } from "@/shared/types";
 
+import { FieldPosition } from "./FieldPosition";
+import { fieldLabel, fieldPercent } from "./fieldPosition";
 import { GameHeaderScore } from "./GameHeaderScore";
 import { GameHeaderTeam } from "./GameHeaderTeam";
 import { PeriodScores } from "./PeriodScores";
@@ -14,8 +17,8 @@ import { PeriodScores } from "./PeriodScores";
 type GameHeaderProps = { game: Game };
 
 // A scoreboard header for one game, banded in the two team colors:
-// both teams with their scores, the game clock, the score by period and the
-// broadcast network. Wraps the period
+// both teams with their scores, the game clock and down and distance, where
+// the ball is, the score by period and the broadcast network. Wraps the period
 // table onto its own row in narrow windows.
 export const GameHeader = ({ game }: GameHeaderProps) => {
   const started = game.state !== "upcoming";
@@ -32,14 +35,28 @@ export const GameHeader = ({ game }: GameHeaderProps) => {
     return away > home ? game.away.id : game.home.id;
   }, [isFinal, game.away, game.home]);
 
+  const isLive = game.state === "live";
+
+  const showsBall = (team: Team) =>
+    isLive && game.possession === team.id && game.yardLine !== undefined;
+
   const score = (team: Team, area: "awayScore" | "homeScore") => (
-    <Box sx={{ gridArea: area }}>
+    <Box sx={{ gridArea: area, alignSelf: "start", pt: { xs: 2, sm: 3 } }}>
       <GameHeaderScore
         id={`game-header-score-${game.id}-${team.id}`}
         score={started ? team.score : ""}
         dimmed={Boolean(leader) && leader !== team.id}
-        possession={game.state === "live" && game.possession === team.id}
-        dotSide={area === "awayScore" ? "end" : "start"}
+        possession={isLive && game.possession === team.id}
+        markerSide={area === "awayScore" ? "end" : "start"}
+        below={
+          showsBall(team) && (
+            <FieldPosition
+              id={`game-header-field-${game.id}`}
+              percent={fieldPercent(game.yardLine ?? 50)}
+              label={fieldLabel(game.yardLine ?? 50, game.away, game.home)}
+            />
+          )
+        }
       />
     </Box>
   );
@@ -79,19 +96,32 @@ export const GameHeader = ({ game }: GameHeaderProps) => {
         <GameHeaderTeam team={game.away} id={`game-header-away-${game.id}`} />
       </Box>
       {score(game.away, "awayScore")}
-      <Typography
-        id={`game-header-status-${game.id}`}
-        component="span"
+      <Stack
+        spacing={0.25}
         sx={{
           gridArea: "status",
-          fontWeight: 600,
-          textAlign: "center",
+          alignItems: "center",
           alignSelf: { sm: "end" },
-          whiteSpace: "nowrap",
         }}
       >
-        {status}
-      </Typography>
+        <Typography
+          id={`game-header-status-${game.id}`}
+          component="span"
+          sx={{ fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}
+        >
+          {status}
+        </Typography>
+        {isLive && game.downDistance && (
+          <Typography
+            id={`game-header-situation-${game.id}`}
+            component="span"
+            variant="caption"
+            sx={{ textAlign: "center" }}
+          >
+            {game.downDistance}
+          </Typography>
+        )}
+      </Stack>
       {score(game.home, "homeScore")}
       <Box sx={{ gridArea: "home" }}>
         <GameHeaderTeam team={game.home} id={`game-header-home-${game.id}`} />

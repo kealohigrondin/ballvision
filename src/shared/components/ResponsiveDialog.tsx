@@ -68,10 +68,15 @@ export const ResponsiveDialog = ({
       slotProps={{
         paper: {
           id,
-          // Match the app's card radius; full-screen dialogs stay square.
-          sx: compact
-            ? {}
-            : { borderRadius: "var(--mui-app-paperBorderRadius)" },
+          sx: {
+            // Same surface as the app's cards: dark mode lightens dialogs
+            // with a stronger overlay than cards, so use the cards' one.
+            "--Paper-overlay": "var(--mui-overlays-1)",
+            // Match the cards' radius; full-screen dialogs stay square.
+            ...(!compact && {
+              borderRadius: "var(--mui-app-paperBorderRadius)",
+            }),
+          },
         },
       }}
     >

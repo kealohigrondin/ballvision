@@ -5,10 +5,11 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
 
-import { copy } from "@/copy";
 import { TeamLogo } from "@/shared/components/TeamLogo";
 import { TeamScheduleLink } from "@/shared/components/TeamScheduleLink";
 import type { Team } from "@/shared/types";
+
+import { PossessionMarker } from "./PossessionMarker";
 
 type TeamRowProps = {
   team: Team;
@@ -62,19 +63,7 @@ export const TeamRow = ({
               justifyContent: "center",
             }}
           >
-            {possession && (
-              <Typography
-                component="span"
-                className="possession"
-                title={copy.gameCard.possession}
-                aria-label={copy.gameCard.possession}
-                sx={{
-                  color: "primary.main",
-                }}
-              >
-                ◆
-              </Typography>
-            )}
+            {possession && <PossessionMarker />}
           </Box>
           <TeamLogo team={team} size={36} />
           <Box sx={{ flex: 1, minWidth: 0 }}>

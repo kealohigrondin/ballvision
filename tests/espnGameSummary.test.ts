@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   headshotThumbnail,
   parseGameSummary,
+  parseScoringPlays,
   parseTeamLeaders,
   parseTeamStats,
 } from "@/features/scores/espnGameSummary";
@@ -147,6 +148,74 @@ describe("parseGameSummary", () => {
     expect(
       parseGameSummary({ leaders: [uga] }, "142", "61").leaders.away,
     ).toEqual([]);
+  });
+});
+
+// ESPN's scoring play shape, trimmed to the fields the app reads.
+const espnScoringPlay = (
+  id: string,
+  teamId: string,
+  awayScore: number,
+  homeScore: number,
+) => ({
+  id,
+  text: "John Mateer 8 Yd Run (Tate Sandell Kick)",
+  awayScore,
+  homeScore,
+  period: { number: 1 },
+  clock: { displayValue: "5:54" },
+  team: { id: teamId },
+  type: { abbreviation: "TD" },
+  scoringType: { abbreviation: "TD" },
+});
+
+describe("parseScoringPlays", () => {
+  it("keeps both teams' plays in the order they happened", () => {
+    const plays = parseScoringPlays(
+      {
+        scoringPlays: [
+          espnScoringPlay("a", "201", 0, 7),
+          espnScoringPlay("b", "145", 7, 7),
+        ],
+      },
+      "145",
+      "201",
+    );
+    expect(plays.map((play) => [play.id, play.side])).toEqual([
+      ["a", "home"],
+      ["b", "away"],
+    ]);
+  });
+
+  it("reads the quarter, clock, type, description and score", () => {
+    const [play] = parseScoringPlays(
+      { scoringPlays: [espnScoringPlay("a", "201", 0, 7)] },
+      "145",
+      "201",
+    );
+    expect(play).toEqual({
+      id: "a",
+      side: "home",
+      period: 1,
+      clock: "5:54",
+      type: "TD",
+      text: "John Mateer 8 Yd Run (Tate Sandell Kick)",
+      awayScore: 0,
+      homeScore: 7,
+    });
+  });
+
+  it("skips a play by a team that is not in the game", () => {
+    const plays = parseScoringPlays(
+      { scoringPlays: [espnScoringPlay("a", "999", 0, 7)] },
+      "145",
+      "201",
+    );
+    expect(plays).toEqual([]);
+  });
+
+  it("returns no plays when the summary has none", () => {
+    expect(parseScoringPlays({}, "145", "201")).toEqual([]);
   });
 });
 

@@ -47,9 +47,26 @@ export interface TeamStatLine {
   awayValue: number;
   homeValue: number;
 }
+/** A score in the game, with the score after it. */
+export interface ScoringPlay {
+  id: string;
+  /** Which team scored. */
+  side: "away" | "home";
+  period: number;
+  /** Game clock when the play ended, e.g. "5:54". */
+  clock: string;
+  /** ESPN's short scoring type, e.g. "TD" or "FG". */
+  type: string;
+  /** ESPN's play description, e.g. "John Mateer 8 Yd Run (Tate Sandell Kick)". */
+  text: string;
+  awayScore: number;
+  homeScore: number;
+}
 export interface GameSummary {
   leaders: { away: GameLeader[]; home: GameLeader[] };
   stats: TeamStatLine[];
+  /** Both teams' scores, in the order they happened. */
+  scoringPlays: ScoringPlay[];
 }
 export interface GameSummaryQuery {
   division: Division;

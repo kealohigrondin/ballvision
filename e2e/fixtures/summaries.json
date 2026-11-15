@@ -2,10 +2,7 @@
   "1001": {
     "leaders": [
       {
-        "team": {
-          "id": "12",
-          "abbreviation": "RIV"
-        },
+        "team": { "id": "12", "abbreviation": "RIV" },
         "leaders": [
           {
             "name": "passingYards",
@@ -16,9 +13,7 @@
                   "id": "O. Banks",
                   "shortName": "O. Banks",
                   "jersey": "9",
-                  "position": {
-                    "abbreviation": "QB"
-                  },
+                  "position": { "abbreviation": "QB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/2060.png"
                   }
@@ -35,9 +30,7 @@
                   "id": "O. Rivers",
                   "shortName": "O. Rivers",
                   "jersey": "22",
-                  "position": {
-                    "abbreviation": "RB"
-                  },
+                  "position": { "abbreviation": "RB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/76377.png"
                   }
@@ -54,9 +47,7 @@
                   "id": "T. Brook",
                   "shortName": "T. Brook",
                   "jersey": "3",
-                  "position": {
-                    "abbreviation": "WR"
-                  },
+                  "position": { "abbreviation": "WR" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/34029.png"
                   }
@@ -67,10 +58,7 @@
         ]
       },
       {
-        "team": {
-          "id": "11",
-          "abbreviation": "RDG"
-        },
+        "team": { "id": "11", "abbreviation": "RDG" },
         "leaders": [
           {
             "name": "passingYards",
@@ -81,9 +69,7 @@
                   "id": "R. Hawk",
                   "shortName": "R. Hawk",
                   "jersey": "7",
-                  "position": {
-                    "abbreviation": "QB"
-                  },
+                  "position": { "abbreviation": "QB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/8529.png"
                   }
@@ -100,9 +86,7 @@
                   "id": "S. Ridge",
                   "shortName": "S. Ridge",
                   "jersey": "25",
-                  "position": {
-                    "abbreviation": "RB"
-                  },
+                  "position": { "abbreviation": "RB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/37579.png"
                   }
@@ -119,9 +103,7 @@
                   "id": "T. Ridge",
                   "shortName": "T. Ridge",
                   "jersey": "1",
-                  "position": {
-                    "abbreviation": "WR"
-                  },
+                  "position": { "abbreviation": "WR" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/77825.png"
                   }
@@ -135,85 +117,163 @@
     "boxscore": {
       "teams": [
         {
-          "team": {
-            "id": "12"
-          },
+          "team": { "id": "12" },
           "statistics": [
-            {
-              "name": "totalYards",
-              "displayValue": "185"
-            },
-            {
-              "name": "turnovers",
-              "displayValue": "1"
-            },
-            {
-              "name": "firstDowns",
-              "displayValue": "11"
-            },
-            {
-              "name": "totalPenaltiesYards",
-              "displayValue": "4-35"
-            },
-            {
-              "name": "thirdDownEff",
-              "displayValue": "3-9"
-            },
-            {
-              "name": "fourthDownEff",
-              "displayValue": "0-1"
-            },
-            {
-              "name": "possessionTime",
-              "displayValue": "19:40"
-            }
+            { "name": "totalYards", "displayValue": "185" },
+            { "name": "turnovers", "displayValue": "1" },
+            { "name": "firstDowns", "displayValue": "11" },
+            { "name": "totalPenaltiesYards", "displayValue": "4-35" },
+            { "name": "thirdDownEff", "displayValue": "3-9" },
+            { "name": "fourthDownEff", "displayValue": "0-1" },
+            { "name": "possessionTime", "displayValue": "19:40" }
           ]
         },
         {
-          "team": {
-            "id": "11"
-          },
+          "team": { "id": "11" },
           "statistics": [
-            {
-              "name": "totalYards",
-              "displayValue": "265"
-            },
-            {
-              "name": "turnovers",
-              "displayValue": "0"
-            },
-            {
-              "name": "firstDowns",
-              "displayValue": "16"
-            },
-            {
-              "name": "totalPenaltiesYards",
-              "displayValue": "2-15"
-            },
-            {
-              "name": "thirdDownEff",
-              "displayValue": "5-8"
-            },
-            {
-              "name": "fourthDownEff",
-              "displayValue": "0-0"
-            },
-            {
-              "name": "possessionTime",
-              "displayValue": "21:08"
-            }
+            { "name": "totalYards", "displayValue": "265" },
+            { "name": "turnovers", "displayValue": "0" },
+            { "name": "firstDowns", "displayValue": "16" },
+            { "name": "totalPenaltiesYards", "displayValue": "2-15" },
+            { "name": "thirdDownEff", "displayValue": "5-8" },
+            { "name": "fourthDownEff", "displayValue": "0-0" },
+            { "name": "possessionTime", "displayValue": "21:08" }
           ]
         }
       ]
-    }
+    },
+    "scoringPlays": [
+      {
+        "id": "10011",
+        "type": {
+          "id": "68",
+          "text": "Rushing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "M. Okafor 4 Yd Run (J. Reyes Kick)",
+        "awayScore": 0,
+        "homeScore": 7,
+        "period": { "number": 1 },
+        "clock": { "value": 0, "displayValue": "9:12" },
+        "team": { "id": "11" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10012",
+        "type": { "id": "59", "text": "Field Goal Good", "abbreviation": "FG" },
+        "text": "T. Lindqvist 38 Yd Field Goal",
+        "awayScore": 3,
+        "homeScore": 7,
+        "period": { "number": 1 },
+        "clock": { "value": 0, "displayValue": "2:40" },
+        "team": { "id": "12" },
+        "scoringType": {
+          "name": "field-goal",
+          "displayName": "Field Goal",
+          "abbreviation": "FG"
+        }
+      },
+      {
+        "id": "10013",
+        "type": {
+          "id": "67",
+          "text": "Passing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "D. Mensah 22 Yd pass from C. Harlan (T. Lindqvist Kick)",
+        "awayScore": 10,
+        "homeScore": 7,
+        "period": { "number": 2 },
+        "clock": { "value": 0, "displayValue": "12:05" },
+        "team": { "id": "12" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10014",
+        "type": { "id": "59", "text": "Field Goal Good", "abbreviation": "FG" },
+        "text": "J. Reyes 45 Yd Field Goal",
+        "awayScore": 10,
+        "homeScore": 10,
+        "period": { "number": 2 },
+        "clock": { "value": 0, "displayValue": "7:31" },
+        "team": { "id": "11" },
+        "scoringType": {
+          "name": "field-goal",
+          "displayName": "Field Goal",
+          "abbreviation": "FG"
+        }
+      },
+      {
+        "id": "10015",
+        "type": {
+          "id": "68",
+          "text": "Rushing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "C. Harlan 1 Yd Run (T. Lindqvist Kick)",
+        "awayScore": 17,
+        "homeScore": 10,
+        "period": { "number": 2 },
+        "clock": { "value": 0, "displayValue": "3:18" },
+        "team": { "id": "12" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10016",
+        "type": {
+          "id": "67",
+          "text": "Passing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "A. Bell 31 Yd pass from R. Vance (J. Reyes Kick)",
+        "awayScore": 17,
+        "homeScore": 17,
+        "period": { "number": 2 },
+        "clock": { "value": 0, "displayValue": "0:29" },
+        "team": { "id": "11" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10017",
+        "type": {
+          "id": "68",
+          "text": "Rushing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "M. Okafor 12 Yd Run (J. Reyes Kick)",
+        "awayScore": 17,
+        "homeScore": 24,
+        "period": { "number": 3 },
+        "clock": { "value": 0, "displayValue": "6:44" },
+        "team": { "id": "11" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      }
+    ]
   },
   "1003": {
     "leaders": [
       {
-        "team": {
-          "id": "32",
-          "abbreviation": "CAN"
-        },
+        "team": { "id": "32", "abbreviation": "CAN" },
         "leaders": [
           {
             "name": "passingYards",
@@ -224,9 +284,7 @@
                   "id": "C. Fox",
                   "shortName": "C. Fox",
                   "jersey": "12",
-                  "position": {
-                    "abbreviation": "QB"
-                  },
+                  "position": { "abbreviation": "QB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/1973.png"
                   }
@@ -243,9 +301,7 @@
                   "id": "C. Mesa",
                   "shortName": "C. Mesa",
                   "jersey": "4",
-                  "position": {
-                    "abbreviation": "RB"
-                  },
+                  "position": { "abbreviation": "RB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/21804.png"
                   }
@@ -262,9 +318,7 @@
                   "id": "R. Canyon",
                   "shortName": "R. Canyon",
                   "jersey": "80",
-                  "position": {
-                    "abbreviation": "WR"
-                  },
+                  "position": { "abbreviation": "WR" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/91738.png"
                   }
@@ -275,10 +329,7 @@
         ]
       },
       {
-        "team": {
-          "id": "31",
-          "abbreviation": "LAK"
-        },
+        "team": { "id": "31", "abbreviation": "LAK" },
         "leaders": [
           {
             "name": "passingYards",
@@ -289,9 +340,7 @@
                   "id": "L. Shore",
                   "shortName": "L. Shore",
                   "jersey": "9",
-                  "position": {
-                    "abbreviation": "QB"
-                  },
+                  "position": { "abbreviation": "QB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/58700.png"
                   }
@@ -308,9 +357,7 @@
                   "id": "L. Wade",
                   "shortName": "L. Wade",
                   "jersey": "30",
-                  "position": {
-                    "abbreviation": "RB"
-                  },
+                  "position": { "abbreviation": "RB" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/76982.png"
                   }
@@ -327,9 +374,7 @@
                   "id": "H. Pond",
                   "shortName": "H. Pond",
                   "jersey": "81",
-                  "position": {
-                    "abbreviation": "TE"
-                  },
+                  "position": { "abbreviation": "TE" },
                   "headshot": {
                     "href": "https://a.espncdn.com/i/headshots/college-football/players/full/86628.png"
                   }
@@ -343,76 +388,199 @@
     "boxscore": {
       "teams": [
         {
-          "team": {
-            "id": "32"
-          },
+          "team": { "id": "32" },
           "statistics": [
-            {
-              "name": "totalYards",
-              "displayValue": "311"
-            },
-            {
-              "name": "turnovers",
-              "displayValue": "2"
-            },
-            {
-              "name": "firstDowns",
-              "displayValue": "18"
-            },
-            {
-              "name": "totalPenaltiesYards",
-              "displayValue": "6-50"
-            },
-            {
-              "name": "thirdDownEff",
-              "displayValue": "6-14"
-            },
-            {
-              "name": "fourthDownEff",
-              "displayValue": "1-2"
-            },
-            {
-              "name": "possessionTime",
-              "displayValue": "28:30"
-            }
+            { "name": "totalYards", "displayValue": "311" },
+            { "name": "turnovers", "displayValue": "2" },
+            { "name": "firstDowns", "displayValue": "18" },
+            { "name": "totalPenaltiesYards", "displayValue": "6-50" },
+            { "name": "thirdDownEff", "displayValue": "6-14" },
+            { "name": "fourthDownEff", "displayValue": "1-2" },
+            { "name": "possessionTime", "displayValue": "28:30" }
           ]
         },
         {
-          "team": {
-            "id": "31"
-          },
+          "team": { "id": "31" },
           "statistics": [
-            {
-              "name": "totalYards",
-              "displayValue": "343"
-            },
-            {
-              "name": "turnovers",
-              "displayValue": "1"
-            },
-            {
-              "name": "firstDowns",
-              "displayValue": "21"
-            },
-            {
-              "name": "totalPenaltiesYards",
-              "displayValue": "3-20"
-            },
-            {
-              "name": "thirdDownEff",
-              "displayValue": "7-12"
-            },
-            {
-              "name": "fourthDownEff",
-              "displayValue": "0-0"
-            },
-            {
-              "name": "possessionTime",
-              "displayValue": "31:30"
-            }
+            { "name": "totalYards", "displayValue": "343" },
+            { "name": "turnovers", "displayValue": "1" },
+            { "name": "firstDowns", "displayValue": "21" },
+            { "name": "totalPenaltiesYards", "displayValue": "3-20" },
+            { "name": "thirdDownEff", "displayValue": "7-12" },
+            { "name": "fourthDownEff", "displayValue": "0-0" },
+            { "name": "possessionTime", "displayValue": "31:30" }
           ]
         }
       ]
-    }
+    },
+    "scoringPlays": [
+      {
+        "id": "10031",
+        "type": {
+          "id": "67",
+          "text": "Passing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "K. Morrow 18 Yd pass from L. Duarte (S. Park Kick)",
+        "awayScore": 0,
+        "homeScore": 7,
+        "period": { "number": 1 },
+        "clock": { "value": 0, "displayValue": "4:02" },
+        "team": { "id": "31" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10032",
+        "type": {
+          "id": "68",
+          "text": "Rushing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "B. Achebe 2 Yd Run (N. Ortiz Kick)",
+        "awayScore": 7,
+        "homeScore": 7,
+        "period": { "number": 2 },
+        "clock": { "value": 0, "displayValue": "13:50" },
+        "team": { "id": "32" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10033",
+        "type": {
+          "id": "68",
+          "text": "Rushing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "L. Duarte 6 Yd Run (S. Park Kick)",
+        "awayScore": 7,
+        "homeScore": 14,
+        "period": { "number": 2 },
+        "clock": { "value": 0, "displayValue": "8:16" },
+        "team": { "id": "31" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10034",
+        "type": {
+          "id": "67",
+          "text": "Passing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "E. Sato 40 Yd pass from G. Whitfield (N. Ortiz Kick)",
+        "awayScore": 14,
+        "homeScore": 14,
+        "period": { "number": 2 },
+        "clock": { "value": 0, "displayValue": "0:51" },
+        "team": { "id": "32" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10035",
+        "type": { "id": "59", "text": "Field Goal Good", "abbreviation": "FG" },
+        "text": "S. Park 33 Yd Field Goal",
+        "awayScore": 14,
+        "homeScore": 17,
+        "period": { "number": 3 },
+        "clock": { "value": 0, "displayValue": "10:22" },
+        "team": { "id": "31" },
+        "scoringType": {
+          "name": "field-goal",
+          "displayName": "Field Goal",
+          "abbreviation": "FG"
+        }
+      },
+      {
+        "id": "10036",
+        "type": {
+          "id": "68",
+          "text": "Rushing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "B. Achebe 15 Yd Run (N. Ortiz Kick)",
+        "awayScore": 21,
+        "homeScore": 17,
+        "period": { "number": 3 },
+        "clock": { "value": 0, "displayValue": "5:09" },
+        "team": { "id": "32" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10037",
+        "type": {
+          "id": "67",
+          "text": "Passing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "T. Grant 9 Yd pass from L. Duarte (S. Park Kick)",
+        "awayScore": 21,
+        "homeScore": 24,
+        "period": { "number": 3 },
+        "clock": { "value": 0, "displayValue": "1:37" },
+        "team": { "id": "31" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10038",
+        "type": {
+          "id": "67",
+          "text": "Passing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "E. Sato 27 Yd pass from G. Whitfield (N. Ortiz Kick)",
+        "awayScore": 28,
+        "homeScore": 24,
+        "period": { "number": 4 },
+        "clock": { "value": 0, "displayValue": "9:58" },
+        "team": { "id": "32" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      },
+      {
+        "id": "10039",
+        "type": {
+          "id": "68",
+          "text": "Rushing Touchdown",
+          "abbreviation": "TD"
+        },
+        "text": "L. Duarte 1 Yd Run (S. Park Kick)",
+        "awayScore": 28,
+        "homeScore": 31,
+        "period": { "number": 4 },
+        "clock": { "value": 0, "displayValue": "0:12" },
+        "team": { "id": "31" },
+        "scoringType": {
+          "name": "touchdown",
+          "displayName": "Touchdown",
+          "abbreviation": "TD"
+        }
+      }
+    ]
   }
 }

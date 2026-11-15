@@ -4,7 +4,11 @@ import { afterEach, expect, it, vi } from "vitest";
 import { copy } from "@/copy";
 import { GameDetails } from "@/features/scores/GameDetails";
 import { GameLeaders } from "@/features/scores/GameLeaders";
-import type { GameLeader, GameSummary } from "@/features/scores/types";
+import type {
+  GameLeader,
+  GameSummary,
+  GameSummarySource,
+} from "@/features/scores/types";
 import type { Game, Team } from "@/shared/types";
 
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
@@ -90,9 +94,10 @@ it("leaves the leaders section out when the summary has none", async () => {
       value={createAppData({ paused: true })}
       scores={{
         summarySource: {
-          load: vi.fn().mockResolvedValue({
+          load: vi.fn<GameSummarySource["load"]>().mockResolvedValue({
             leaders: { away: [], home: [] },
             stats: [],
+            scoringPlays: [],
           }),
         },
       }}

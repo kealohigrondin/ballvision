@@ -9,6 +9,8 @@ import type { Game } from "@/shared/types";
 import { GameLeaders } from "./GameLeaders";
 import { GameLeadersSkeleton } from "./GameLeadersSkeleton";
 import { useGameSummaryData } from "./gameSummaryContext";
+import { ScoringPlays } from "./ScoringPlays";
+import { ScoringPlaysSkeleton } from "./ScoringPlaysSkeleton";
 import { TeamStats } from "./TeamStats";
 import { TeamStatsSkeleton } from "./TeamStatsSkeleton";
 
@@ -16,13 +18,13 @@ type GameDetailsBodyProps = {
   game: Game;
   /** Shown for unfinished games, after the team stats. */
   liveDetails?: ReactNode;
-  /** Shown after the last play, above the leaders and team stats. */
+  /** Shown after the last play, above the scoring summary. */
   playerDetails?: ReactNode;
 };
 
 // Everything known about one game below its header: last play, extra
-// player details, each team's leaders, team stats, live extras, timeouts and
-// venue.
+// player details, the scoring summary, each team's leaders, team stats, live
+// extras, timeouts and venue.
 export const GameDetailsBody = ({
   game,
   liveDetails,
@@ -36,9 +38,15 @@ export const GameDetailsBody = ({
   const hasLeaders =
     summary.leaders.away.length > 0 || summary.leaders.home.length > 0;
   const hasStats = summary.stats.length > 0;
+  const hasScoring = summary.scoringPlays.length > 0;
+  // A loaded summary always has box score stats once a game starts, so a
+  // game with stats but no scores shows "no scoring yet". Live refreshes keep
+  // the section on screen instead of flashing the placeholder.
+  const showScoring = hasScoring || hasStats;
   const hasDetails = Boolean(
     hasLeaders ||
     hasStats ||
+    hasScoring ||
     game.lastPlay ||
     game.home.quarters.length ||
     game.away.quarters.length ||
@@ -62,6 +70,15 @@ export const GameDetailsBody = ({
       {playerDetails}
       {/* Placeholders hold each section's space on the first load; live
           refreshes keep the current data on screen. */}
+      {loading && !showScoring && <ScoringPlaysSkeleton gameId={game.id} />}
+      {showScoring && (
+        <ScoringPlays
+          gameId={game.id}
+          away={game.away}
+          home={game.home}
+          plays={summary.scoringPlays}
+        />
+      )}
       {loading && !hasLeaders && <GameLeadersSkeleton gameId={game.id} />}
       {hasLeaders && (
         <GameLeaders

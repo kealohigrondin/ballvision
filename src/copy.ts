@@ -56,6 +56,23 @@ export const copy = {
       possession: "Possession",
     },
   },
+  scoringPlays: {
+    title: "Scoring summary",
+    loading: "Loading scoring plays",
+    none: "No scoring plays yet.",
+    // "1st Quarter" … "4th Quarter", then "Overtime", "2nd Overtime" and on.
+    period: (period: number) => {
+      const ordinal = (n: number) => ["1st", "2nd", "3rd"][n - 1] ?? `${n}th`;
+      if (period <= 4) {
+        return `${ordinal(period)} Quarter`;
+      }
+
+      return period === 5 ? "Overtime" : `${ordinal(period - 4)} Overtime`;
+    },
+    // Read in place of the two score columns.
+    score: (away: string, awayScore: number, home: string, homeScore: number) =>
+      `${away} ${awayScore}, ${home} ${homeScore}`,
+  },
   gameLeaders: {
     title: "Game leaders",
     loading: "Loading game leaders",

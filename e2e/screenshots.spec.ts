@@ -3,6 +3,7 @@ import { expect, type Page, test } from "@playwright/test";
 import { copy } from "../src/copy";
 import eplScoreboard from "./fixtures/epl-scoreboard.json" with { type: "json" };
 import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
+import summaries from "./fixtures/summaries.json" with { type: "json" };
 import {
   mockApis,
   mockNflStandings,
@@ -530,6 +531,50 @@ test.describe("@screenshots game stats", () => {
     });
   }
 
+  for (const [state, gameId, theme] of [
+    ["final", "1003", "dark"],
+    ["live", "1001", "light"],
+  ] as const) {
+    test(`scoring summary, ${state}, ${theme}`, async ({ page }) => {
+      // Tall enough to show every play without scrolling the dialog.
+      await page.setViewportSize({ width: 1280, height: 2000 });
+      await openDashboard(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      await page.locator(`#game-details-${gameId}-button`).click();
+      await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+        "opacity",
+        "1",
+      );
+      const plays = page.locator(`#scoring-plays-${gameId}`);
+      await expect(plays).toBeVisible();
+      await plays.screenshot({
+        path: `screenshots/scoring-plays-${state}-${theme}.png`,
+      });
+    });
+  }
+
+  test("scoring summary, no scores yet", async ({ page }) => {
+    await openDashboard(page);
+    // The live game's summary with its scoring plays taken out.
+    await page.route("https://site.api.espn.com/**/summary*", (route) =>
+      route.fulfill({
+        json: { ...summaries["1001"], scoringPlays: [] },
+      }),
+    );
+    await page.locator("#game-details-1001-button").click();
+    await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    const plays = page.locator("#scoring-plays-1001");
+    await expect(plays).toContainText(copy.scoringPlays.none);
+    await plays.screenshot({
+      path: "screenshots/scoring-plays-empty-dark.png",
+    });
+  });
+
   test("team stats, light", async ({ page }) => {
     await openDashboard(page);
     await switchToLight(page);
@@ -564,7 +609,9 @@ test.describe("@screenshots loading placeholders", () => {
   test.use({ viewport: viewports.mobile });
 
   for (const theme of themes) {
-    test(`leaders and team stats, ${theme}`, async ({ page }) => {
+    test(`scoring summary, leaders and team stats, ${theme}`, async ({
+      page,
+    }) => {
       await openDashboard(page);
       if (theme === "light") {
         await switchToLight(page);
@@ -576,6 +623,9 @@ test.describe("@screenshots loading placeholders", () => {
         "opacity",
         "1",
       );
+      await page.locator("#scoring-plays-skeleton-1003").screenshot({
+        path: `screenshots/scoring-plays-loading-${theme}.png`,
+      });
       await page
         .locator("#game-leaders-skeleton-1003")
         .screenshot({ path: `screenshots/game-leaders-loading-${theme}.png` });

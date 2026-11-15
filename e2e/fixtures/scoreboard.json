@@ -51,9 +51,7 @@
           },
           "broadcasts": [
             {
-              "names": [
-                "ABC"
-              ]
+              "names": ["ABC"]
             }
           ],
           "situation": {
@@ -146,9 +144,7 @@
           },
           "broadcasts": [
             {
-              "names": [
-                "ESPN"
-              ]
+              "names": ["ESPN"]
             }
           ],
           "competitors": [
@@ -206,9 +202,7 @@
           },
           "broadcasts": [
             {
-              "names": [
-                "FOX"
-              ]
+              "names": ["FOX"]
             }
           ],
           "competitors": [

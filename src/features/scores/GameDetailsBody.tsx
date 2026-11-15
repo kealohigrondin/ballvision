@@ -16,13 +16,17 @@ type GameDetailsBodyProps = {
   game: Game;
   /** Shown for unfinished games, after the team stats. */
   liveDetails?: ReactNode;
+  /** Shown after the last play, above the leaders and team stats. */
+  playerDetails?: ReactNode;
 };
 
-// Everything known about one game below its header: last play, each
-// team's leaders, team stats, live extras, timeouts and venue.
+// Everything known about one game below its header: last play, extra
+// player details, each team's leaders, team stats, live extras, timeouts and
+// venue.
 export const GameDetailsBody = ({
   game,
   liveDetails,
+  playerDetails,
 }: GameDetailsBodyProps) => {
   const isFinal = game.state === "final";
   const hasTimeouts =
@@ -45,7 +49,7 @@ export const GameDetailsBody = ({
   return (
     <Stack spacing={2}>
       {game.lastPlay && (
-        <Typography component="div">
+        <Typography component="div" id={`game-last-play-${game.id}`}>
           <Typography
             component="span"
             sx={{ display: "block", fontWeight: 600 }}
@@ -55,6 +59,7 @@ export const GameDetailsBody = ({
           {game.lastPlay}
         </Typography>
       )}
+      {playerDetails}
       {/* Placeholders hold each section's space on the first load; live
           refreshes keep the current data on screen. */}
       {loading && !hasLeaders && <GameLeadersSkeleton gameId={game.id} />}

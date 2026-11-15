@@ -28,9 +28,16 @@ type GameCardProps = {
   odds?: ReactNode;
   /** Extra details shown first when an unfinished game is expanded. */
   liveDetails?: ReactNode;
+  /** Extra details shown after the last play, above the stats. */
+  playerDetails?: ReactNode;
 };
 
-export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
+export const GameCard = ({
+  game,
+  odds,
+  liveDetails,
+  playerDetails,
+}: GameCardProps) => {
   const { favoriteIds, toggleFavorite } = useAppData();
   const favorite = favoriteIds.includes(game.id);
   const isLive = game.state === "live";
@@ -229,7 +236,11 @@ export const GameCard = ({ game, odds, liveDetails }: GameCardProps) => {
           </IconButton>
         </Stack>
       </Stack>
-      <GameDetails game={game} liveDetails={liveDetails} />
+      <GameDetails
+        game={game}
+        liveDetails={liveDetails}
+        playerDetails={playerDetails}
+      />
     </Paper>
   );
 };

@@ -8,8 +8,10 @@ import {
   mockNflStandings,
   mockRankings,
   mockSecStandings,
+  mockSleeper,
   mockSoccer,
   mockTeamSchedule,
+  saveSleeperUsername,
 } from "./support/mockApis";
 
 // Captures reference screenshots for pull requests. Run with
@@ -756,4 +758,70 @@ test.describe("@screenshots soccer league table", () => {
         .screenshot({ path: `screenshots/league-zone-key-${league}.png` });
     });
   }
+});
+
+test.describe("@screenshots fantasy players", () => {
+  // Opens the live NFL game's details with a saved Sleeper username.
+  const openLiveGameDetails = async (page: Page) => {
+    await saveSleeperUsername(page);
+    await mockApis(page);
+    await mockSleeper(page);
+    await page.clock.setFixedTime(new Date("2026-11-07T21:00:00Z"));
+    await page.goto("./");
+    await page.locator("#game-details-1001-button").click();
+    await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await expect(page.locator("#fantasy-player-1001-L1-101")).toBeVisible();
+    await expect(page.locator("#game-leaders-1001 img")).toHaveCount(6);
+  };
+
+  for (const theme of themes) {
+    test(`player list, ${theme}`, async ({ page }) => {
+      await page.setViewportSize(viewports.mobile);
+      await openLiveGameDetails(page);
+      if (theme === "light") {
+        await page.keyboard.press("Escape");
+        await switchToLight(page);
+        await page.locator("#game-details-1001-button").click();
+      }
+      await page
+        .locator("#fantasy-players-1001")
+        .screenshot({ path: `screenshots/fantasy-players-${theme}.png` });
+    });
+  }
+
+  for (const [device, viewport] of [
+    ["mobile", viewports.mobile],
+    ["desktop", viewports.desktop],
+  ] as const) {
+    test(`game details dialog with fantasy players, ${device}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await openLiveGameDetails(page);
+      await page.screenshot({
+        path: `screenshots/game-details-fantasy-${device}-dark.png`,
+      });
+    });
+  }
+
+  test("Sleeper account dialog", async ({ page }) => {
+    await page.setViewportSize(viewports.mobile);
+    await saveSleeperUsername(page);
+    await mockApis(page);
+    await mockSleeper(page);
+    await page.goto("./");
+    await page.locator("#masthead-menu-button").click();
+    await page.getByRole("button", { name: copy.fantasy.account }).click();
+    const dialog = page.getByRole("dialog", { name: copy.fantasy.account });
+    await expect(dialog).toBeVisible();
+    // Let the fade-in finish so the page doesn't show through the dialog.
+    await expect(page.locator(".MuiDialog-container").last()).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await dialog.screenshot({ path: "screenshots/sleeper-account-dialog.png" });
+  });
 });

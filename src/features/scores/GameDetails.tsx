@@ -14,10 +14,16 @@ type GameDetailsProps = {
   game: Game;
   /** Shown for unfinished games while the details are open. */
   liveDetails?: ReactNode;
+  /** Extra details shown after the last play, above the stats. */
+  playerDetails?: ReactNode;
 };
 
 // The card's "Game details" button and the dialog it opens.
-export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
+export const GameDetails = ({
+  game,
+  liveDetails,
+  playerDetails,
+}: GameDetailsProps) => {
   const [open, setOpen] = useState(false);
   const dialogId = `game-details-${game.id}`;
 
@@ -52,7 +58,11 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
         closeLabel={copy.gameDetails.close}
       >
         <GameSummaryProvider game={game}>
-          <GameDetailsBody game={game} liveDetails={liveDetails} />
+          <GameDetailsBody
+            game={game}
+            liveDetails={liveDetails}
+            playerDetails={playerDetails}
+          />
         </GameSummaryProvider>
       </ResponsiveDialog>
     </>

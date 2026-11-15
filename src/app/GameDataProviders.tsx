@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { type FantasySource, SleeperDataProvider } from "@/features/fantasy";
 import {
   type ChaosAudio,
   ScoreNotificationProvider,
@@ -15,18 +16,21 @@ type GameDataProvidersProps = {
   children: ReactNode;
   oddsSource?: OddsSource;
   oddsHistorySource?: OddsHistorySource;
+  fantasySource?: FantasySource;
   audioFactory?: () => ChaosAudio;
 };
 
-// Hands the scoreboard's games to the features that build on them (odds and
-// score alerts), so those features never import the scores feature.
+// Hands the scoreboard's games and weeks to the features that build on them
+// (odds, score alerts and fantasy players), so those features never import
+// the scores feature.
 export const GameDataProviders = ({
   children,
   oddsSource,
   oddsHistorySource,
+  fantasySource,
   audioFactory,
 }: GameDataProvidersProps) => {
-  const { games, updatedAt, error } = useScoresData();
+  const { games, updatedAt, error, weeks, currentWeekId } = useScoresData();
 
   return (
     <PolymarketDataProvider
@@ -40,7 +44,13 @@ export const GameDataProviders = ({
         error={error}
         audioFactory={audioFactory}
       >
-        {children}
+        <SleeperDataProvider
+          weeks={weeks}
+          currentWeekId={currentWeekId}
+          source={fantasySource}
+        >
+          {children}
+        </SleeperDataProvider>
       </ScoreNotificationProvider>
     </PolymarketDataProvider>
   );

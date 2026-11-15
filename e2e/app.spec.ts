@@ -2,6 +2,11 @@ import { expect, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
 import eplScoreboard from "./fixtures/epl-scoreboard.json" with { type: "json" };
+import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
+import {
+  shownNotifications,
+  stubDesktopNotifications,
+} from "./support/desktopNotifications";
 import {
   mockApis,
   mockCollegeStandings,
@@ -301,5 +306,60 @@ test.describe("league tabs", () => {
     ).toHaveText(
       /1–4\s*Champions League\s*5\s*Europa League\s*18–20\s*Relegation/,
     );
+  });
+});
+
+test.describe("desktop notifications", () => {
+  test.beforeEach(async ({ page }) => {
+    await stubDesktopNotifications(page);
+    // Pin the live game so its scores raise alerts.
+    await page.addInitScript(() =>
+      localStorage.setItem("ballvision:favorites:v1", JSON.stringify(["1001"])),
+    );
+  });
+
+  test("confirms on the desktop when turned on", async ({ page }) => {
+    await page.goto("./");
+    await page
+      .getByRole("button", { name: copy.scoreNotification.desktopOn })
+      .click();
+
+    await expect
+      .poll(() => shownNotifications(page))
+      .toEqual([
+        expect.objectContaining({
+          title: copy.scoreNotification.desktopReadyTitle,
+        }),
+      ]);
+  });
+
+  test("sends a pinned game's score to the desktop while another window has focus", async ({
+    page,
+  }) => {
+    await page.goto("./");
+    await page
+      .getByRole("button", { name: copy.scoreNotification.desktopOn })
+      .click();
+    await expect(
+      page.getByRole("button", { name: copy.scoreNotification.desktopOff }),
+    ).toBeVisible();
+    await page.evaluate(() => {
+      document.hasFocus = () => false;
+    });
+    // The home team scores a touchdown: 24 becomes 31.
+    const scored = structuredClone(scoreboard);
+    const live = scored.events.find((event) => event.id === "1001")!;
+    const home = live.competitions[0].competitors.find(
+      (team) => team.homeAway === "home",
+    )!;
+    Object.assign(home, { score: "31" });
+    await page.route("https://site.api.espn.com/**/scoreboard*", (route) =>
+      route.fulfill({ json: scored }),
+    );
+    await page.getByRole("button", { name: copy.sync.refresh }).click();
+
+    await expect
+      .poll(async () => (await shownNotifications(page)).at(-1)?.body ?? "")
+      .toContain("31");
   });
 });

@@ -191,6 +191,10 @@ export const AppDataTestProvider = ({
                     audioUnavailable: false,
                     enableSound: vi.fn().mockResolvedValue(undefined),
                     toggleMute: vi.fn(),
+                    desktopSupported: false,
+                    desktopEnabled: false,
+                    desktopBlocked: false,
+                    toggleDesktopAlerts: vi.fn().mockResolvedValue(undefined),
                   }}
                 >
                   {children}

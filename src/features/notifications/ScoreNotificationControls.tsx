@@ -1,4 +1,12 @@
-import { BellOff, BellRing, Flame } from "lucide-react";
+import {
+  BellOff,
+  BellRing,
+  Flame,
+  MonitorCheck,
+  MonitorOff,
+  MonitorX,
+} from "lucide-react";
+import { useMemo } from "react";
 
 import { copy } from "@/copy";
 import { ToolbarIconButton } from "@/shared/components/ToolbarIconButton";
@@ -18,6 +26,10 @@ export const ScoreNotificationControls = ({
     preview,
     previewAvailable,
     audioUnavailable,
+    desktopSupported,
+    desktopEnabled,
+    desktopBlocked,
+    toggleDesktopAlerts,
   } = useScoreNotification();
   const enableLabel = audioUnavailable
     ? copy.scoreNotification.retrySound
@@ -25,6 +37,16 @@ export const ScoreNotificationControls = ({
   const soundLabel = muted
     ? copy.scoreNotification.unmuteSound
     : copy.scoreNotification.muteSound;
+
+  const desktop = useMemo(() => {
+    if (desktopBlocked) {
+      return { icon: MonitorX, label: copy.scoreNotification.desktopBlocked };
+    }
+
+    return desktopEnabled
+      ? { icon: MonitorCheck, label: copy.scoreNotification.desktopOff }
+      : { icon: MonitorOff, label: copy.scoreNotification.desktopOn };
+  }, [desktopBlocked, desktopEnabled]);
 
   return (
     <>
@@ -50,6 +72,15 @@ export const ScoreNotificationControls = ({
         disabled={!previewAvailable}
         showLabel={showLabels}
       />
+      {desktopSupported && (
+        <ToolbarIconButton
+          icon={desktop.icon}
+          label={desktop.label}
+          onClick={() => void toggleDesktopAlerts()}
+          disabled={desktopBlocked}
+          showLabel={showLabels}
+        />
+      )}
     </>
   );
 };

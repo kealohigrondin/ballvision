@@ -4,6 +4,7 @@ import { copy } from "../src/copy";
 import eplScoreboard from "./fixtures/epl-scoreboard.json" with { type: "json" };
 import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
 import summaries from "./fixtures/summaries.json" with { type: "json" };
+import { stubDesktopNotifications } from "./support/desktopNotifications";
 import {
   mockApis,
   mockNflStandings,
@@ -888,4 +889,25 @@ test.describe("@screenshots fantasy players", () => {
     );
     await dialog.screenshot({ path: "screenshots/sleeper-account-dialog.png" });
   });
+});
+
+test.describe("@screenshots desktop notifications button", () => {
+  for (const [state, answer, label] of [
+    ["off", "granted", copy.scoreNotification.desktopOn],
+    ["on", "granted", copy.scoreNotification.desktopOff],
+    ["blocked", "denied", copy.scoreNotification.desktopBlocked],
+  ] as const) {
+    test(state, async ({ page }) => {
+      await stubDesktopNotifications(page, answer);
+      await openDashboard(page);
+      if (state !== "off") {
+        await page
+          .getByRole("button", { name: copy.scoreNotification.desktopOn })
+          .click();
+      }
+      await page
+        .getByRole("button", { name: label })
+        .screenshot({ path: `screenshots/desktop-notifications-${state}.png` });
+    });
+  }
 });

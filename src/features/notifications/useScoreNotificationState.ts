@@ -3,8 +3,10 @@ import { useEffect, useRef } from "react";
 import type { Game } from "@/shared/types";
 
 import type { ChaosAudio } from "./audio/chaosAudio";
+import type { DesktopNotifier } from "./desktopNotifier";
 import { notificationSoundKind } from "./scoreNotifications";
 import { useChaosAudio } from "./useChaosAudio";
+import { useDesktopNotifications } from "./useDesktopNotifications";
 import { useScoreNotifications } from "./useScoreNotifications";
 
 export type ScoreNotificationOptions = {
@@ -15,6 +17,8 @@ export type ScoreNotificationOptions = {
   ready: boolean;
   favoriteIds: readonly string[];
   audioFactory?: () => ChaosAudio;
+  /** Shows alerts on the desktop; defaults to the browser's notifications. */
+  desktopNotifier?: DesktopNotifier;
 };
 
 export const useScoreNotificationState = ({
@@ -23,8 +27,15 @@ export const useScoreNotificationState = ({
   ready,
   favoriteIds,
   audioFactory,
+  desktopNotifier,
 }: ScoreNotificationOptions) => {
-  const events = useScoreNotifications(games, slateKey, ready, favoriteIds);
+  const { alerts, ...events } = useScoreNotifications(
+    games,
+    slateKey,
+    ready,
+    favoriteIds,
+  );
+  const desktop = useDesktopNotifications(alerts, desktopNotifier);
   const audio = useChaosAudio(audioFactory);
   const played = useRef<string | undefined>(undefined);
 
@@ -46,5 +57,6 @@ export const useScoreNotificationState = ({
     audioUnavailable: audio.unavailable,
     enableSound: audio.enable,
     toggleMute: audio.toggleMute,
+    ...desktop,
   };
 };

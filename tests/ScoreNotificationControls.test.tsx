@@ -25,6 +25,10 @@ const renderControls = (overrides: Partial<ScoreNotificationData>) =>
         audioUnavailable: false,
         enableSound: vi.fn().mockResolvedValue(undefined),
         toggleMute: vi.fn(),
+        desktopSupported: false,
+        desktopEnabled: false,
+        desktopBlocked: false,
+        toggleDesktopAlerts: vi.fn().mockResolvedValue(undefined),
         ...overrides,
       }}
     >
@@ -61,3 +65,43 @@ it.each([
     expect(iconClass(label)).toContain(icon);
   },
 );
+
+it.each([
+  [
+    { desktopEnabled: false },
+    copy.scoreNotification.desktopOn,
+    "lucide-monitor-off",
+  ],
+  [
+    { desktopEnabled: true },
+    copy.scoreNotification.desktopOff,
+    "lucide-monitor-check",
+  ],
+  [
+    { desktopBlocked: true },
+    copy.scoreNotification.desktopBlocked,
+    "lucide-monitor-x",
+  ],
+])(
+  "shows whether desktop notifications are on with a monitor (%o)",
+  (state, label, icon) => {
+    renderControls({ desktopSupported: true, ...state });
+    expect(iconClass(label)).toContain(icon);
+  },
+);
+
+it("disables the desktop button while the browser blocks notifications", () => {
+  renderControls({ desktopSupported: true, desktopBlocked: true });
+  expect(
+    screen
+      .getByRole("button", { name: copy.scoreNotification.desktopBlocked })
+      .hasAttribute("disabled"),
+  ).toBe(true);
+});
+
+it("leaves the desktop button out where the browser has no notifications", () => {
+  renderControls({ desktopSupported: false });
+  expect(
+    screen.queryByRole("button", { name: copy.scoreNotification.desktopOn }),
+  ).toBeNull();
+});

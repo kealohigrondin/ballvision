@@ -161,6 +161,9 @@ export const copy = {
       winDrawLoss: "W-D-L",
       goalDifference: "GD",
     },
+    zones: "Table positions",
+    zonePositions: (first: number, last: number) =>
+      first === last ? `${first}` : `${first}–${last}`,
     trendNew: "NEW",
     trendUnchanged: "-",
     nflViews: {

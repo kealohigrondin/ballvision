@@ -233,14 +233,14 @@ test.describe("league tabs", () => {
     ).toBeVisible();
   });
 
-  test("names each qualification zone under its last team", async ({
-    page,
-  }) => {
+  test("lists what each run of table positions earns", async ({ page }) => {
     await page.goto("./");
     await page.locator("#league-tab-epl").click();
     await page.getByRole("button", { name: copy.navRail.standings }).click();
     await expect(
-      page.locator("#league-note-2026-27-english-premier-league-364"),
-    ).toHaveText("Champions League");
+      page.locator("#league-zones-2026-27-english-premier-league"),
+    ).toHaveText(
+      /1–4\s*Champions League\s*5\s*Europa League\s*18–20\s*Relegation/,
+    );
   });
 });

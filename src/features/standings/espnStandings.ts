@@ -12,7 +12,7 @@ import {
 import { hasRankings, sportOf } from "@/shared/leagues";
 import type { Division } from "@/shared/types";
 
-import type { LeagueRow, LeagueSource, LeagueTable } from "./types";
+import type { LeagueRow, LeagueSource, LeagueTable, LeagueZone } from "./types";
 
 // League context stays separate from the high-frequency scoreboard feed.
 const leagueTeamIdentity = (team: Json) => ({
@@ -101,18 +101,33 @@ export const parseStandings = (
 };
 
 // Soccer dividers come where ESPN's qualification note changes. A line is
-// dashed when it leads into one of these notes (a step within the same
-// tier, or the relegation zone) and solid otherwise.
-const dashedBeforeNotes = new Set([
-  "Knockout phase playoffs - seeded", // Champions League 8/9
-  "Knockout phase playoffs - unseeded", // Champions League 16/17
+// solid when it leads into one of these notes (the teams below it are out)
+// and dashed otherwise.
+const solidBeforeNotes = new Set([
+  "Eliminated", // Champions League 24/25
   "Relegation", // Premier League 17/18
 ]);
 
+// Each run of positions sharing an ESPN note, e.g. 1–4 "Champions League".
+// Positions without a note (mid-table) form no zone.
+const soccerZones = (rows: readonly LeagueRow[]): LeagueZone[] =>
+  rows.reduce<LeagueZone[]>((zones, row, index) => {
+    const position = row.rank ?? index + 1;
+    const current = zones.at(-1);
+    if (!row.note) {
+      return zones;
+    }
+    if (current?.note === row.note && current.last === position - 1) {
+      return [...zones.slice(0, -1), { ...current, last: position }];
+    }
+
+    return [...zones, { note: row.note, first: position, last: position }];
+  }, []);
+
 // Soccer league tables: one per stage (the Premier League's single table,
 // the Champions League's league phase), in table order. A line marks each
-// change of qualification zone, and the last team of each noted zone
-// carries the note to show under it.
+// change of qualification zone, and the zones are listed for a key under
+// the table.
 export const parseSoccerStandings = (payload: unknown): LeagueTable[] => {
   const root = obj(payload);
   if (!Array.isArray(root.children)) {
@@ -151,19 +166,18 @@ export const parseSoccerStandings = (payload: unknown): LeagueTable[] => {
       title: str(group.name, "League table"),
       subtitle: str(standings.seasonDisplayName, str(standings.season)),
       soccer: true,
+      zones: soccerZones(rows),
       rows: rows.map((row, index) => {
         const next = rows[index + 1];
-        const closesGroup = next?.note !== row.note;
+        const closesGroup = next !== undefined && next.note !== row.note;
 
         return {
           ...row,
-          ...(closesGroup && row.note && { noteAfter: row.note }),
-          ...(closesGroup &&
-            next && {
-              dividerAfter: dashedBeforeNotes.has(next.note ?? "")
-                ? ("dashed" as const)
-                : ("solid" as const),
-            }),
+          ...(closesGroup && {
+            dividerAfter: solidBeforeNotes.has(next.note ?? "")
+              ? ("solid" as const)
+              : ("dashed" as const),
+          }),
         };
       }),
     };

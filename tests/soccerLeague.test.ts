@@ -82,7 +82,7 @@ describe("parseSoccerStandings", () => {
     );
     expect(table.rows.map((row) => row.dividerAfter)).toEqual([
       undefined,
-      "solid",
+      "dashed",
       undefined,
     ]);
   });
@@ -95,7 +95,7 @@ describe("parseSoccerStandings", () => {
         : [],
     );
 
-  it("dashes the Champions League lines within the knockout playoffs", () => {
+  it("keeps only the Champions League elimination line solid", () => {
     expect(dividers(uclStandings)).toEqual([
       "8/9 dashed",
       "16/17 dashed",
@@ -103,38 +103,20 @@ describe("parseSoccerStandings", () => {
     ]);
   });
 
-  it("dashes the Premier League relegation line and keeps the others solid", () => {
+  it("keeps only the Premier League relegation line solid", () => {
     expect(dividers(eplStandings)).toEqual([
-      "4/5 solid",
-      "5/6 solid",
-      "17/18 dashed",
+      "4/5 dashed",
+      "5/6 dashed",
+      "17/18 solid",
     ]);
   });
 
-  it("puts each zone's note under its last team", () => {
-    const [table] = parseSoccerStandings(
-      standingsPayload([
-        standingsEntry({ id: "a", rank: 1, note: "Round of 16" }),
-        standingsEntry({ id: "b", rank: 2, note: "Round of 16" }),
-        standingsEntry({ id: "c", rank: 3 }),
-      ]),
-    );
-    expect(table.rows.map((row) => row.noteAfter)).toEqual([
-      undefined,
-      "Round of 16",
-      undefined,
+  it("lists each qualification zone's positions", () => {
+    expect(parseSoccerStandings(eplStandings)[0].zones).toEqual([
+      { note: "Champions League", first: 1, last: 4 },
+      { note: "Europa League", first: 5, last: 5 },
+      { note: "Relegation", first: 18, last: 20 },
     ]);
-  });
-
-  it("notes the last zone of the table without a line under it", () => {
-    const [table] = parseSoccerStandings(
-      standingsPayload([
-        standingsEntry({ id: "a", rank: 1 }),
-        standingsEntry({ id: "b", rank: 2, note: "Relegation" }),
-      ]),
-    );
-    expect(table.rows[1]).toMatchObject({ noteAfter: "Relegation" });
-    expect(table.rows[1].dividerAfter).toBeUndefined();
   });
 
   it("rejects a payload without tables", () => {

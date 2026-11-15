@@ -22,15 +22,17 @@ export interface LeagueRow {
   /** Soccer: what this table position earns, e.g. "Champions League". */
   note?: string;
   /**
-   * Soccer: the note of the group this row closes, shown in a small row
-   * under it, e.g. "Champions League" after the last qualifying team.
-   */
-  noteAfter?: string;
-  /**
-   * Draws a separator below this row (below its note row, if it has one),
+   * Draws a separator below this row,
    * e.g. at a playoff cut line.
    */
   dividerAfter?: "solid" | "dashed";
+}
+/** Soccer: a run of table positions that earn the same thing. */
+export interface LeagueZone {
+  /** ESPN's note for the zone, e.g. "Europa League". */
+  note: string;
+  first: number;
+  last: number;
 }
 export interface LeagueTable {
   id: string;
@@ -41,6 +43,8 @@ export interface LeagueTable {
   nflView?: NflStandingsView;
   /** Soccer tables rank by league points and show goal difference. */
   soccer?: boolean;
+  /** Soccer: the qualification zones, top to bottom. */
+  zones?: LeagueZone[];
 }
 export type LeagueTableView = "standings" | "rankings";
 export interface LeagueSource {

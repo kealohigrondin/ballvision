@@ -1,12 +1,19 @@
 import { expect, test } from "@playwright/test";
 
 import { copy } from "../src/copy";
+import eplScoreboard from "./fixtures/epl-scoreboard.json" with { type: "json" };
 import {
   mockApis,
   mockCollegeStandings,
   mockNflStandings,
   mockSleeper,
+  mockSoccer,
 } from "./support/mockApis";
+
+// The Premier League fixture's match in progress.
+const eplLive = eplScoreboard.events.find(
+  (event) => event.status.type.state === "in",
+)!;
 
 test.beforeEach(async ({ page }) => {
   await mockApis(page);
@@ -43,9 +50,7 @@ test("remembers the chosen NFL standings view after a reload", async ({
 }) => {
   await mockNflStandings(page);
   await page.goto("./");
-  await page
-    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
-    .click();
+  await page.locator("#league-tab-nfl").click();
   await page.getByRole("button", { name: copy.navRail.standings }).click();
   const picker = page.getByLabel(copy.league.standingsView);
   await expect(picker).toHaveValue("wildcard");
@@ -74,9 +79,7 @@ test("titles each NFL division table with the division name", async ({
 }) => {
   await mockNflStandings(page);
   await page.goto("./");
-  await page
-    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
-    .click();
+  await page.locator("#league-tab-nfl").click();
   await page.getByRole("button", { name: copy.navRail.standings }).click();
   await page.getByLabel(copy.league.standingsView).selectOption("division");
   const table = page.getByRole("table", { name: /NFC North/ });
@@ -98,9 +101,7 @@ test("lists every college team in the schedule picker", async ({ page }) => {
 test("finds an NFL team by typing in the schedule picker", async ({ page }) => {
   await mockNflStandings(page);
   await page.goto("./");
-  await page
-    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
-    .click();
+  await page.locator("#league-tab-nfl").click();
   await page.getByRole("button", { name: copy.navRail.schedule }).click();
   const team = page.getByRole("combobox", { name: copy.schedule.team });
   await team.click();
@@ -112,23 +113,157 @@ test("finds an NFL team by typing in the schedule picker", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("shows your Sleeper players in the game details of their NFL game", async ({
-  page,
-}) => {
-  await mockSleeper(page);
+test("shows each team's leaders in a live game's details", async ({ page }) => {
   await page.goto("./");
-  await page
-    .getByRole("button", { name: copy.scoresHeader.divisions.nfl })
-    .click();
-  await page.getByRole("button", { name: copy.fantasy.account }).click();
-  await page.locator("#sleeper-account-input").fill("AaronY");
-  await page.locator("#sleeper-account-save").click();
   await page
     .getByRole("button", { name: copy.gameDetails.toggle })
     .first()
     .click();
 
-  await expect(page.locator("#fantasy-player-1001-L1-101")).toContainText(
-    "Riley Hawk",
+  await expect(page.locator("#game-leader-1001-home-passing")).toContainText(
+    "14/21, 188 YDS, 2 TD",
   );
+});
+
+test("leaves leaders out of an upcoming game's details", async ({ page }) => {
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: copy.gameDetails.toggle })
+    .nth(1)
+    .click();
+
+  await expect(page.locator("#game-leaders-1002")).toHaveCount(0);
+});
+
+test("opens a game's details in a dialog named for the matchup", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.locator("#game-details-1001-button").click();
+
+  await expect(
+    page.getByRole("dialog", {
+      name: copy.gameDetails.title("River Otters", "Ridge Hawks"),
+    }),
+  ).toBeVisible();
+});
+
+test("closes the game details dialog with the Escape key", async ({ page }) => {
+  await page.goto("./");
+  await page.locator("#game-details-1001-button").click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("dialog")).toBeHidden();
+});
+
+test("compares the teams' stats in a game's details", async ({ page }) => {
+  await page.goto("./");
+  await page.locator("#game-details-1001-button").click();
+
+  await expect(page.locator("#team-stat-1001-totalYards")).toContainText("185");
+});
+
+test("shows the stadium in place of kickoff on an upcoming game's card", async ({
+  page,
+}) => {
+  await page.goto("./");
+
+  await expect(
+    page.locator("article").nth(1).locator(".card-situation").first(),
+  ).toContainText("Summit Stadium");
+});
+
+test.describe("Sleeper fantasy players", () => {
+  // Saves a username on the NFL tab and opens the live game's details.
+  test.beforeEach(async ({ page }) => {
+    await mockSleeper(page);
+    await page.goto("./");
+    await page.locator("#league-tab-nfl").click();
+    await page.getByRole("button", { name: copy.fantasy.account }).click();
+    await page.locator("#sleeper-account-input").fill("AaronY");
+    await page.locator("#sleeper-account-save").click();
+    await page.locator("#game-details-1001-button").click();
+  });
+
+  test("shows your players in the details of their NFL game", async ({
+    page,
+  }) => {
+    await expect(page.locator("#fantasy-player-1001-L1-101")).toContainText(
+      "Riley Hawk",
+    );
+  });
+
+  test("lists your players below the last play and above the stats", async ({
+    page,
+  }) => {
+    const top = async (selector: string) =>
+      (await page.locator(selector).boundingBox())?.y ?? NaN;
+    await expect(page.locator("#game-leaders-1001")).toBeVisible();
+    const players = await top("#fantasy-players-1001");
+
+    expect(players).toBeGreaterThan(await top("#game-last-play-1001"));
+    expect(players).toBeLessThan(await top("#game-leaders-1001"));
+  });
+});
+
+test.describe("league tabs", () => {
+  test.beforeEach(async ({ page }) => {
+    await mockSoccer(page);
+  });
+
+  test("shows the Premier League scoreboard on the EPL tab", async ({
+    page,
+  }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-epl").click();
+    await expect(page.locator(`#game-card-${eplLive.id}`)).toBeVisible();
+  });
+
+  test("offers FBS and FCS only on the NCAAF tab", async ({ page }) => {
+    await page.goto("./");
+    await expect(page.locator("#division-control")).toBeVisible();
+    await page.locator("#league-tab-ucl").click();
+    await expect(page.locator("#division-control")).toBeHidden();
+  });
+
+  test("moves the tab indicator under the chosen league", async ({ page }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-ucl").click();
+    const tab = await page.locator("#league-tab-ucl").boundingBox();
+    await expect
+      .poll(async () => {
+        const indicator = await page
+          .locator("header .MuiTabs-indicator")
+          .boundingBox();
+
+        return Math.round(indicator?.x ?? 0);
+      })
+      .toBe(Math.round(tab?.x ?? -1));
+  });
+
+  test("remembers the chosen league after a reload", async ({ page }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-ucl").click();
+    await expect(page.locator("#league-tab-ucl")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await page.reload();
+    await expect(page.locator("#league-tab-ucl")).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+  });
+
+  test("shows the Premier League table in the league panel", async ({
+    page,
+  }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-epl").click();
+    await page.getByRole("button", { name: copy.navRail.standings }).click();
+    await expect(
+      page.locator("#league-table-title-2026-27-english-premier-league"),
+    ).toBeVisible();
+  });
 });

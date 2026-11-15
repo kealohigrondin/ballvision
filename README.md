@@ -1,6 +1,6 @@
 # BALLVISION
 
-Your live game companion. A React + TypeScript football dashboard for FBS, FCS, and the NFL. Runs in browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
+Your live game companion. A React + TypeScript dashboard for college football (FBS and FCS), the NFL, the Premier League and the Champions League. Runs in browser with no API key or backend. ESPN is an undocumented upstream API; its availability, coverage, and schema may change.
 
 ## Run locally
 
@@ -58,7 +58,13 @@ On every pull request that changes `src/components/`, the **PR screenshots** wor
 - `src/context/polymarketDataContext.ts` / `PolymarketDataProvider`: own batched live moneylines. `PolymarketGameProvider` scopes the current quote, history range, history data, and dropdown lifecycle to each game; odds and chart components use `usePolymarketGame()` directly.
 - `src/App.tsx`: composes UI, ESPN, and Polymarket providers with replaceable data sources. `Dashboard` composes the layout; headers, grid, refresh controls, and league panel consume context directly.
 
-Polling runs 20 seconds after each completed request; requests time out after 15 seconds. Hidden tabs stop scheduled polling and refresh on return. A failed refresh retains the last successful snapshot with a warning. Changing dates/divisions clears the prior slate and cancels obsolete requests. Game clocks display the reported feed value; they are not extrapolated. All kickoff times use the browser's local timezone. FBS/FCS/NFL data availability follows ESPN; the app cannot guarantee coverage outside the selected feed.
+Polling runs 20 seconds after each completed request; requests time out after 15 seconds. Hidden tabs stop scheduled polling and refresh on return. A failed refresh retains the last successful snapshot with a warning. Changing dates/divisions clears the prior slate and cancels obsolete requests. Game clocks display the reported feed value; they are not extrapolated. All kickoff times use the browser's local timezone. FBS/FCS/NFL/EPL/UCL data availability follows ESPN; the app cannot guarantee coverage outside the selected feed.
+
+## Leagues
+
+Tabs in the masthead switch between **NCAAF**, **NFL**, **EPL** (Premier League) and **UCL** (Champions League). The FBS/FCS toggle appears only on the NCAAF tab, which returns to the last college division chosen. `src/shared/leagues.ts` maps each ESPN feed (`Division`) to its tab (`League`) and its rules (`Sport`); `espnLeaguePath` in `src/shared/api/espn.ts` maps each feed to its ESPN API path.
+
+ESPN lists soccer scoreboards only by day or by month (it rejects date ranges), so soccer pages through the season by month instead of by week: one request per refresh covers every match in the month. Months come from the Premier League's list of match days and from the Champions League's stage date ranges. Soccer cards show the match minute and the latest goal, have no period columns, and treat a level score as a draw. Soccer tables show played, W-D-L, goal difference and points, with a line at each change of qualification zone. Polymarket's soccer markets are three-way (home, draw, away), so soccer games show no odds, and there are no soccer polls.
 
 Pinned game IDs stay on this browser. There is no account, tracking, database, or continuous animation. Details expand natively and logos load lazily.
 

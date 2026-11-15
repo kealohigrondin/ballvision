@@ -1,13 +1,14 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 
-import { TeamLogo } from "../src/components/TeamLogo";
-import { ColorModeContext } from "../src/context/ColorModeContext";
-import { parseScoreboard, parseStandings } from "../src/data/espn";
+import { parseStandings } from "@/features/standings/espnStandings";
+import { parseScoreboard } from "@/shared/api/espn";
+import { ColorModeContext } from "@/shared/ColorModeContext";
+import { TeamLogo } from "@/shared/components/TeamLogo";
 
 afterEach(cleanup);
 
-const espnLogo = (league: "nfl" | "ncaa", id: string) =>
+const espnLogo = (league: "nfl" | "ncaa" | "soccer", id: string) =>
   `https://a.espncdn.com/i/teamlogos/${league}/500/${id}.png`;
 
 const competitor = (
@@ -58,6 +59,18 @@ it("tells an NFL team from a college team with the same ESPN id", () => {
   const auburn = homeTeam("2", { logo: espnLogo("ncaa", "2") });
   expect(bills.logo).toContain("assets/logos/nfl/2-light");
   expect(auburn.logo).toContain("assets/logos/fbs/2-light");
+});
+
+it("uses the bundled light and dark logos for a soccer team", () => {
+  const liverpool = homeTeam("364", { logo: espnLogo("soccer", "364") });
+  expect(liverpool.logo).toContain("assets/logos/soccer/364-light");
+  expect(liverpool.logoDark).toContain("assets/logos/soccer/364-dark");
+});
+
+it("bundles no dark logo for a soccer crest ESPN draws the same in both themes", () => {
+  const arsenal = homeTeam("359", { logo: espnLogo("soccer", "359") });
+  expect(arsenal.logo).toContain("assets/logos/soccer/359-light");
+  expect(arsenal.logoDark).toBeUndefined();
 });
 
 it("keeps ESPN's logos for a team without a bundled logo", () => {

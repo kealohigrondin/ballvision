@@ -8,13 +8,14 @@ import {
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { ScoreNotificationControls } from "../src/components/ScoreNotificationControls";
-import { ScoreNotificationModal } from "../src/components/ScoreNotificationModal";
-import { copy } from "../src/copy";
-import type { Game } from "../src/data/types";
-import { AppTheme } from "../src/providers/AppTheme";
-import { ScoreNotificationProvider } from "../src/providers/ScoreNotificationProvider";
-import { periodLabel } from "../src/utils/gameTime";
+import { AppTheme } from "@/app/AppTheme";
+import { copy } from "@/copy";
+import { ScoreNotificationControls } from "@/features/notifications/ScoreNotificationControls";
+import { ScoreNotificationModal } from "@/features/notifications/ScoreNotificationModal";
+import { ScoreNotificationProvider } from "@/features/notifications/ScoreNotificationProvider";
+import { periodLabel } from "@/shared/gameTime";
+import type { Game } from "@/shared/types";
+
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 import { oddsGame } from "./helpers/oddsFixture";
 afterEach(cleanup);
@@ -34,11 +35,12 @@ it("shows the real updated score, plays armed audio once, and offers immediate m
 
   const build = (games: Game[]) => (
     <AppTheme>
-      <AppDataTestProvider
-        value={createAppData({ favoriteIds: [first.id] })}
-        espn={{ games }}
-      >
-        <ScoreNotificationProvider audioFactory={() => audio}>
+      <AppDataTestProvider value={createAppData({ favoriteIds: [first.id] })}>
+        <ScoreNotificationProvider
+          games={games}
+          updatedAt={new Date()}
+          audioFactory={() => audio}
+        >
           <ScoreNotificationControls />
           <ScoreNotificationModal />
         </ScoreNotificationProvider>

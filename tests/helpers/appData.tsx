@@ -1,21 +1,31 @@
 import type { ReactNode } from "react";
 import { vi } from "vitest";
 
-import { type AppData, appDataContext } from "../../src/context/appDataContext";
-import {
-  type EspnData,
-  espnDataContext,
-} from "../../src/context/espnDataContext";
-import {
-  type PolymarketData,
-  polymarketDataContext,
-} from "../../src/context/polymarketDataContext";
-import { scoreNotificationContext } from "../../src/context/scoreNotificationContext";
 import {
   type SleeperData,
   sleeperDataContext,
-} from "../../src/context/sleeperDataContext";
-import type { OddsSource, ScoreboardSource } from "../../src/data/types";
+} from "@/features/fantasy/sleeperDataContext";
+import { scoreNotificationContext } from "@/features/notifications/scoreNotificationContext";
+import {
+  type PolymarketData,
+  polymarketDataContext,
+} from "@/features/odds/polymarketDataContext";
+import type { OddsSource } from "@/features/odds/types";
+import {
+  scheduleContext,
+  type ScheduleData,
+} from "@/features/schedule/scheduleContext";
+import {
+  scoresContext,
+  type ScoresData,
+} from "@/features/scores/scoresContext";
+import type { ScoreboardSource } from "@/features/scores/types";
+import {
+  standingsContext,
+  type StandingsData,
+} from "@/features/standings/standingsContext";
+import { statsContext, type StatsData } from "@/features/stats/statsContext";
+import { type AppData, appDataContext } from "@/shared/appData/appDataContext";
 
 export const emptyOddsSource: OddsSource = {
   load: vi.fn().mockResolvedValue({}),
@@ -28,10 +38,14 @@ export const emptyScoreboardSource: ScoreboardSource = {
 export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   panelOpen: true,
   setPanelOpen: vi.fn(),
+  panelView: "standings",
+  setPanelView: vi.fn(),
   week: null,
   setWeek: vi.fn(),
   division: "fbs",
   setDivision: vi.fn(),
+  league: "ncaaf",
+  setLeague: vi.fn(),
   filter: "all",
   setFilter: vi.fn(),
   search: "",
@@ -44,14 +58,16 @@ export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   setStandingsConferenceId: vi.fn(),
   sleeperUsername: "",
   setSleeperUsername: vi.fn(),
+  selectedTeam: undefined,
+  selectTeam: vi.fn(),
   favoriteIds: [],
   toggleFavorite: vi.fn(),
   ...overrides,
 });
 
-export const createEspnData = (
-  overrides: Partial<EspnData> = {},
-): EspnData => ({
+export const createScoresData = (
+  overrides: Partial<ScoresData> = {},
+): ScoresData => ({
   games: [],
   visibleGames: [],
   loading: false,
@@ -61,27 +77,48 @@ export const createEspnData = (
   weeks: [],
   currentWeekId: undefined,
   counts: { all: 0, live: 0, upcoming: 0, final: 0, pinned: 0 },
-  schedule: {
-    selectedTeam: undefined,
-    selectTeam: vi.fn(),
-    teams: [],
-    data: undefined,
-    loading: false,
-    error: false,
-    refresh: vi.fn(),
+  summarySource: {
+    load: vi.fn().mockResolvedValue({
+      leaders: { away: [], home: [] },
+      stats: [],
+    }),
   },
-  league: {
-    tables: [],
-    loading: false,
-    error: false,
-    refresh: vi.fn(),
-    view: "standings",
-    setView: vi.fn(),
-    selected: undefined,
-    selectedId: "",
-    setSelectedId: vi.fn(),
-    visibleTables: [],
-  },
+  ...overrides,
+});
+
+export const createStandingsData = (
+  overrides: Partial<StandingsData> = {},
+): StandingsData => ({
+  tables: [],
+  loading: false,
+  error: false,
+  refresh: vi.fn(),
+  view: "standings",
+  selected: undefined,
+  selectedId: "",
+  setSelectedId: vi.fn(),
+  visibleTables: [],
+  teams: [],
+  ...overrides,
+});
+
+export const createScheduleData = (
+  overrides: Partial<ScheduleData> = {},
+): ScheduleData => ({
+  data: undefined,
+  loading: false,
+  error: false,
+  refresh: vi.fn(),
+  ...overrides,
+});
+
+export const createStatsData = (
+  overrides: Partial<StatsData> = {},
+): StatsData => ({
+  data: undefined,
+  loading: false,
+  error: false,
+  refresh: vi.fn(),
   ...overrides,
 });
 
@@ -96,6 +133,18 @@ export const createPolymarketData = (
   ...overrides,
 });
 
+type AppDataTestProviderProps = {
+  children: ReactNode;
+  value: AppData;
+  scores?: Partial<ScoresData>;
+  standings?: Partial<StandingsData>;
+  schedule?: Partial<ScheduleData>;
+  stats?: Partial<StatsData>;
+  polymarket?: Partial<PolymarketData>;
+  sleeper?: Partial<SleeperData>;
+};
+
+// Supplies every app context with fixed test values.
 export const createSleeperData = (
   overrides: Partial<SleeperData> = {},
 ): SleeperData => ({
@@ -106,44 +155,47 @@ export const createSleeperData = (
   ...overrides,
 });
 
-type AppDataTestProviderProps = {
-  children: ReactNode;
-  value: AppData;
-  espn?: Partial<EspnData>;
-  polymarket?: Partial<PolymarketData>;
-  sleeper?: Partial<SleeperData>;
-};
-
 export const AppDataTestProvider = ({
   children,
   value,
-  espn,
+  scores,
+  standings,
+  schedule,
+  stats,
   polymarket,
   sleeper,
 }: AppDataTestProviderProps) => (
   <appDataContext.Provider value={value}>
-    <espnDataContext.Provider value={createEspnData(espn)}>
-      <polymarketDataContext.Provider value={createPolymarketData(polymarket)}>
-        <sleeperDataContext.Provider value={createSleeperData(sleeper)}>
-          <scoreNotificationContext.Provider
-            value={{
-              current: undefined,
-              pending: 0,
-              dismiss: vi.fn(),
-              dismissAll: vi.fn(),
-              preview: vi.fn(),
-              previewAvailable: false,
-              soundArmed: false,
-              muted: false,
-              audioUnavailable: false,
-              enableSound: vi.fn().mockResolvedValue(undefined),
-              toggleMute: vi.fn(),
-            }}
-          >
-            {children}
-          </scoreNotificationContext.Provider>
-        </sleeperDataContext.Provider>
-      </polymarketDataContext.Provider>
-    </espnDataContext.Provider>
+    <scoresContext.Provider value={createScoresData(scores)}>
+      <standingsContext.Provider value={createStandingsData(standings)}>
+        <scheduleContext.Provider value={createScheduleData(schedule)}>
+          <statsContext.Provider value={createStatsData(stats)}>
+            <polymarketDataContext.Provider
+              value={createPolymarketData(polymarket)}
+            >
+              <sleeperDataContext.Provider value={createSleeperData(sleeper)}>
+                <scoreNotificationContext.Provider
+                  value={{
+                    current: undefined,
+                    pending: 0,
+                    dismiss: vi.fn(),
+                    dismissAll: vi.fn(),
+                    preview: vi.fn(),
+                    previewAvailable: false,
+                    soundArmed: false,
+                    muted: false,
+                    audioUnavailable: false,
+                    enableSound: vi.fn().mockResolvedValue(undefined),
+                    toggleMute: vi.fn(),
+                  }}
+                >
+                  {children}
+                </scoreNotificationContext.Provider>
+              </sleeperDataContext.Provider>
+            </polymarketDataContext.Provider>
+          </statsContext.Provider>
+        </scheduleContext.Provider>
+      </standingsContext.Provider>
+    </scoresContext.Provider>
   </appDataContext.Provider>
 );

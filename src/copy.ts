@@ -35,10 +35,35 @@ export const copy = {
   },
   gameDetails: {
     toggle: "Game details",
+    title: (away: string, home: string) => `${away} at ${home}`,
+    close: "Close game details",
     chartUnavailable: "Polymarket chart unavailable for this game.",
     oddsBlocked: "Couldn't reach Polymarket. Disable adblock for this site.",
     lastPlay: "Last play",
     unavailable: "Additional details are not available yet.",
+    statsError: "Couldn't load leaders and team stats.",
+  },
+  teamStats: {
+    title: "Team stats",
+    loading: "Loading team stats",
+    labels: {
+      totalYards: "Total Yards",
+      turnovers: "Turnovers",
+      firstDowns: "1st Downs",
+      penalties: "Penalties",
+      thirdDown: "3rd Down",
+      fourthDown: "4th Down",
+      possession: "Possession",
+    },
+  },
+  gameLeaders: {
+    title: "Game leaders",
+    loading: "Loading game leaders",
+    categories: { passing: "PASS", rushing: "RUSH", receiving: "REC" },
+    detail: (position: string, jersey: string, team: string) =>
+      [[position, jersey && `#${jersey}`].filter(Boolean).join(" "), team]
+        .filter(Boolean)
+        .join(" - "),
   },
   odds: {
     loading: "Odds…",
@@ -62,7 +87,7 @@ export const copy = {
   },
   scoresHeader: {
     division: "Division",
-    divisions: { fbs: "FBS", fcs: "FCS", nfl: "NFL" },
+    divisions: { fbs: "FBS", fcs: "FCS" },
     search: "Search teams",
     searchPlaceholder: "Find your team…",
     clearSearch: "Clear search",
@@ -70,7 +95,7 @@ export const copy = {
     filters: {
       all: "All",
       live: "Live",
-      upcoming: "Upcoming",
+      upcoming: "Next",
       final: "Final",
       pinned: "Pinned",
     },
@@ -81,6 +106,8 @@ export const copy = {
   mastHead: {
     settings: "Settings",
     closeSettings: "Close settings",
+    leaguesLabel: "Leagues",
+    leagues: { ncaaf: "NCAAF", nfl: "NFL", epl: "EPL", ucl: "UCL" },
   },
   fantasy: {
     title: "My fantasy players",
@@ -127,8 +154,24 @@ export const copy = {
     division: "Division",
     conference: "Conference",
     poll: "Poll",
+    stage: "Stage",
+    titles: {
+      schedule: "Team schedule",
+      nfl: "NFL standings",
+      soccer: "League table",
+      rankings: "Top 25",
+      conference: "Conference standings",
+    },
     standingsView: "Standings view",
     trend: "TREND",
+    columns: {
+      conference: "CONF",
+      overall: "OVR",
+      points: "PTS",
+      played: "P",
+      winDrawLoss: "W-D-L",
+      goalDifference: "GD",
+    },
     trendNew: "NEW",
     trendUnchanged: "-",
     nflViews: {

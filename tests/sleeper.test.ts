@@ -12,7 +12,7 @@ import {
   readStoredDirectory,
   sleeperSource,
   toEspnTeam,
-} from "../src/data/sleeper";
+} from "@/features/fantasy/sleeper";
 
 const DAY = 24 * 60 * 60 * 1000;
 

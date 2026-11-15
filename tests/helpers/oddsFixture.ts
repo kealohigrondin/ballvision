@@ -1,4 +1,5 @@
-import type { Game, GameOdds } from "../../src/data/types";
+import type { GameOdds } from "@/features/odds/types";
+import type { Game } from "@/shared/types";
 export const oddsGame: Game = {
   id: "game-1",
   state: "live",

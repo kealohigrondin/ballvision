@@ -1,15 +1,15 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { FantasyPlayerList } from "../src/components/FantasyPlayerList";
-import { GameDetails } from "../src/components/GameDetails";
-import { TextPromptDialog } from "../src/components/TextPromptDialog";
-import { copy } from "../src/copy";
-import type { FantasyLeague } from "../src/data/types";
-import { AppTheme } from "../src/providers/AppTheme";
-import { PolymarketGameProvider } from "../src/providers/PolymarketGameProvider";
+import { AppTheme } from "@/app/AppTheme";
+import { copy } from "@/copy";
+import { FantasyPlayerList } from "@/features/fantasy/FantasyPlayerList";
+import { GameFantasyPlayers } from "@/features/fantasy/GameFantasyPlayers";
+import type { FantasyLeague } from "@/features/fantasy/types";
+import { TextPromptDialog } from "@/shared/components/TextPromptDialog";
+
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
-import { oddsGame, oddsQuote } from "./helpers/oddsFixture";
+import { oddsGame } from "./helpers/oddsFixture";
 
 afterEach(cleanup);
 
@@ -57,38 +57,24 @@ it("does not mark starters as bench players", () => {
   ).not.toContain(copy.fantasy.bench);
 });
 
-const showDetails = (leagues: FantasyLeague[]) => {
+const showGamePlayers = (leagues: FantasyLeague[]) =>
   render(
     <AppTheme>
-      <AppDataTestProvider
-        value={createAppData({ paused: true })}
-        polymarket={{ quotes: { [oddsGame.id]: oddsQuote } }}
-        sleeper={{ leagues }}
-      >
-        <PolymarketGameProvider game={oddsGame}>
-          <GameDetails game={oddsGame} />
-        </PolymarketGameProvider>
+      <AppDataTestProvider value={createAppData()} sleeper={{ leagues }}>
+        <GameFantasyPlayers game={oddsGame} />
       </AppDataTestProvider>
     </AppTheme>,
   );
-  fireEvent.click(
-    screen.getByRole("button", { name: copy.gameDetails.toggle }),
-  );
-};
 
-it("shows fantasy players above the Polymarket chart in game details", async () => {
-  showDetails([league(oddsGame.away.abbreviation)]);
-  const odds = await screen.findByRole("region", {
-    name: copy.oddsHistory.label,
-  });
-  const players = document.getElementById(`fantasy-players-${oddsGame.id}`)!;
+it("lists fantasy players on a team in the game", () => {
+  showGamePlayers([league(oddsGame.away.abbreviation)]);
   expect(
-    players.compareDocumentPosition(odds) & Node.DOCUMENT_POSITION_FOLLOWING,
-  ).toBeTruthy();
+    document.getElementById(`fantasy-players-${oddsGame.id}`),
+  ).not.toBeNull();
 });
 
 it("leaves out fantasy players on teams not in the game", () => {
-  showDetails([league("KC")]);
+  showGamePlayers([league("KC")]);
   expect(document.getElementById(`fantasy-players-${oddsGame.id}`)).toBeNull();
 });
 

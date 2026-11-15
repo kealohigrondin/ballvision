@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 
-import { getGameGridSize } from "../src/utils/gameGridLayout";
+import { getGameGridSize } from "@/features/scores/gameGridLayout";
 
 it.each([
   { compact: true, cardsPerRow: 3 },

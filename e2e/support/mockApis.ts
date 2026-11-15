@@ -1,9 +1,20 @@
+import { fileURLToPath } from "node:url";
+
 import type { Page, Route } from "@playwright/test";
 
+import eplScoreboard from "../fixtures/epl-scoreboard.json" with { type: "json" };
+import eplStandings from "../fixtures/epl-standings.json" with { type: "json" };
 import nflConferences from "../fixtures/nfl-standings-conferences.json" with { type: "json" };
 import nflDivisions from "../fixtures/nfl-standings-divisions.json" with { type: "json" };
 import rankings from "../fixtures/rankings.json" with { type: "json" };
 import scoreboard from "../fixtures/scoreboard.json" with { type: "json" };
+import summaries from "../fixtures/summaries.json" with { type: "json" };
+import uclScoreboard from "../fixtures/ucl-scoreboard.json" with { type: "json" };
+import uclStandings from "../fixtures/ucl-standings.json" with { type: "json" };
+
+const headshot = fileURLToPath(
+  new URL("../fixtures/headshot.png", import.meta.url),
+);
 
 const json = (route: Route, body: unknown) =>
   route.fulfill({ status: 200, contentType: "application/json", json: body });
@@ -17,6 +28,15 @@ export const mockApis = async (page: Page): Promise<void> => {
   await page.route("https://site.api.espn.com/**/scoreboard*", (route) =>
     json(route, scoreboard),
   );
+  // Game summaries (leaders and team stats) by event id; others are empty.
+  await page.route("https://site.api.espn.com/**/summary*", (route) => {
+    const event = new URL(route.request().url()).searchParams.get("event");
+
+    return json(
+      route,
+      summaries[(event ?? "") as keyof typeof summaries] ?? {},
+    );
+  });
   await page.route("https://site.web.api.espn.com/**/standings*", (route) =>
     json(route, { children: [] }),
   );
@@ -29,6 +49,30 @@ export const mockApis = async (page: Page): Promise<void> => {
   await page.route(/^https:\/\/(gamma-api|clob)\.polymarket\.com\//, (route) =>
     json(route, []),
   );
+  // Player headshots, resized by ESPN's image service.
+  await page.route(/^https:\/\/a\.espncdn\.com\/combiner\/i\?/, (route) =>
+    route.fulfill({ path: headshot, contentType: "image/png" }),
+  );
+};
+
+// Serve Premier League and Champions League scoreboards and tables captured
+// from ESPN. The Premier League month has finals (one a 1-1 draw), a match
+// live in its 67th minute and upcoming fixtures. Call after mockApis.
+export const mockSoccer = async (page: Page): Promise<void> => {
+  const leagues = [
+    ["eng.1", eplScoreboard, eplStandings],
+    ["uefa.champions", uclScoreboard, uclStandings],
+  ] as const;
+  for (const [slug, board, table] of leagues) {
+    await page.route(
+      `https://site.api.espn.com/**/soccer/${slug}/scoreboard*`,
+      (route) => json(route, board),
+    );
+    await page.route(
+      `https://site.api.espn.com/apis/v2/sports/soccer/${slug}/standings*`,
+      (route) => json(route, table),
+    );
+  }
 };
 
 // Serve real NFL standings captured from ESPN: level 2 is the AFC and NFC,

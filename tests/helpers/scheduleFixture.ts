@@ -1,4 +1,5 @@
-import type { TeamScheduleGame } from "../../src/data/types";
+import type { TeamScheduleGame } from "@/features/schedule/types";
+
 import { oddsGame } from "./oddsFixture";
 export const scheduleGame: TeamScheduleGame = {
   ...oddsGame,

@@ -1,12 +1,12 @@
 import { screen } from "@testing-library/react";
 
-import { leagueNavDestinations } from "../../src/components/LeagueNavRail";
-import type { LeagueView } from "../../src/hooks/useLeagueTables";
+import { leagueNavDestinations } from "@/app/LeagueNavRail";
+import type { PanelView } from "@/shared/types";
 
 // Locate UI through the app's own copy constants and structure rather than
 // hardcoded display text, so wording changes in the app do not break tests.
 
-export const navRailButton = (view: LeagueView) => {
+export const navRailButton = (view: PanelView) => {
   const destination = leagueNavDestinations.find(
     (candidate) => candidate.view === view,
   );

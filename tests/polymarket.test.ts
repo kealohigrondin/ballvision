@@ -1,11 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { americanOdds } from "@/features/odds/odds";
 import {
   createPolymarketSource,
   matchMoneyline,
   parseMoneylineMarkets,
-} from "../src/data/polymarket";
-import { americanOdds } from "../src/utils/odds";
+} from "@/features/odds/polymarket";
+
 import { oddsGame } from "./helpers/oddsFixture";
 
 const market = {

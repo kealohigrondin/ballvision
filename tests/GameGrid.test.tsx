@@ -1,18 +1,19 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { GameGrid } from "../src/components/GameGrid";
-import type { AppData } from "../src/context/appDataContext";
-import type { EspnData } from "../src/context/espnDataContext";
-import { copy } from "../src/copy";
+import { copy } from "@/copy";
+import { GameGrid } from "@/features/scores/GameGrid";
+import type { ScoresData } from "@/features/scores/scoresContext";
+import type { AppData } from "@/shared/appData/appDataContext";
+
 import { AppDataTestProvider, createAppData } from "./helpers/appData";
 
 const grid = (
-  overrides: Partial<EspnData> & Pick<Partial<AppData>, "filter"> = {},
+  overrides: Partial<ScoresData> & Pick<Partial<AppData>, "filter"> = {},
 ) => (
   <AppDataTestProvider
     value={createAppData({ filter: overrides.filter ?? "all" })}
-    espn={overrides}
+    scores={overrides}
   >
     <GameGrid />
   </AppDataTestProvider>

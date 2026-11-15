@@ -1,7 +1,11 @@
 import { afterEach, expect, it, vi } from "vitest";
 
-import { espnTeamScheduleSource, parseTeamSchedule } from "../src/data/espn";
-import { scheduleGameStatus } from "../src/utils/teamSchedule";
+import {
+  espnTeamScheduleSource,
+  parseTeamSchedule,
+} from "@/features/schedule/espnSchedule";
+import { scheduleGameStatus } from "@/features/schedule/scheduleStatus";
+
 import { rawScheduleEvent, scheduleGame } from "./helpers/scheduleFixture";
 
 afterEach(() => vi.unstubAllGlobals());

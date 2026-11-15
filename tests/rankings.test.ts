@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 
-import { parseRankings } from "../src/data/espn";
+import { parseRankings } from "@/features/standings/espnStandings";
 
 const poll = (type: string, name: string) => ({
   id: type,

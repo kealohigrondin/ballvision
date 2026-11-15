@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "skills": {
+    "feature-arch": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/feature-arch/SKILL.md",
+      "computedHash": "0005bb2f535a932b169b83000b9675f639d8f103154a5d6b72909b6776cef667"
+    },
+    "msw": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/msw/SKILL.md",
+      "computedHash": "fec4649b924c39ef117c5944fef8f6689226dbce4dd9758d47cd4522811ad75b"
+    },
+    "playwright": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/playwright/SKILL.md",
+      "computedHash": "c109ea18fe079808e86f6138e295f2ba461aaea06a632576e0f54c3b352e909f"
+    },
+    "react": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react/SKILL.md",
+      "computedHash": "fe5acf82d09bf914d6dd9091dde416121a86ca38938ff8b0758c362d6ff1f14b"
+    },
+    "typescript": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typescript/SKILL.md",
+      "computedHash": "139c6cfb783bfae5b90f5843587bc59ff71b5f909a5fa25e618a36f59ef57f5e"
+    },
+    "ui-design": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ui-design/SKILL.md",
+      "computedHash": "18a97032e044a6852e575a8972ab0563719c1f86eeb63f3b5eca55d802bf2e2a"
+    },
+    "vitest": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vitest/SKILL.md",
+      "computedHash": "8229ed593a804086c797e81134b9bc8c98f650de7fc9deceae6465273ba58645"
+    },
+    "web-design-guidelines": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "4f68ae07187fb0d1fb78c88b503d089da4cf5a9d9625d1f2e425b1590bf96d92"
+    },
+    "zod": {
+      "source": "thongdn-it/react-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/zod/SKILL.md",
+      "computedHash": "0dda8a9c32affa99f4981924798d7399f0f5bd3ecc37910cfc4b05f260f442cd"
+    }
+  }
+}

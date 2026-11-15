@@ -1,7 +1,8 @@
 import { expect, it } from "vitest";
 
-import type { FantasyLeague, Game, Team } from "../src/data/types";
-import { fantasyLeaguesForGame } from "../src/utils/fantasyPlayers";
+import { fantasyLeaguesForGame } from "@/features/fantasy/fantasyPlayers";
+import type { FantasyLeague } from "@/features/fantasy/types";
+import type { Game, Team } from "@/shared/types";
 
 const team = (abbreviation: string): Team => ({
   id: abbreviation,

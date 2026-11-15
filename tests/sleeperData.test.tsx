@@ -2,18 +2,16 @@ import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { useAppData } from "../src/context/appDataContext";
-import { useSleeperData } from "../src/context/sleeperDataContext";
-import type {
-  FantasyLeague,
-  FantasySource,
-  LeagueSource,
-  ScoreboardSource,
-  Week,
-} from "../src/data/types";
-import { AppDataProvider } from "../src/providers/AppDataProvider";
-import { EspnDataProvider } from "../src/providers/EspnDataProvider";
-import { SleeperDataProvider } from "../src/providers/SleeperDataProvider";
+import { GameDataProviders } from "@/app/GameDataProviders";
+import { useSleeperData } from "@/features/fantasy/sleeperDataContext";
+import type { FantasyLeague, FantasySource } from "@/features/fantasy/types";
+import { ScoresProvider } from "@/features/scores/ScoresProvider";
+import type { ScoreboardSource } from "@/features/scores/types";
+import { useAppData } from "@/shared/appData/appDataContext";
+import { AppDataProvider } from "@/shared/appData/AppDataProvider";
+import type { Week } from "@/shared/types";
+
+import { emptyOddsSource } from "./helpers/appData";
 
 const week = (seasonType: number, number: number): Week => ({
   id: `2026-${seasonType}-${number}`,
@@ -42,7 +40,7 @@ const leagues: FantasyLeague[] = [
   },
 ];
 
-// Renders the app data, ESPN and Sleeper providers (no UI) with ESPN's
+// Renders the app data, scores and game data providers (no UI) with ESPN's
 // current week set to regular season week 9.
 const renderSleeperData = () => {
   const source: FantasySource = { load: vi.fn().mockResolvedValue(leagues) };
@@ -53,16 +51,14 @@ const renderSleeperData = () => {
       currentWeekId: "2026-2-9",
     }),
   };
-  const leagueSource: LeagueSource = {
-    loadStandings: vi.fn().mockResolvedValue([]),
-    loadRankings: vi.fn().mockResolvedValue([]),
-  };
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <AppDataProvider>
-      <EspnDataProvider source={scoreboard} leagueSource={leagueSource}>
-        <SleeperDataProvider source={source}>{children}</SleeperDataProvider>
-      </EspnDataProvider>
+      <ScoresProvider source={scoreboard}>
+        <GameDataProviders oddsSource={emptyOddsSource} fantasySource={source}>
+          {children}
+        </GameDataProviders>
+      </ScoresProvider>
     </AppDataProvider>
   );
   const { result } = renderHook(

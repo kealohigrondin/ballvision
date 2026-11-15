@@ -1,8 +1,9 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
-import { useScoreNotifications } from "../src/hooks/useScoreNotifications";
-import { NOTIFICATION_DURATION_MS } from "../src/utils/scoreNotifications";
+import { NOTIFICATION_DURATION_MS } from "@/features/notifications/scoreNotifications";
+import { useScoreNotifications } from "@/features/notifications/useScoreNotifications";
+
 import { oddsGame } from "./helpers/oddsFixture";
 const first = { ...oddsGame, home: { ...oddsGame.home, score: "0" } };
 const scored = { ...first, home: { ...first.home, score: "7" } };

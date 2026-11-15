@@ -1,13 +1,13 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { useAppDataState } from "../src/hooks/useAppDataState";
 import {
   APP_PREFERENCES_KEY,
   defaultAppPreferences,
   loadAppPreferences,
   saveAppPreferences,
-} from "../src/utils/appPreferences";
+} from "@/shared/appData/appPreferences";
+import { useAppDataState } from "@/shared/appData/useAppDataState";
 
 const week = {
   id: "2026-2-10",
@@ -134,6 +134,20 @@ it("falls back to the first conference for a malformed saved conference", () => 
       ),
   };
   expect(loadAppPreferences(storage).standingsConferenceId).toBe("");
+});
+
+it("restores a saved soccer league", () => {
+  const storage = {
+    getItem: () => JSON.stringify({ version: 1, division: "ucl" }),
+  };
+  expect(loadAppPreferences(storage).division).toBe("ucl");
+});
+
+it("returns to college football when the saved league is unknown", () => {
+  const storage = {
+    getItem: () => JSON.stringify({ version: 1, division: "mls" }),
+  };
+  expect(loadAppPreferences(storage).division).toBe("fbs");
 });
 
 it("falls back to no Sleeper username when the stored one is not text", () => {

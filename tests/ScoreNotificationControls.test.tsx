@@ -1,12 +1,12 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 
-import { ScoreNotificationControls } from "../src/components/ScoreNotificationControls";
+import { copy } from "@/copy";
 import {
   scoreNotificationContext,
   type ScoreNotificationData,
-} from "../src/context/scoreNotificationContext";
-import { copy } from "../src/copy";
+} from "@/features/notifications/scoreNotificationContext";
+import { ScoreNotificationControls } from "@/features/notifications/ScoreNotificationControls";
 
 afterEach(cleanup);
 

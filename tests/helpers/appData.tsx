@@ -19,7 +19,10 @@ import {
   scoresContext,
   type ScoresData,
 } from "@/features/scores/scoresContext";
-import type { ScoreboardSource } from "@/features/scores/types";
+import type {
+  GameSummarySource,
+  ScoreboardSource,
+} from "@/features/scores/types";
 import {
   standingsContext,
   type StandingsData,
@@ -78,7 +81,7 @@ export const createScoresData = (
   currentWeekId: undefined,
   counts: { all: 0, live: 0, upcoming: 0, final: 0, pinned: 0 },
   summarySource: {
-    load: vi.fn().mockResolvedValue({
+    load: vi.fn<GameSummarySource["load"]>().mockResolvedValue({
       leaders: { away: [], home: [] },
       stats: [],
       scoringPlays: [],

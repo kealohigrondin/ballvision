@@ -160,6 +160,15 @@ export const copy = {
     test: "Test score notification",
     dismissAll: "I have seen enough",
     clock: "Game clock and period",
+    desktopOn: "Turn on desktop notifications",
+    desktopOff: "Turn off desktop notifications",
+    desktopBlocked:
+      "Desktop notifications are blocked. Allow them in your browser's site settings.",
+    desktopReadyTitle: "Desktop notifications are on",
+    desktopReadyBody:
+      "Score alerts for your pinned games show here when ballvision isn't in focus.",
+    desktopBody: (away: string, home: string, time: string) =>
+      `${away}, ${home}\n${time}`,
   },
   navRail: {
     label: "League navigation",

@@ -105,6 +105,9 @@ export const useScoreNotifications = (
 
   return {
     current,
+    /** Every alert still waiting, oldest first, starting with `current`. */
+    // Empty when the queue is empty or belongs to another slate.
+    alerts: current ? eligibleQueue : [],
     pending: Math.max(0, eligibleQueue.length - 1),
     dismiss,
     dismissAll,

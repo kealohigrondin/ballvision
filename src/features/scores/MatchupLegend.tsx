@@ -2,7 +2,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { TeamLogo } from "@/shared/components/TeamLogo";
-import { TeamSwatch } from "@/shared/components/TeamSwatch";
 import type { Team } from "@/shared/types";
 
 type MatchupLegendProps = { away: Team; home: Team };
@@ -17,7 +16,6 @@ export const MatchupLegend = ({ away, home }: MatchupLegendProps) => (
   >
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <TeamLogo team={away} size={28} />
-      <TeamSwatch color={away.color} hatched />
       <Typography variant="body2" color="text.secondary">
         {away.abbreviation}
       </Typography>
@@ -26,7 +24,6 @@ export const MatchupLegend = ({ away, home }: MatchupLegendProps) => (
       <Typography variant="body2" color="text.secondary">
         {home.abbreviation}
       </Typography>
-      <TeamSwatch color={home.color} />
       <TeamLogo team={home} size={28} />
     </Stack>
   </Stack>

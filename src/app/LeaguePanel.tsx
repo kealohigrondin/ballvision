@@ -217,15 +217,6 @@ export const LeaguePanel = ({}: LeaguePanelProps) => {
           </Alert>
         )}
         {content}
-        <Typography
-          component="p"
-          className="league-note"
-          color="text.secondary"
-          sx={{ mt: 2 }}
-        >
-          {label} · {division.toUpperCase()} · Current season. Updates every 5
-          minutes; records may lag live games.
-        </Typography>
       </Paper>
     </Slide>
   );

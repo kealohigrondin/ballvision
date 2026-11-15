@@ -62,6 +62,18 @@ const summary: GameSummary = {
       homeValue: 468,
     },
   ],
+  scoringPlays: [
+    {
+      id: "1",
+      side: "home",
+      period: 1,
+      clock: "5:54",
+      type: "TD",
+      text: "J. Mateer 8 Yd Run (T. Sandell Kick)",
+      awayScore: 0,
+      homeScore: 7,
+    },
+  ],
 };
 
 // Opens the game's details with a summary source; the dialog's content
@@ -106,6 +118,17 @@ it("replaces the team stats placeholder once the summary arrives", async () => {
   openDetails({ load: vi.fn().mockResolvedValue(summary) });
   await screen.findByRole("region", { name: copy.teamStats.title });
   expect(document.getElementById("team-stats-skeleton-401")).toBeNull();
+});
+
+it("holds the scoring plays section's place while the summary loads", () => {
+  openDetails(pending);
+  expect(document.getElementById("scoring-plays-skeleton-401")).not.toBeNull();
+});
+
+it("replaces the scoring plays placeholder once the summary arrives", async () => {
+  openDetails({ load: vi.fn().mockResolvedValue(summary) });
+  await screen.findByRole("region", { name: copy.scoringPlays.title });
+  expect(document.getElementById("scoring-plays-skeleton-401")).toBeNull();
 });
 
 const showOdds = (loading: boolean) =>

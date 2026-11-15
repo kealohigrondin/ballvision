@@ -8,6 +8,7 @@ const LIVE_REFRESH_MS = 30_000;
 const emptySummary: GameSummary = {
   leaders: { away: [], home: [] },
   stats: [],
+  scoringPlays: [],
 };
 
 type SummaryState = {

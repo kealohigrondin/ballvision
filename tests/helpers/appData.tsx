@@ -81,6 +81,7 @@ export const createScoresData = (
     load: vi.fn().mockResolvedValue({
       leaders: { away: [], home: [] },
       stats: [],
+      scoringPlays: [],
     }),
   },
   ...overrides,

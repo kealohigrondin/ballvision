@@ -12,6 +12,7 @@ import type {
   GameSummary,
   GameSummarySource,
   LeaderCategory,
+  ScoringPlay,
   TeamStatKey,
   TeamStatLine,
 } from "./types";
@@ -162,6 +163,38 @@ export const parseTeamStats = (
   });
 };
 
+/** Both teams' scoring plays from ESPN's summary, in the order they happened. */
+export const parseScoringPlays = (
+  payload: unknown,
+  awayId: string,
+  homeId: string,
+): ScoringPlay[] =>
+  list(obj(payload).scoringPlays)
+    .map(obj)
+    .flatMap((play) => {
+      const teamId = str(obj(play.team).id);
+      const side =
+        teamId === awayId ? "away" : teamId === homeId ? "home" : undefined;
+      const text = str(play.text).trim();
+      if (!side || !text) {
+        return [];
+      }
+      const type = obj(play.scoringType);
+
+      return [
+        {
+          id: str(play.id),
+          side,
+          period: Number(obj(play.period).number) || 0,
+          clock: str(obj(play.clock).displayValue),
+          type: str(type.abbreviation, str(obj(play.type).abbreviation)),
+          text,
+          awayScore: Number(play.awayScore) || 0,
+          homeScore: Number(play.homeScore) || 0,
+        },
+      ];
+    });
+
 /** Each team's leaders and both teams' stats from ESPN's game summary. */
 export const parseGameSummary = (
   payload: unknown,
@@ -179,6 +212,7 @@ export const parseGameSummary = (
   return {
     leaders: { away: leadersFor(awayId), home: leadersFor(homeId) },
     stats: parseTeamStats(payload, awayId, homeId),
+    scoringPlays: parseScoringPlays(payload, awayId, homeId),
   };
 };
 

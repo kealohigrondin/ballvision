@@ -21,6 +21,7 @@ const summary: GameSummary = {
       homeValue: 468,
     },
   ],
+  scoringPlays: [],
 };
 
 const query: GameSummaryQuery = {

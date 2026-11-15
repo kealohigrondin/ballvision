@@ -164,6 +164,17 @@ test("compares the teams' stats in a game's details", async ({ page }) => {
   await expect(page.locator("#team-stat-1001-totalYards")).toContainText("185");
 });
 
+test("lists both teams' scoring plays in one list in a game's details", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.locator("#game-details-1003-button").click();
+  const plays = page.locator("#scoring-plays-1003 li li");
+
+  await expect(plays).toHaveCount(9);
+  await expect(plays.last()).toContainText("L. Duarte 1 Yd Run");
+});
+
 test("shows the stadium in place of kickoff on an upcoming game's card", async ({
   page,
 }) => {

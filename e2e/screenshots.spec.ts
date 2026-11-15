@@ -559,3 +559,29 @@ test.describe("@screenshots game stats", () => {
     });
   }
 });
+
+test.describe("@screenshots loading placeholders", () => {
+  test.use({ viewport: viewports.mobile });
+
+  for (const theme of themes) {
+    test(`leaders and team stats, ${theme}`, async ({ page }) => {
+      await openDashboard(page);
+      if (theme === "light") {
+        await switchToLight(page);
+      }
+      // Never answer the summary, so the placeholders stay on screen.
+      await page.route("https://site.api.espn.com/**/summary*", () => {});
+      await page.locator("#game-details-1003-button").click();
+      await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+        "opacity",
+        "1",
+      );
+      await page
+        .locator("#game-leaders-skeleton-1003")
+        .screenshot({ path: `screenshots/game-leaders-loading-${theme}.png` });
+      await page
+        .locator("#team-stats-skeleton-1003")
+        .screenshot({ path: `screenshots/team-stats-loading-${theme}.png` });
+    });
+  }
+});

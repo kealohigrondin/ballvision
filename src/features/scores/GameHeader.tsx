@@ -8,8 +8,6 @@ import { useMemo } from "react";
 import { gameTime, kickoff } from "@/shared/gameTime";
 import type { Game, Team } from "@/shared/types";
 
-import { FieldPosition } from "./FieldPosition";
-import { fieldLabel, fieldPercent } from "./fieldPosition";
 import { GameHeaderScore } from "./GameHeaderScore";
 import { GameHeaderTeam } from "./GameHeaderTeam";
 import { PeriodScores } from "./PeriodScores";
@@ -17,8 +15,8 @@ import { PeriodScores } from "./PeriodScores";
 type GameHeaderProps = { game: Game };
 
 // A scoreboard header for one game, banded in the two team colors:
-// both teams with their scores, the game clock and down and distance, where
-// the ball is, the score by period and the broadcast network. Wraps the period
+// both teams with their scores, the game clock and down and distance, the
+// score by period and the broadcast network. Wraps the period
 // table onto its own row in narrow windows.
 export const GameHeader = ({ game }: GameHeaderProps) => {
   const started = game.state !== "upcoming";
@@ -37,26 +35,14 @@ export const GameHeader = ({ game }: GameHeaderProps) => {
 
   const isLive = game.state === "live";
 
-  const showsBall = (team: Team) =>
-    isLive && game.possession === team.id && game.yardLine !== undefined;
-
   const score = (team: Team, area: "awayScore" | "homeScore") => (
-    <Box sx={{ gridArea: area, alignSelf: "start", pt: { xs: 2, sm: 3 } }}>
+    <Box sx={{ gridArea: area }}>
       <GameHeaderScore
         id={`game-header-score-${game.id}-${team.id}`}
         score={started ? team.score : ""}
         dimmed={Boolean(leader) && leader !== team.id}
         possession={isLive && game.possession === team.id}
         markerSide={area === "awayScore" ? "end" : "start"}
-        below={
-          showsBall(team) && (
-            <FieldPosition
-              id={`game-header-field-${game.id}`}
-              percent={fieldPercent(game.yardLine ?? 50)}
-              label={fieldLabel(game.yardLine ?? 50, game.away, game.home)}
-            />
-          )
-        }
       />
     </Box>
   );

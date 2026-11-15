@@ -7,8 +7,10 @@ import { copy } from "@/copy";
 import type { Game } from "@/shared/types";
 
 import { GameLeaders } from "./GameLeaders";
+import { GameLeadersSkeleton } from "./GameLeadersSkeleton";
 import { useGameSummaryData } from "./gameSummaryContext";
 import { TeamStats } from "./TeamStats";
+import { TeamStatsSkeleton } from "./TeamStatsSkeleton";
 
 type GameDetailsBodyProps = {
   game: Game;
@@ -26,7 +28,7 @@ export const GameDetailsBody = ({
   const hasTimeouts =
     game.state === "live" &&
     (game.homeTimeouts !== undefined || game.awayTimeouts !== undefined);
-  const { summary, error } = useGameSummaryData();
+  const { summary, loading, error } = useGameSummaryData();
   const hasLeaders =
     summary.leaders.away.length > 0 || summary.leaders.home.length > 0;
   const hasStats = summary.stats.length > 0;
@@ -53,6 +55,9 @@ export const GameDetailsBody = ({
           {game.lastPlay}
         </Typography>
       )}
+      {/* Placeholders hold each section's space on the first load; live
+          refreshes keep the current data on screen. */}
+      {loading && !hasLeaders && <GameLeadersSkeleton gameId={game.id} />}
       {hasLeaders && (
         <GameLeaders
           gameId={game.id}
@@ -61,6 +66,7 @@ export const GameDetailsBody = ({
           leaders={summary.leaders}
         />
       )}
+      {loading && !hasStats && <TeamStatsSkeleton gameId={game.id} />}
       {hasStats && (
         <TeamStats
           gameId={game.id}

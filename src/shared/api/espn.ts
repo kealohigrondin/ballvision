@@ -177,7 +177,6 @@ export const parseScoreboard = (payload: unknown): Game[] => {
       situation: gameSituation(s, teams),
       lastPlay: str(obj(s.lastPlay).text),
       redZone: s.isRedZone === true,
-      yardLine: number(s.yardLine),
       downDistance: str(s.downDistanceText),
       homeTimeouts: number(s.homeTimeouts),
       awayTimeouts: number(s.awayTimeouts),

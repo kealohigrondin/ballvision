@@ -1,6 +1,5 @@
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
-import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,6 +8,7 @@ import { useMemo } from "react";
 import { copy } from "@/copy";
 import { SegmentedControl } from "@/shared/components/SegmentedControl";
 
+import { OddsChartSkeleton } from "./OddsChartSkeleton";
 import { OddsHistoryChart } from "./OddsHistoryChart";
 import { useOddsHistoryData } from "./oddsHistoryContext";
 import { usePolymarketGame } from "./polymarketGameContext";
@@ -25,7 +25,7 @@ export const GameOddsHistory = ({}: GameOddsHistoryProps) => {
 
   const content = useMemo(() => {
     if (!hasHistory && loading) {
-      return <LinearProgress aria-label={copy.oddsHistory.loading} />;
+      return <OddsChartSkeleton />;
     }
     if (!hasHistory && error) {
       return (

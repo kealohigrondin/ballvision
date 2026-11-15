@@ -5,7 +5,9 @@ import Typography from "@mui/material/Typography";
 import { type PointerEvent, useId, useMemo, useState } from "react";
 
 import { copy } from "@/copy";
+import { TeamLineKey } from "@/shared/components/TeamLineKey";
 import { useElementWidth } from "@/shared/hooks/useElementWidth";
+import { AWAY_LINE_DASH } from "@/shared/teamFill";
 
 import { formatProbability } from "./odds";
 import { withLiveOdds } from "./oddsHistory";
@@ -121,12 +123,21 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
         useFlexGap
         sx={{ flexWrap: "wrap", mb: 1 }}
       >
-        <Typography sx={{ color: "primary.main" }}>
-          {away} — {formatProbability(awayValue)}
-        </Typography>
-        <Typography sx={{ color: "secondary.main" }}>
-          {home} ⋯ {formatProbability(homeValue)}
-        </Typography>
+        {/* Team colors mark the lines; the text keeps the theme color so
+            dark team colors stay readable. Away is dashed, home solid, as
+            in the team stats. */}
+        <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
+          <TeamLineKey color={game.away.color} dashed />
+          <Typography>
+            {away} {formatProbability(awayValue)}
+          </Typography>
+        </Stack>
+        <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
+          <TeamLineKey color={game.home.color} />
+          <Typography>
+            {home} {formatProbability(homeValue)}
+          </Typography>
+        </Stack>
       </Stack>
       <Box
         component="svg"
@@ -182,16 +193,16 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
         <path
           d={path(history.away)}
           fill="none"
-          stroke={theme.palette.primary.main}
+          stroke={game.away.color}
           strokeWidth="2"
+          strokeDasharray={AWAY_LINE_DASH}
           vectorEffect="non-scaling-stroke"
         />
         <path
           d={path(history.home)}
           fill="none"
-          stroke={theme.palette.secondary.main}
+          stroke={game.home.color}
           strokeWidth="2"
-          strokeDasharray="6 4"
           vectorEffect="non-scaling-stroke"
         />
         <line
@@ -207,7 +218,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
             cx={x(timestamp)}
             cy={y(awayValue)}
             r="3"
-            fill={theme.palette.primary.main}
+            fill={game.away.color}
           />
         )}
         {homeValue !== undefined && (
@@ -215,7 +226,7 @@ export const OddsHistoryChart = ({}: OddsHistoryChartProps) => {
             cx={x(timestamp)}
             cy={y(homeValue)}
             r="3"
-            fill={theme.palette.secondary.main}
+            fill={game.home.color}
           />
         )}
       </Box>

@@ -43,11 +43,9 @@ export const copy = {
     unavailable: "Additional details are not available yet.",
     statsError: "Couldn't load leaders and team stats.",
   },
-  gameHeader: {
-    ballOn: (yardLine: string) => `Ball on the ${yardLine}`,
-  },
   teamStats: {
     title: "Team stats",
+    loading: "Loading team stats",
     labels: {
       totalYards: "Total Yards",
       turnovers: "Turnovers",
@@ -60,6 +58,7 @@ export const copy = {
   },
   gameLeaders: {
     title: "Game leaders",
+    loading: "Loading game leaders",
     categories: { passing: "PASS", rushing: "RUSH", receiving: "REC" },
     detail: (position: string, jersey: string, team: string) =>
       [[position, jersey && `#${jersey}`].filter(Boolean).join(" "), team]

@@ -3,11 +3,11 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { copy } from "@/copy";
+import { teamFill } from "@/shared/teamFill";
 import type { Team } from "@/shared/types";
 
 import { MatchupLegend } from "./MatchupLegend";
 import { StatShareBar } from "./StatShareBar";
-import { teamFill } from "./teamFill";
 import type { TeamStatLine } from "./types";
 
 type TeamStatsProps = {

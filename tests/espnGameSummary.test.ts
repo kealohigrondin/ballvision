@@ -6,9 +6,7 @@ import {
   parseTeamLeaders,
   parseTeamStats,
 } from "@/features/scores/espnGameSummary";
-import { fieldLabel, fieldPercent } from "@/features/scores/fieldPosition";
 import { splitStatLine } from "@/features/scores/statLine";
-import type { Team } from "@/shared/types";
 
 // One ESPN leader category, shaped like the summary's leaders[].leaders[].
 const category = (name: string, displayValue: string, shortName: string) => ({
@@ -166,35 +164,5 @@ describe("splitStatLine", () => {
       true,
       false,
     ]);
-  });
-});
-
-const team = (abbreviation: string): Team => ({
-  id: abbreviation,
-  name: abbreviation,
-  abbreviation,
-  color: "#000000",
-  score: "0",
-  quarters: [],
-});
-
-describe("field position", () => {
-  const away = team("MICH");
-  const home = team("ORE");
-
-  it("names a spot in the home team's half after the home team", () => {
-    expect(fieldLabel(17, away, home)).toBe("ORE 17");
-  });
-
-  it("names a spot in the away team's half after the away team", () => {
-    expect(fieldLabel(68, away, home)).toBe("MICH 32");
-  });
-
-  it("calls midfield the 50", () => {
-    expect(fieldLabel(50, away, home)).toBe("50");
-  });
-
-  it("places the home goal line at the right edge", () => {
-    expect(fieldPercent(0)).toBe(100);
   });
 });

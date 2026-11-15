@@ -51,7 +51,9 @@
           },
           "broadcasts": [
             {
-              "names": ["ABC"]
+              "names": [
+                "ABC"
+              ]
             }
           ],
           "situation": {
@@ -61,8 +63,7 @@
               "text": "Ridge Hawks rush for 6 yards."
             },
             "homeTimeouts": 2,
-            "awayTimeouts": 3,
-            "yardLine": 66
+            "awayTimeouts": 3
           },
           "competitors": [
             {
@@ -145,7 +146,9 @@
           },
           "broadcasts": [
             {
-              "names": ["ESPN"]
+              "names": [
+                "ESPN"
+              ]
             }
           ],
           "competitors": [
@@ -203,7 +206,9 @@
           },
           "broadcasts": [
             {
-              "names": ["FOX"]
+              "names": [
+                "FOX"
+              ]
             }
           ],
           "competitors": [

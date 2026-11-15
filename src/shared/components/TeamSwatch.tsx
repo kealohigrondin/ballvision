@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 
-import { teamFill } from "./teamFill";
+import { teamFill } from "@/shared/teamFill";
 
 type TeamSwatchProps = { color: string; hatched?: boolean };
 

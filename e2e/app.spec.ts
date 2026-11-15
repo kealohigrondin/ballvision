@@ -162,15 +162,6 @@ test("compares the teams' stats in a game's details", async ({ page }) => {
   await expect(page.locator("#team-stat-1001-totalYards")).toContainText("185");
 });
 
-test("shows where the ball is under the possessing team's score", async ({
-  page,
-}) => {
-  await page.goto("./");
-  await page.locator("#game-details-1001-button").click();
-
-  await expect(page.locator("#game-header-field-1001")).toContainText("RIV 34");
-});
-
 test("shows the stadium in place of kickoff on an upcoming game's card", async ({
   page,
 }) => {

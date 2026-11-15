@@ -31,11 +31,6 @@ export interface Game {
   redZone: boolean;
   homeTimeouts?: number;
   awayTimeouts?: number;
-  /**
-   * Where the ball is, in yards from the home team's goal line (0–100), for
-   * games in progress.
-   */
-  yardLine?: number;
   /** ESPN's down and distance, e.g. "2nd & Goal at TXST 10". */
   downDistance?: string;
 }

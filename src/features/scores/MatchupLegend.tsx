@@ -2,9 +2,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { TeamLogo } from "@/shared/components/TeamLogo";
+import { TeamSwatch } from "@/shared/components/TeamSwatch";
 import type { Team } from "@/shared/types";
-
-import { TeamSwatch } from "./TeamSwatch";
 
 type MatchupLegendProps = { away: Team; home: Team };
 

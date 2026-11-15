@@ -266,4 +266,15 @@ test.describe("league tabs", () => {
       page.locator("#league-table-title-2026-27-english-premier-league"),
     ).toBeVisible();
   });
+
+  test("lists what each run of table positions earns", async ({ page }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-epl").click();
+    await page.getByRole("button", { name: copy.navRail.standings }).click();
+    await expect(
+      page.locator("#league-zones-2026-27-english-premier-league"),
+    ).toHaveText(
+      /1–4\s*Champions League\s*5\s*Europa League\s*18–20\s*Relegation/,
+    );
+  });
 });

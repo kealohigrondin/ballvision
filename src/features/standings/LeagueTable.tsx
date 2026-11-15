@@ -15,6 +15,7 @@ import { TeamLogo } from "@/shared/components/TeamLogo";
 import { TeamScheduleLink } from "@/shared/components/TeamScheduleLink";
 
 import { leagueTableSx, rankTrendColor } from "./leagueTableStyles";
+import { LeagueZoneKey } from "./LeagueZoneKey";
 import { rankTrend } from "./rankTrend";
 import { useStandingsData } from "./standingsContext";
 import type { LeagueRow, LeagueTable as LeagueTableData } from "./types";
@@ -83,84 +84,90 @@ export const LeagueTable = ({ table }: LeagueTableProps) => {
     ];
   }, [table.soccer, table.rows, ranked]);
 
-  const rows = table.rows.map((row) => (
-    <TableRow
-      key={row.id}
-      className={clsx(
-        row.dividerAfter && "league-row-divider",
-        row.dividerAfter === "dashed" && "league-row-divider-dashed",
-      )}
-    >
-      <TableCell component="th" scope="row" title={row.note}>
-        <Stack
-          direction="row"
-          className="league-team"
-          spacing={1}
-          sx={{ alignItems: "center", minWidth: 0 }}
-        >
-          {row.rank !== undefined && (
-            <Box component="span" className="league-rank">
-              {row.rank}
-            </Box>
-          )}
-          <TeamLogo
-            team={{ ...row, abbreviation: row.abbreviation || row.name }}
-            size={24}
-          />
-          <TeamScheduleLink team={row} />
-        </Stack>
-      </TableCell>
-      {columns.map((column) => (
-        <TableCell
-          key={column.key}
-          align="right"
-          id={column.id?.(row)}
-          sx={{ color: column.color?.(row) }}
-        >
-          {column.cell(row) ?? "—"}
-        </TableCell>
-      ))}
-    </TableRow>
-  ));
-
   // IDs can't contain spaces, so "AFC East" becomes "afc-east".
   const titleId = table.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
+  const rows = table.rows.map((row) => {
+    const divider = clsx(
+      row.dividerAfter && "league-row-divider",
+      row.dividerAfter === "dashed" && "league-row-divider-dashed",
+    );
+
+    return (
+      <TableRow key={row.id} className={divider}>
+        <TableCell component="th" scope="row" title={row.note}>
+          <Stack
+            direction="row"
+            className="league-team"
+            spacing={1}
+            sx={{ alignItems: "center", minWidth: 0 }}
+          >
+            {row.rank !== undefined && (
+              <Box component="span" className="league-rank">
+                {row.rank}
+              </Box>
+            )}
+            <TeamLogo
+              team={{ ...row, abbreviation: row.abbreviation || row.name }}
+              size={24}
+            />
+            <TeamScheduleLink team={row} />
+          </Stack>
+        </TableCell>
+        {columns.map((column) => (
+          <TableCell
+            key={column.key}
+            align="right"
+            id={column.id?.(row)}
+            sx={{ color: column.color?.(row) }}
+          >
+            {column.cell(row) ?? "—"}
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  });
+
   return (
-    <TableContainer
-      id={`league-table-scroll-${titleId}`}
-      sx={{ overflowX: "auto" }}
-    >
-      <Table
-        size="small"
-        aria-label={`league-table-${table.title}`}
-        sx={leagueTableSx}
+    <Stack spacing={1}>
+      <TableContainer
+        id={`league-table-scroll-${titleId}`}
+        sx={{ overflowX: "auto" }}
       >
-        <TableHead>
-          <TableRow>
-            <TableCell component="th" scope="col">
-              <Typography
-                variant="body1"
-                sx={{ fontWeight: "bold" }}
-                id={`league-table-title-${titleId}`}
-              >
-                {table.title}
-              </Typography>
-            </TableCell>
-            {columns.map((column) => (
-              <TableCell
-                key={column.key}
-                component="th"
-                scope="col"
-                align="right"
-              >
-                {column.header}
+        <Table
+          size="small"
+          aria-label={`league-table-${table.title}`}
+          sx={leagueTableSx}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell component="th" scope="col">
+                <Typography
+                  variant="body1"
+                  sx={{ fontWeight: "bold" }}
+                  id={`league-table-title-${titleId}`}
+                >
+                  {table.title}
+                </Typography>
               </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>{rows}</TableBody>
-      </Table>
-    </TableContainer>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.key}
+                  component="th"
+                  scope="col"
+                  align="right"
+                >
+                  {column.header}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>{rows}</TableBody>
+        </Table>
+      </TableContainer>
+      {table.zones && table.zones.length > 0 && (
+        <LeagueZoneKey id={`league-zones-${titleId}`} zones={table.zones} />
+      )}
+    </Stack>
   );
 };

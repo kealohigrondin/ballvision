@@ -747,6 +747,17 @@ test.describe("@screenshots soccer league table", () => {
     await page.getByRole("button", { name: copy.navRail.standings }).click();
     await screenshotLeaguePanel(page, "league-table-epl-light");
   });
+
+  for (const league of ["epl", "ucl"] as const) {
+    test(`${league} zone key`, async ({ page }) => {
+      await openLeague(page, league);
+      await page.getByRole("button", { name: copy.navRail.standings }).click();
+      await page
+        .getByRole("list", { name: copy.league.zones })
+        .first()
+        .screenshot({ path: `screenshots/league-zone-key-${league}.png` });
+    });
+  }
 });
 
 test.describe("@screenshots fantasy players", () => {

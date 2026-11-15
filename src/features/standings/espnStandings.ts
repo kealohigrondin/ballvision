@@ -12,7 +12,7 @@ import {
 import { hasRankings, sportOf } from "@/shared/leagues";
 import type { Division } from "@/shared/types";
 
-import type { LeagueRow, LeagueSource, LeagueTable } from "./types";
+import type { LeagueRow, LeagueSource, LeagueTable, LeagueZone } from "./types";
 
 // League context stays separate from the high-frequency scoreboard feed.
 const leagueTeamIdentity = (team: Json) => ({
@@ -100,9 +100,34 @@ export const parseStandings = (
   return root.children.flatMap(collect);
 };
 
+// Soccer dividers come where ESPN's qualification note changes. A line is
+// solid when it leads into one of these notes (the teams below it are out)
+// and dashed otherwise.
+const solidBeforeNotes = new Set([
+  "Eliminated", // Champions League 24/25
+  "Relegation", // Premier League 17/18
+]);
+
+// Each run of positions sharing an ESPN note, e.g. 1–4 "Champions League".
+// Positions without a note (mid-table) form no zone.
+const soccerZones = (rows: readonly LeagueRow[]): LeagueZone[] =>
+  rows.reduce<LeagueZone[]>((zones, row, index) => {
+    const position = row.rank ?? index + 1;
+    const current = zones.at(-1);
+    if (!row.note) {
+      return zones;
+    }
+    if (current?.note === row.note && current.last === position - 1) {
+      return [...zones.slice(0, -1), { ...current, last: position }];
+    }
+
+    return [...zones, { note: row.note, first: position, last: position }];
+  }, []);
+
 // Soccer league tables: one per stage (the Premier League's single table,
-// the Champions League's league phase), in table order. A solid line marks
-// each change of qualification zone, such as the Champions League places.
+// the Champions League's league phase), in table order. A line marks each
+// change of qualification zone, and the zones are listed for a key under
+// the table.
 export const parseSoccerStandings = (payload: unknown): LeagueTable[] => {
   const root = obj(payload);
   if (!Array.isArray(root.children)) {
@@ -141,12 +166,19 @@ export const parseSoccerStandings = (payload: unknown): LeagueTable[] => {
       title: str(group.name, "League table"),
       subtitle: str(standings.seasonDisplayName, str(standings.season)),
       soccer: true,
+      zones: soccerZones(rows),
       rows: rows.map((row, index) => {
         const next = rows[index + 1];
+        const closesGroup = next !== undefined && next.note !== row.note;
 
-        return next && next.note !== row.note
-          ? { ...row, dividerAfter: "solid" as const }
-          : row;
+        return {
+          ...row,
+          ...(closesGroup && {
+            dividerAfter: solidBeforeNotes.has(next.note ?? "")
+              ? ("solid" as const)
+              : ("dashed" as const),
+          }),
+        };
       }),
     };
   });
@@ -199,14 +231,12 @@ export const parseNflStandings = (
     };
   });
 
-  // Seeds 1-4 win their divisions and 5-7 are wild cards: a dashed line
-  // separates the two, and a solid one marks the playoff cut.
-  const dividerAfterSeed = (seed: number) => {
-    if (seed === 4) {
-      return "dashed" as const;
-    }
-
-    return seed === 7 ? ("solid" as const) : undefined;
+  // Seeds 1-4 win their divisions and 5-7 are wild cards. ESPN gives NFL
+  // teams no qualification notes, so the lines come from seeds: dashed
+  // within the playoff field, solid at the playoff cut.
+  const dividerAfterSeed: Readonly<Record<number, "dashed" | "solid">> = {
+    4: "dashed", // division winners | wild cards
+    7: "solid", // playoff cut
   };
   const wildcard: LeagueTable[] = conferences.map((conference) => ({
     id: `${conference.id}-wildcard`,
@@ -218,7 +248,7 @@ export const parseNflStandings = (
       .map(({ row, seed }) => ({
         ...row,
         rank: Number.isFinite(seed) ? seed : undefined,
-        dividerAfter: dividerAfterSeed(seed),
+        dividerAfter: dividerAfterSeed[seed],
       })),
   }));
   // Seeds already include the NFL tiebreakers, so they settle equal records.

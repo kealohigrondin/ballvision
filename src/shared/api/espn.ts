@@ -46,14 +46,12 @@ const localLogo = (league: string, id: string, variant: "light" | "dark") =>
 // use one folder.
 const logoFolders: readonly (readonly [string, readonly string[]])[] = [
   ["/teamlogos/nfl/", ["nfl"]],
-  // "ncaa" holds college teams outside FBS and FCS (Division II, III and
-  // others), which appear on the scoreboard as opponents.
-  ["/teamlogos/ncaa/", ["fbs", "fcs", "ncaa"]],
+  ["/teamlogos/ncaa/", ["fbs", "fcs"]],
   ["/teamlogos/soccer/", ["soccer"]],
 ];
 
 // ESPN team ids repeat between leagues, so the league comes from ESPN's logo
-// URL. College ids are unique across every division. Teams without a dark file
+// URL. College ids are unique across FBS and FCS. Teams without a dark file
 // of their own (most soccer crests) show their light logo in dark mode.
 export const teamLogos = (
   id: string,

@@ -1,3 +1,4 @@
+import type { FantasySource } from "@/features/fantasy";
 import type { OddsHistorySource, OddsSource } from "@/features/odds";
 import { ScheduleProvider, type TeamScheduleSource } from "@/features/schedule";
 import {
@@ -20,6 +21,7 @@ type AppProps = {
   oddsSource?: OddsSource;
   oddsHistorySource?: OddsHistorySource;
   summarySource?: GameSummarySource;
+  fantasySource?: FantasySource;
 };
 
 const App = ({
@@ -30,6 +32,7 @@ const App = ({
   oddsSource,
   oddsHistorySource,
   summarySource,
+  fantasySource,
 }: AppProps) => (
   <AppDataProvider>
     <ScoresProvider source={source} summarySource={summarySource}>
@@ -39,6 +42,7 @@ const App = ({
             <GameDataProviders
               oddsSource={oddsSource}
               oddsHistorySource={oddsHistorySource}
+              fantasySource={fantasySource}
             >
               <Dashboard />
             </GameDataProviders>

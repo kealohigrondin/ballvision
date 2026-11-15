@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import { Radio, Settings } from "lucide-react";
 
 import { copy } from "@/copy";
+import { SleeperAccountControl } from "@/features/fantasy";
 import { ScoreNotificationControls } from "@/features/notifications";
 import { useAppData } from "@/shared/appData/appDataContext";
 import { MenuDrawer } from "@/shared/components/MenuDrawer";
@@ -36,12 +37,14 @@ const MastHead = ({}: MastHeadProps) => {
     >
       <SyncControls showLabels />
       <ScoreNotificationControls showLabels />
+      <SleeperAccountControl showLabels />
       <ThemeToggle showLabels />
     </MenuDrawer>
   ) : (
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <SyncControls />
       <ScoreNotificationControls />
+      <SleeperAccountControl />
       <ThemeToggle />
     </Stack>
   );

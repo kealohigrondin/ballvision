@@ -71,14 +71,14 @@ export const parseTeamLeaders = (group: Json): GameLeader[] => {
 };
 
 // "2-10" (made-attempts) as a rate, so 0 attempts compares as 0.
-const conversionRate = (text: string) => {
+const conversionRate = (text: string): number => {
   const [made, attempts] = text.split("-").map(Number);
 
   return attempts ? made / attempts : 0;
 };
 
 // "27:13" as seconds.
-const clockSeconds = (text: string) => {
+const clockSeconds = (text: string): number => {
   const [minutes, seconds] = text.split(":").map(Number);
 
   return (minutes || 0) * 60 + (seconds || 0);

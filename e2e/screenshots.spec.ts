@@ -420,7 +420,7 @@ test.describe("@screenshots game leaders", () => {
       }
       await openDetails(page, 0);
       const leaders = page.locator("#game-leaders-1001");
-      await expect(leaders.locator("img")).toHaveCount(3);
+      await expect(leaders.locator("img")).toHaveCount(6);
       await leaders.screenshot({
         path: `screenshots/game-leaders-live-${theme}.png`,
       });
@@ -431,7 +431,7 @@ test.describe("@screenshots game leaders", () => {
     await openDashboard(page);
     await openDetails(page, 2);
     const leaders = page.locator("#game-leaders-1003");
-    await expect(leaders.locator("img")).toHaveCount(3);
+    await expect(leaders.locator("img")).toHaveCount(6);
     await leaders.screenshot({
       path: "screenshots/game-leaders-final-dark.png",
     });
@@ -450,7 +450,7 @@ test.describe("@screenshots game details dialog", () => {
       "opacity",
       "1",
     );
-    await expect(page.locator("#game-leaders-1001 img")).toHaveCount(3);
+    await expect(page.locator("#game-leaders-1001 img")).toHaveCount(6);
   };
 
   for (const theme of themes) {
@@ -503,4 +503,59 @@ test.describe("@screenshots game details dialog", () => {
       .locator("#game-details-1001-button")
       .screenshot({ path: "screenshots/game-details-button-dark.png" });
   });
+});
+
+test.describe("@screenshots game stats", () => {
+  test.use({ viewport: viewports.mobile });
+
+  for (const [state, id, index] of [
+    ["live", "1001", 0],
+    ["final", "1003", 2],
+  ] as const) {
+    test(`team stats, ${state}`, async ({ page }) => {
+      await openDashboard(page);
+      await page
+        .getByRole("button", { name: copy.gameDetails.toggle })
+        .nth(index)
+        .click();
+      await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+        "opacity",
+        "1",
+      );
+      const stats = page.locator(`#team-stats-${id}`);
+      await expect(stats).toBeVisible();
+      await stats.screenshot({
+        path: `screenshots/team-stats-${state}-dark.png`,
+      });
+    });
+  }
+
+  test("team stats, light", async ({ page }) => {
+    await openDashboard(page);
+    await switchToLight(page);
+    await page.locator("#game-details-1001-button").click();
+    await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    const stats = page.locator("#team-stats-1001");
+    await expect(stats).toBeVisible();
+    await stats.screenshot({ path: "screenshots/team-stats-live-light.png" });
+  });
+
+  for (const [state, index] of [
+    ["live", 0],
+    ["upcoming", 1],
+    ["final", 2],
+  ] as const) {
+    test(`card footer, ${state}`, async ({ page }) => {
+      await openDashboard(page);
+      await page
+        .locator("article")
+        .nth(index)
+        .locator(".card-situation")
+        .first()
+        .screenshot({ path: `screenshots/card-footer-${state}-dark.png` });
+    });
+  }
 });

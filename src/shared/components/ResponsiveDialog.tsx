@@ -69,9 +69,10 @@ export const ResponsiveDialog = ({
         paper: {
           id,
           sx: {
-            // Same surface as the app's cards: dark mode lightens dialogs
-            // with a stronger overlay than cards, so use the cards' one.
-            "--Paper-overlay": "var(--mui-overlays-1)",
+            // Same surface as the app's cards. Dark mode lightens dialogs
+            // with a stronger overlay than cards (MUI sets it inline), so
+            // paint the cards' overlay directly. Light mode has none.
+            backgroundImage: "var(--mui-overlays-1, none)",
             // Match the cards' radius; full-screen dialogs stay square.
             ...(!compact && {
               borderRadius: "var(--mui-app-paperBorderRadius)",

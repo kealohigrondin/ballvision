@@ -6,6 +6,7 @@ import nflConferences from "../fixtures/nfl-standings-conferences.json" with { t
 import nflDivisions from "../fixtures/nfl-standings-divisions.json" with { type: "json" };
 import rankings from "../fixtures/rankings.json" with { type: "json" };
 import scoreboard from "../fixtures/scoreboard.json" with { type: "json" };
+import summaries from "../fixtures/summaries.json" with { type: "json" };
 
 const headshot = fileURLToPath(
   new URL("../fixtures/headshot.png", import.meta.url),
@@ -23,6 +24,15 @@ export const mockApis = async (page: Page): Promise<void> => {
   await page.route("https://site.api.espn.com/**/scoreboard*", (route) =>
     json(route, scoreboard),
   );
+  // Game summaries (leaders and team stats) by event id; others are empty.
+  await page.route("https://site.api.espn.com/**/summary*", (route) => {
+    const event = new URL(route.request().url()).searchParams.get("event");
+
+    return json(
+      route,
+      summaries[(event ?? "") as keyof typeof summaries] ?? {},
+    );
+  });
   await page.route("https://site.web.api.espn.com/**/standings*", (route) =>
     json(route, { children: [] }),
   );

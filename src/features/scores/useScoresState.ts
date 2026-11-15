@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { sportOf } from "@/shared/leagues";
 import type { Division, Filter, Week } from "@/shared/types";
 
 import type { ScoreboardSource } from "./types";
@@ -21,8 +22,25 @@ export const useScoresState = (
   source: ScoreboardSource,
   { division, week, paused, filter, search, favoriteIds }: ScoresOptions,
 ) => {
-  const scoreboard = useScoreboard(source, { division, week }, paused);
   const calendar = useSeasonCalendar(source, division);
+
+  // ESPN has no current soccer matchweek, so soccer follows the calendar's
+  // (the next one with matches during a break); football asks ESPN.
+  const shownWeek = useMemo(() => {
+    if (week || sportOf(division) !== "soccer") {
+      return week;
+    }
+
+    return (
+      calendar.weeks.find((option) => option.id === calendar.currentWeekId) ??
+      null
+    );
+  }, [week, division, calendar.weeks, calendar.currentWeekId]);
+  const scoreboard = useScoreboard(
+    source,
+    { division, week: shownWeek },
+    paused,
+  );
   const { games } = scoreboard;
 
   const counts = useMemo(

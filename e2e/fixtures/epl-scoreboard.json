@@ -55,6 +55,8 @@
         "2026-11-06T08:00Z",
         "2026-11-07T08:00Z",
         "2026-11-08T08:00Z",
+        "2026-11-17T08:00Z",
+        "2026-11-18T08:00Z",
         "2026-11-21T08:00Z",
         "2026-11-22T08:00Z",
         "2026-11-23T08:00Z",
@@ -107,7 +109,7 @@
     {
       "id": "401879246",
       "uid": "s:600~l:700~e:401879246",
-      "date": "2026-11-01T16:30Z",
+      "date": "2026-11-17T19:30Z",
       "name": "Arsenal at Liverpool",
       "shortName": "ARS @ LIV",
       "status": {
@@ -127,7 +129,7 @@
       "competitions": [
         {
           "id": "401879246",
-          "date": "2026-11-01T16:30Z",
+          "date": "2026-11-17T19:30Z",
           "status": {
             "clock": 5400.0,
             "displayClock": "90'+7'",
@@ -224,7 +226,7 @@
     {
       "id": "401878762",
       "uid": "s:600~l:700~e:401878762",
-      "date": "2026-11-02T20:00Z",
+      "date": "2026-11-17T20:00Z",
       "name": "Everton at Newcastle United",
       "shortName": "EVE @ NEW",
       "status": {
@@ -244,7 +246,7 @@
       "competitions": [
         {
           "id": "401878762",
-          "date": "2026-11-02T20:00Z",
+          "date": "2026-11-17T20:00Z",
           "status": {
             "clock": 5400.0,
             "displayClock": "90'+10'",
@@ -341,7 +343,7 @@
     {
       "id": "401879242",
       "uid": "s:600~l:700~e:401879242",
-      "date": "2026-11-06T20:00Z",
+      "date": "2026-11-18T19:30Z",
       "name": "Coventry City at Everton",
       "shortName": "COV @ EVE",
       "status": {
@@ -361,7 +363,7 @@
       "competitions": [
         {
           "id": "401879242",
-          "date": "2026-11-06T20:00Z",
+          "date": "2026-11-18T19:30Z",
           "status": {
             "clock": 5400.0,
             "displayClock": "90'+7'",
@@ -521,7 +523,7 @@
     {
       "id": "401878758",
       "uid": "s:600~l:700~e:401878758",
-      "date": "2026-11-07T12:30Z",
+      "date": "2026-11-18T20:00Z",
       "name": "Tottenham Hotspur at Leeds United",
       "shortName": "TOT @ LEE",
       "status": {
@@ -541,7 +543,7 @@
       "competitions": [
         {
           "id": "401878758",
-          "date": "2026-11-07T12:30Z",
+          "date": "2026-11-18T20:00Z",
           "status": {
             "clock": 5400.0,
             "displayClock": "90'+5'",

@@ -1,3 +1,4 @@
+import { copy } from "@/copy";
 import {
   espnLeaguePath,
   fetchEspnJson,
@@ -9,7 +10,7 @@ import {
   str,
 } from "@/shared/api/espn";
 import { sportOf } from "@/shared/leagues";
-import type { Division, Week } from "@/shared/types";
+import type { Division, Game, Week } from "@/shared/types";
 
 import type { ScoreboardSource, SeasonCalendar } from "./types";
 
@@ -60,92 +61,136 @@ export const parseCalendar = (payload: unknown): SeasonCalendar => {
   };
 };
 
-// ESPN only lists soccer by day or by month, so a soccer "week" is a month:
-// one request covers every match in it.
-const monthKey = (year: number, month: number) =>
-  `${year}-${String(month).padStart(2, "0")}`;
+// ESPN lists soccer only by day, month or year, and has no matchweeks, so
+// soccer weeks are built here: Tuesday-to-Monday windows (like college
+// football's) that hold at least one match, numbered within each stage.
+const DAY = 24 * 60 * 60 * 1000;
 
-const monthWeek = (year: number, month: number, group: string): Week => ({
-  id: monthKey(year, month),
-  label: new Intl.DateTimeFormat(undefined, {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(Date.UTC(year, month - 1, 1)),
-  group,
-  detail: "",
-  year,
-  seasonType: 0,
-  number: month,
-});
+const isoDay = (time: number) => new Date(time).toISOString().slice(0, 10);
 
-// Calendar months from the first date to the last, inclusive.
-const monthsBetween = (first: Date, last: Date): [number, number][] => {
-  const months: [number, number][] = [];
-  const cursor = new Date(
-    Date.UTC(first.getUTCFullYear(), first.getUTCMonth(), 1),
+// Midnight UTC on the Tuesday on or before a time.
+const tuesdayBefore = (time: number) => {
+  const date = new Date(time);
+  const day = Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
   );
-  while (cursor <= last && months.length < 24) {
-    months.push([cursor.getUTCFullYear(), cursor.getUTCMonth() + 1]);
-    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
-  }
 
-  return months;
+  return day - ((date.getUTCDay() + 5) % 7) * DAY;
 };
 
+// ESPN's football week format: "Nov 10-16", or "Oct 27-Nov 2" across months.
+const weekDetail = (start: number) => {
+  const end = start + 6 * DAY;
+
+  const format = (time: number, options: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat(undefined, { ...options, timeZone: "UTC" }).format(
+      time,
+    );
+  const sameMonth =
+    new Date(start).getUTCMonth() === new Date(end).getUTCMonth();
+
+  return `${format(start, { month: "short", day: "numeric" })}-${format(
+    end,
+    sameMonth ? { day: "numeric" } : { month: "short", day: "numeric" },
+  )}`;
+};
+
+type Stage = { label: string; start: number; end: number };
+
+// Champions League stages (League Phase, Round of 16, ...) with their date
+// ranges; the Premier League is one stage named for its season.
+const calendarStages = (league: Json): Stage[] => {
+  const stages = list(league.calendar)
+    .flatMap((entry) => list(obj(entry).entries))
+    .map(obj)
+    .map((stage) => ({
+      label: str(stage.label),
+      start: Date.parse(str(stage.startDate)),
+      end: Date.parse(str(stage.endDate)),
+    }))
+    .filter((stage) => Number.isFinite(stage.start + stage.end));
+
+  return stages.length > 0
+    ? stages
+    : [
+        {
+          label: str(obj(league.season).displayName),
+          start: -Infinity,
+          end: Infinity,
+        },
+      ];
+};
+
+const scoreboardLeague = (payload: unknown): Json =>
+  obj(list(obj(payload).leagues)[0]);
+
+/** The Premier League's calendar lists its match days; others list none. */
+export const calendarMatchDays = (payload: unknown): string[] =>
+  list(scoreboardLeague(payload).calendar).filter(
+    (entry): entry is string => typeof entry === "string",
+  );
+
 /**
- * Soccer calendars list match days (Premier League) or competition stages
- * with date ranges (Champions League). Either way, the selectable weeks are
- * the months that hold them; the current one is this month, or the next
- * month with matches.
+ * Soccer weeks for the given match days: every Tuesday-to-Monday window with
+ * a match, numbered from 1 within each stage and grouped by stage. The
+ * current week is this week, or the next one with matches.
  */
-export const parseMonthCalendar = (
+export const parseMatchweekCalendar = (
   payload: unknown,
+  matchDays: readonly string[],
   now: Date = new Date(),
 ): SeasonCalendar => {
-  const league = obj(list(obj(payload).leagues)[0]);
-  const group = str(obj(league.season).displayName);
-  const DAY = 24 * 60 * 60 * 1000;
+  const league = scoreboardLeague(payload);
+  const stages = calendarStages(league);
+  // Year queries also return the previous season's matches.
+  const season = obj(league.season);
+  const seasonStart = Date.parse(str(season.startDate)) || -Infinity;
+  const seasonEnd = Date.parse(str(season.endDate)) || Infinity;
+  const starts = [
+    ...new Set(
+      matchDays
+        .map((day) => Date.parse(day))
+        .filter((time) => time >= seasonStart && time < seasonEnd)
+        .map(tuesdayBefore),
+    ),
+  ].sort((a, b) => a - b);
+  const numbers = new Map<string, number>();
+  const weeks = starts.map((start): Week => {
+    const index = stages.findIndex(
+      (stage) => start + 6 * DAY >= stage.start && start < stage.end,
+    );
+    const stage = stages[index] ?? stages[0];
+    const number = (numbers.get(stage.label) ?? 0) + 1;
+    numbers.set(stage.label, number);
 
-  // Stage ranges end early on the morning after their last day.
-  const range = (stage: Json) => [
-    Date.parse(str(stage.startDate)),
-    Date.parse(str(stage.endDate)) - DAY,
-  ];
-  const times = list(league.calendar)
-    .flatMap((entry) => {
-      if (typeof entry === "string") {
-        return [Date.parse(entry)];
-      }
-      const stages = list(obj(entry).entries).map(obj);
-
-      return stages.length > 0 ? stages.flatMap(range) : range(obj(entry));
-    })
-    .filter(Number.isFinite)
-    .sort((a, b) => a - b);
-  if (times.length === 0) {
-    return { weeks: [] };
-  }
-  // Day lists name only match days; stage ranges cover every day between.
-  const matchMonths = new Set(
-    typeof list(league.calendar)[0] === "string"
-      ? times.map((time) => {
-          const date = new Date(time);
-
-          return monthKey(date.getUTCFullYear(), date.getUTCMonth() + 1);
-        })
-      : undefined,
-  );
-  const weeks = monthsBetween(new Date(times[0]), new Date(times.at(-1) ?? 0))
-    .filter(
-      ([year, month]) =>
-        matchMonths.size === 0 || matchMonths.has(monthKey(year, month)),
-    )
-    .map(([year, month]) => monthWeek(year, month, group));
-  const thisMonth = monthKey(now.getFullYear(), now.getMonth() + 1);
-  const current = weeks.find((week) => week.id >= thisMonth) ?? weeks.at(-1);
+    return {
+      id: isoDay(start),
+      label: copy.week.matchweek(number),
+      group: stage.label,
+      detail: weekDetail(start),
+      year: new Date(start).getUTCFullYear(),
+      seasonType: Math.max(index, 0) + 1,
+      number,
+      start: isoDay(start),
+    };
+  });
+  const thisWeek = isoDay(tuesdayBefore(now.getTime()));
+  const current = weeks.find((week) => week.id >= thisWeek) ?? weeks.at(-1);
 
   return { weeks, currentWeekId: current?.id };
+};
+
+// The calendar years a season spans, e.g. 2026 and 2027 for 2026-27.
+const seasonYears = (payload: unknown): string[] => {
+  const season = obj(scoreboardLeague(payload).season);
+  const years = [str(season.startDate), str(season.endDate)]
+    .map((date) => Date.parse(date))
+    .filter(Number.isFinite)
+    .map((time) => new Date(time).getUTCFullYear());
+
+  return [...new Set(years)].map(String);
 };
 
 const collegeGroups: Partial<Record<Division, string>> = {
@@ -166,37 +211,89 @@ const scoreboardUrl = (division: Division, params: Record<string, string>) => {
   return url;
 };
 
-// Football weeks are ESPN calendar weeks; soccer weeks are months, and
-// without one ESPN would return a single day, so soccer asks for this month.
-const weekParams = (
-  division: Division,
-  week: Week | null,
-): Record<string, string> => {
-  if (sportOf(division) === "soccer") {
-    const now = new Date();
-    const [year, month] = week
-      ? [week.year, week.number]
-      : [now.getFullYear(), now.getMonth() + 1];
-
-    return { dates: monthKey(year, month).replace("-", "") };
-  }
-
-  // Without a week, ESPN returns its current week.
-  return week
+// Without a week, ESPN returns its current football week.
+const footballWeekParams = (week: Week | null): Record<string, string> =>
+  week
     ? {
         dates: String(week.year),
         seasontype: String(week.seasonType),
         week: String(week.number),
       }
     : {};
+
+const fetchEvents = async (
+  division: Division,
+  dates: string,
+  signal: AbortSignal,
+): Promise<unknown[]> =>
+  list(
+    obj(
+      await fetchEspnJson(
+        scoreboardUrl(division, { dates, limit: "1000" }),
+        signal,
+      ),
+    ).events,
+  );
+
+// A soccer week's matches: the month or two it spans, filtered to the week.
+// Without a chosen week, this week's.
+const loadSoccerWeek = async (
+  division: Division,
+  week: Week | null,
+  signal: AbortSignal,
+): Promise<Game[]> => {
+  const start = week?.start
+    ? Date.parse(week.start)
+    : tuesdayBefore(Date.now());
+  const end = start + 7 * DAY;
+  const months = [
+    ...new Set([start, end - 1].map((time) => isoDay(time).slice(0, 7))),
+  ].map((month) => month.replace("-", ""));
+  const events = (
+    await Promise.all(
+      months.map((month) => fetchEvents(division, month, signal)),
+    )
+  )
+    .flat()
+    .filter((event) => {
+      const time = Date.parse(str(obj(event).date));
+
+      return time >= start && time < end;
+    });
+  const unique = [
+    ...new Map(events.map((event) => [str(obj(event).id), event])).values(),
+  ];
+
+  return parseScoreboard({ events: unique });
+};
+
+// The Champions League calendar lists only stage ranges, so its match days
+// come from the season's matches, fetched by calendar year.
+const loadMatchDays = async (
+  division: Division,
+  payload: unknown,
+  signal: AbortSignal,
+): Promise<string[]> => {
+  const listed = calendarMatchDays(payload);
+  if (listed.length > 0) {
+    return listed;
+  }
+  const events = await Promise.all(
+    seasonYears(payload).map((year) => fetchEvents(division, year, signal)),
+  );
+
+  return events.flat().map((event) => str(obj(event).date));
 };
 
 export const espnSource: ScoreboardSource = {
   load: async ({ division, week }, signal) => {
+    if (sportOf(division) === "soccer") {
+      return loadSoccerWeek(division, week, signal);
+    }
     const url = scoreboardUrl(division, {
       // Larger limits fall back to ESPN's default 25-game response.
       limit: "100",
-      ...weekParams(division, week),
+      ...footballWeekParams(week),
     });
 
     return parseScoreboard(await fetchEspnJson(url, signal));
@@ -208,9 +305,13 @@ export const espnSource: ScoreboardSource = {
       scoreboardUrl(division, { limit: "1" }),
       signal,
     );
+    if (sportOf(division) !== "soccer") {
+      return parseCalendar(payload);
+    }
 
-    return sportOf(division) === "soccer"
-      ? parseMonthCalendar(payload)
-      : parseCalendar(payload);
+    return parseMatchweekCalendar(
+      payload,
+      await loadMatchDays(division, payload, signal),
+    );
   },
 };

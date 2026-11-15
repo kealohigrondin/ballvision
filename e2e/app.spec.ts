@@ -209,7 +209,21 @@ test.describe("Sleeper fantasy players", () => {
 
 test.describe("league tabs", () => {
   test.beforeEach(async ({ page }) => {
+    // Soccer weeks follow the clock: on Nov 15, the Premier League's next
+    // matchweek is Nov 17-23, the week the fixture's matches are in.
+    await page.clock.setFixedTime(new Date("2026-11-15T21:00:00Z"));
     await mockSoccer(page);
+  });
+
+  test("names the current Premier League week like football's", async ({
+    page,
+  }) => {
+    await page.goto("./");
+    await page.locator("#league-tab-epl").click();
+    const matchweek = copy.week.matchweek(0).replace("0", "\\d+");
+    await expect(page.locator("#game-week")).toHaveText(
+      new RegExp(`${matchweek} · \\D+ 17-23`),
+    );
   });
 
   test("shows the Premier League scoreboard on the EPL tab", async ({

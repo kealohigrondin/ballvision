@@ -665,6 +665,20 @@ test.describe("@screenshots league tabs", () => {
     });
   }
 
+  for (const league of ["epl", "ucl"] as const) {
+    test(`week picker, open, ${league}`, async ({ page }) => {
+      await page.setViewportSize(viewports.desktop);
+      await openLeague(page, league);
+      await page.locator("#game-week").click();
+      const menu = page.getByRole("listbox");
+      await expect(menu).toBeVisible();
+      await menu.screenshot({
+        path: `screenshots/week-select-${league}-open-dark.png`,
+        animations: "disabled",
+      });
+    });
+  }
+
   test("Premier League scoreboard, mobile", async ({ page }) => {
     await page.setViewportSize(viewports.mobile);
     await openLeague(page, "epl");

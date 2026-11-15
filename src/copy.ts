@@ -102,6 +102,7 @@ export const copy = {
   },
   week: {
     label: "Week",
+    matchweek: (number: number) => `Matchweek ${number}`,
   },
   mastHead: {
     settings: "Settings",

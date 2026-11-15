@@ -56,8 +56,9 @@ export const mockApis = async (page: Page): Promise<void> => {
 };
 
 // Serve Premier League and Champions League scoreboards and tables captured
-// from ESPN. The Premier League month has finals (one a 1-1 draw), a match
-// live in its 67th minute and upcoming fixtures. Call after mockApis.
+// from ESPN. The Premier League's Nov 17-23 matchweek has finals (one a 1-1
+// draw), a match live in its 67th minute and upcoming fixtures. Call after
+// mockApis.
 export const mockSoccer = async (page: Page): Promise<void> => {
   const leagues = [
     ["eng.1", eplScoreboard, eplStandings],

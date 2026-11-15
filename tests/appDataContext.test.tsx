@@ -367,11 +367,17 @@ it("falls back to standings when the NFL is on the rankings page", () => {
 
 // League tabs
 
-it("loads the Premier League's current month when switching to the EPL tab", async () => {
+it("loads the calendar's current matchweek when switching to the EPL tab", async () => {
   const { result, lastQuery } = renderContexts();
   act(() => result.current.app.setWeek(week(0)));
   act(() => result.current.app.setLeague("epl"));
-  await lastQuery({ week: null, division: "epl" });
+  await lastQuery({ week: week(1), division: "epl" });
+});
+
+it("leaves football's current week to ESPN", async () => {
+  const { result, lastQuery } = renderContexts();
+  act(() => result.current.app.setLeague("nfl"));
+  await lastQuery({ week: null, division: "nfl" });
 });
 
 it("names the league of the current division", () => {

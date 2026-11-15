@@ -49,6 +49,8 @@ export interface Week {
   year: number;
   seasonType: number;
   number: number;
+  /** Soccer weeks: the Tuesday they start on, e.g. "2026-11-10". */
+  start?: string;
 }
 
 /** A team picked from any list (standings, scores, schedules). */

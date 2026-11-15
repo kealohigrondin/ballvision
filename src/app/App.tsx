@@ -1,6 +1,10 @@
 import type { OddsHistorySource, OddsSource } from "@/features/odds";
 import { ScheduleProvider, type TeamScheduleSource } from "@/features/schedule";
-import { type ScoreboardSource, ScoresProvider } from "@/features/scores";
+import {
+  type GameSummarySource,
+  type ScoreboardSource,
+  ScoresProvider,
+} from "@/features/scores";
 import { type LeagueSource, StandingsProvider } from "@/features/standings";
 import { StatsProvider, type TeamStatsSource } from "@/features/stats";
 import { AppDataProvider } from "@/shared/appData/AppDataProvider";
@@ -15,6 +19,7 @@ type AppProps = {
   statsSource?: TeamStatsSource;
   oddsSource?: OddsSource;
   oddsHistorySource?: OddsHistorySource;
+  summarySource?: GameSummarySource;
 };
 
 const App = ({
@@ -24,9 +29,10 @@ const App = ({
   statsSource,
   oddsSource,
   oddsHistorySource,
+  summarySource,
 }: AppProps) => (
   <AppDataProvider>
-    <ScoresProvider source={source}>
+    <ScoresProvider source={source} summarySource={summarySource}>
       <StandingsProvider source={leagueSource}>
         <ScheduleProvider source={scheduleSource}>
           <StatsProvider source={statsSource}>

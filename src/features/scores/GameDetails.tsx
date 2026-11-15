@@ -8,6 +8,7 @@ import type { Game } from "@/shared/types";
 
 import { GameDetailsBody } from "./GameDetailsBody";
 import { GameHeader } from "./GameHeader";
+import { GameSummaryProvider } from "./GameSummaryProvider";
 
 type GameDetailsProps = {
   game: Game;
@@ -50,7 +51,9 @@ export const GameDetails = ({ game, liveDetails }: GameDetailsProps) => {
         header={<GameHeader game={game} />}
         closeLabel={copy.gameDetails.close}
       >
-        <GameDetailsBody game={game} liveDetails={liveDetails} />
+        <GameSummaryProvider game={game}>
+          <GameDetailsBody game={game} liveDetails={liveDetails} />
+        </GameSummaryProvider>
       </ResponsiveDialog>
     </>
   );

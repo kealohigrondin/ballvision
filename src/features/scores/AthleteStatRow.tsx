@@ -6,25 +6,25 @@ import { splitStatLine } from "./statLine";
 
 type AthleteStatRowProps = {
   id: string;
-  /** Short category label shown before the photo, e.g. "PASS". */
-  label: string;
   name: string;
-  /** Secondary text after the name, e.g. position, number and team. */
+  /** Secondary text under the name, e.g. position, number and team. */
   detail?: string;
   /** Stat summary; its numbers are emphasized, e.g. "8/9, 60 YDS". */
   stats: string;
   photo?: string;
+  /** "end" mirrors the row: photo on the right, text aligned right. */
+  align?: "start" | "end";
 };
 
-// One player in a stat list: a category label, their photo, name, details
-// and a stat line with the numbers in bold.
+// One player in a stat list: their photo, name, details and a stat line
+// with the numbers in bold. Can be mirrored for the right-hand team.
 export const AthleteStatRow = ({
   id,
-  label,
   name,
   detail = "",
   stats,
   photo = "",
+  align = "start",
 }: AthleteStatRowProps) => {
   const statParts = splitStatLine(stats).map((part, index) => (
     <Typography
@@ -39,31 +39,30 @@ export const AthleteStatRow = ({
 
   return (
     <Stack
-      component="li"
       id={id}
-      direction="row"
-      spacing={1.5}
+      direction={align === "end" ? "row-reverse" : "row"}
+      spacing={1}
       sx={{ alignItems: "center", minWidth: 0 }}
     >
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ width: "4ch", flexShrink: 0 }}
-      >
-        {label}
-      </Typography>
       <Avatar
         src={photo || undefined}
         alt=""
-        slotProps={{ img: { loading: "lazy", width: 40, height: 40 } }}
-        sx={{ width: 40, height: 40, bgcolor: "action.hover" }}
+        slotProps={{ img: { loading: "lazy", width: 36, height: 36 } }}
+        sx={{ width: 36, height: 36, flexShrink: 0, bgcolor: "action.hover" }}
       />
-      <Stack sx={{ minWidth: 0 }}>
-        <Typography component="span" noWrap>
-          {name}{" "}
-          <Typography component="span" variant="body2" color="text.secondary">
-            {detail}
-          </Typography>
+      <Stack
+        sx={{ minWidth: 0, textAlign: align === "end" ? "right" : "left" }}
+      >
+        <Typography component="span" noWrap sx={{ fontWeight: 600 }}>
+          {name}
+        </Typography>
+        <Typography
+          component="span"
+          variant="caption"
+          color="text.secondary"
+          noWrap
+        >
+          {detail}
         </Typography>
         <Typography
           component="span"

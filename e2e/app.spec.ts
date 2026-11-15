@@ -112,14 +112,14 @@ test("finds an NFL team by typing in the schedule picker", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("shows a live game's leaders in its game details", async ({ page }) => {
+test("shows each team's leaders in a live game's details", async ({ page }) => {
   await page.goto("./");
   await page
     .getByRole("button", { name: copy.gameDetails.toggle })
     .first()
     .click();
 
-  await expect(page.locator("#game-leader-1001-passing")).toContainText(
+  await expect(page.locator("#game-leader-1001-home-passing")).toContainText(
     "14/21, 188 YDS, 2 TD",
   );
 });
@@ -154,6 +154,23 @@ test("closes the game details dialog with the Escape key", async ({ page }) => {
   await page.keyboard.press("Escape");
 
   await expect(page.getByRole("dialog")).toBeHidden();
+});
+
+test("compares the teams' stats in a game's details", async ({ page }) => {
+  await page.goto("./");
+  await page.locator("#game-details-1001-button").click();
+
+  await expect(page.locator("#team-stat-1001-totalYards")).toContainText("185");
+});
+
+test("shows the stadium in place of kickoff on an upcoming game's card", async ({
+  page,
+}) => {
+  await page.goto("./");
+
+  await expect(
+    page.locator("article").nth(1).locator(".card-situation").first(),
+  ).toContainText("Summit Stadium");
 });
 
 test.describe("league tabs", () => {

@@ -71,6 +71,12 @@ export const createScoresData = (
   weeks: [],
   currentWeekId: undefined,
   counts: { all: 0, live: 0, upcoming: 0, final: 0, pinned: 0 },
+  summarySource: {
+    load: vi.fn().mockResolvedValue({
+      leaders: { away: [], home: [] },
+      stats: [],
+    }),
+  },
   ...overrides,
 });
 

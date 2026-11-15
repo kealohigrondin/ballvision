@@ -3,6 +3,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { copy } from "@/copy";
+import { TeamSwatch } from "@/shared/components/TeamSwatch";
 
 import { usePolymarketGame } from "./polymarketGameContext";
 
@@ -22,19 +23,33 @@ export const GameOdds = ({}: GameOddsProps) => {
       </Typography>
     );
   }
-  const favorite = quote.awayProbability > quote.homeProbability ? away : home;
+  const awayFavored = quote.awayProbability > quote.homeProbability;
+  const favorite = awayFavored ? away : home;
+  const even = quote.awayProbability === quote.homeProbability;
   const probability = Math.max(quote.awayProbability, quote.homeProbability);
-  const label =
-    quote.awayProbability === quote.homeProbability
-      ? copy.odds.even
-      : `${favorite} ${(probability * 100).toFixed(1)}%`;
+  const label = even
+    ? copy.odds.even
+    : `${favorite} ${(probability * 100).toFixed(1)}%`;
   const status = stale ? ` · ${copy.odds.stale}` : "";
   const updated = new Date(quote.updatedAt).toLocaleTimeString();
   const description = `Polymarket moneyline, derived from market midpoint prices. ${away}: ${(quote.awayProbability * 100).toFixed(1)}% implied probability. ${home}: ${(quote.homeProbability * 100).toFixed(1)}%. Updated ${updated}${status}.`;
 
   return (
     <Stack sx={{ textAlign: "right", minWidth: 0 }} title={description}>
-      <Link href={quote.url} target="_blank" rel="noopener noreferrer">
+      <Link
+        href={quote.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}
+      >
+        {/* The favored team's swatch, hatched for away and solid for home
+            as in the team stats. */}
+        {!even && (
+          <TeamSwatch
+            color={awayFavored ? game.away.color : game.home.color}
+            hatched={awayFavored}
+          />
+        )}
         <Typography
           component="span"
           sx={{ fontVariantNumeric: "tabular-nums" }}

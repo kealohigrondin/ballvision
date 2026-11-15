@@ -217,6 +217,7 @@ export const parseScoreboard = (payload: unknown): Game[] => {
         sport === "soccer" ? latestGoal(c, teams) : gameSituation(s, teams),
       lastPlay: str(obj(s.lastPlay).text),
       redZone: s.isRedZone === true,
+      downDistance: str(s.downDistanceText),
       homeTimeouts: number(s.homeTimeouts),
       awayTimeouts: number(s.awayTimeouts),
     });

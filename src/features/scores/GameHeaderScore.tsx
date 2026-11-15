@@ -1,33 +1,33 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { copy } from "@/copy";
+import { PossessionMarker } from "./PossessionMarker";
 
 type GameHeaderScoreProps = {
   id: string;
   score: string;
   /** Dims the score, e.g. for the losing team of a finished game. */
   dimmed?: boolean;
-  /** Shows a dot beside the score for the team with the ball. */
+  /** Shows the possession diamond beside the score. */
   possession?: boolean;
-  /** Which side of the score the possession dot sits on. */
-  dotSide?: "start" | "end";
+  /** Which side of the score the possession diamond sits on. */
+  markerSide?: "start" | "end";
 };
 
-// A large score with an optional possession dot beside it.
+// A large score with an optional possession diamond beside it.
 export const GameHeaderScore = ({
   id,
   score,
   dimmed = false,
   possession = false,
-  dotSide = "end",
+  markerSide = "end",
 }: GameHeaderScoreProps) => (
   <Box
     sx={{
       display: "flex",
       alignItems: "center",
       gap: 0.5,
-      flexDirection: dotSide === "end" ? "row" : "row-reverse",
+      flexDirection: markerSide === "end" ? "row" : "row-reverse",
     }}
   >
     <Typography
@@ -43,18 +43,6 @@ export const GameHeaderScore = ({
     >
       {score}
     </Typography>
-    {possession && (
-      <Box
-        component="span"
-        role="img"
-        aria-label={copy.gameCard.possession}
-        sx={{
-          width: 6,
-          height: 6,
-          borderRadius: "50%",
-          bgcolor: "text.primary",
-        }}
-      />
-    )}
+    {possession && <PossessionMarker />}
   </Box>
 );

@@ -123,77 +123,6 @@
                 "color": "b45309"
               }
             }
-          ],
-          "leaders": [
-            {
-              "name": "passingYards",
-              "leaders": [
-                {
-                  "displayValue": "14/21, 188 YDS, 2 TD",
-                  "team": {
-                    "id": "11"
-                  },
-                  "athlete": {
-                    "id": "9001",
-                    "shortName": "R. Hawk",
-                    "jersey": "7",
-                    "position": {
-                      "abbreviation": "QB"
-                    },
-                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9001.png",
-                    "team": {
-                      "id": "11"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "rushingYards",
-              "leaders": [
-                {
-                  "displayValue": "12 CAR, 64 YDS",
-                  "team": {
-                    "id": "12"
-                  },
-                  "athlete": {
-                    "id": "9002",
-                    "shortName": "O. Rivers",
-                    "jersey": "22",
-                    "position": {
-                      "abbreviation": "RB"
-                    },
-                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9002.png",
-                    "team": {
-                      "id": "12"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "receivingYards",
-              "leaders": [
-                {
-                  "displayValue": "5 REC, 71 YDS, 1 TD",
-                  "team": {
-                    "id": "11"
-                  },
-                  "athlete": {
-                    "id": "9003",
-                    "shortName": "T. Ridge",
-                    "jersey": "1",
-                    "position": {
-                      "abbreviation": "WR"
-                    },
-                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9003.png",
-                    "team": {
-                      "id": "11"
-                    }
-                  }
-                }
-              ]
-            }
           ]
         }
       ]
@@ -250,31 +179,6 @@
                 "abbreviation": "PRA",
                 "color": "7c3aed"
               }
-            }
-          ],
-          "leaders": [
-            {
-              "name": "passingYards",
-              "leaders": [
-                {
-                  "displayValue": "2263 YDS, 18 TD, 5 INT",
-                  "team": {
-                    "id": "21"
-                  },
-                  "athlete": {
-                    "id": "9004",
-                    "shortName": "S. Peak",
-                    "jersey": "12",
-                    "position": {
-                      "abbreviation": "QB"
-                    },
-                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9004.png",
-                    "team": {
-                      "id": "21"
-                    }
-                  }
-                }
-              ]
             }
           ]
         }
@@ -363,77 +267,6 @@
                 "abbreviation": "CAN",
                 "color": "be123c"
               }
-            }
-          ],
-          "leaders": [
-            {
-              "name": "passingYards",
-              "leaders": [
-                {
-                  "displayValue": "22/30, 241 YDS, 1 TD",
-                  "team": {
-                    "id": "31"
-                  },
-                  "athlete": {
-                    "id": "9005",
-                    "shortName": "L. Shore",
-                    "jersey": "9",
-                    "position": {
-                      "abbreviation": "QB"
-                    },
-                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9005.png",
-                    "team": {
-                      "id": "31"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "rushingYards",
-              "leaders": [
-                {
-                  "displayValue": "18 CAR, 97 YDS, 1 TD",
-                  "team": {
-                    "id": "32"
-                  },
-                  "athlete": {
-                    "id": "9006",
-                    "shortName": "C. Mesa",
-                    "jersey": "4",
-                    "position": {
-                      "abbreviation": "RB"
-                    },
-                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9006.png",
-                    "team": {
-                      "id": "32"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "receivingYards",
-              "leaders": [
-                {
-                  "displayValue": "7 REC, 102 YDS",
-                  "team": {
-                    "id": "31"
-                  },
-                  "athlete": {
-                    "id": "9007",
-                    "shortName": "H. Pond",
-                    "jersey": "81",
-                    "position": {
-                      "abbreviation": "TE"
-                    },
-                    "headshot": "https://a.espncdn.com/i/headshots/college-football/players/full/9007.png",
-                    "team": {
-                      "id": "31"
-                    }
-                  }
-                }
-              ]
             }
           ]
         }

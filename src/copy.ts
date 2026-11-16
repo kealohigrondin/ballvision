@@ -135,6 +135,10 @@ export const copy = {
     account: "Sleeper account",
     usernameLabel: "Sleeper username",
     usernameHelp: "Shows your fantasy players in NFL game details.",
+    espnAccount: "ESPN fantasy team",
+    espnLinkLabel: "ESPN team link",
+    espnLinkHelp:
+      "Open your team on ESPN Fantasy and paste its link. Private leagues load only while you're signed in to ESPN in this browser.",
     save: "Save",
     cancel: "Cancel",
   },

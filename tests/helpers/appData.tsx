@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import { vi } from "vitest";
 
 import {
-  type SleeperData,
-  sleeperDataContext,
-} from "@/features/fantasy/sleeperDataContext";
+  type FantasyData,
+  fantasyDataContext,
+} from "@/features/fantasy/fantasyDataContext";
 import { scoreNotificationContext } from "@/features/notifications/scoreNotificationContext";
 import {
   type PolymarketData,
@@ -61,6 +61,8 @@ export const createAppData = (overrides: Partial<AppData> = {}): AppData => ({
   setStandingsConferenceId: vi.fn(),
   sleeperUsername: "",
   setSleeperUsername: vi.fn(),
+  espnFantasyTeam: "",
+  setEspnFantasyTeam: vi.fn(),
   selectedTeam: undefined,
   selectTeam: vi.fn(),
   favoriteIds: [],
@@ -145,13 +147,13 @@ type AppDataTestProviderProps = {
   schedule?: Partial<ScheduleData>;
   stats?: Partial<StatsData>;
   polymarket?: Partial<PolymarketData>;
-  sleeper?: Partial<SleeperData>;
+  fantasy?: Partial<FantasyData>;
 };
 
 // Supplies every app context with fixed test values.
-export const createSleeperData = (
-  overrides: Partial<SleeperData> = {},
-): SleeperData => ({
+export const createFantasyData = (
+  overrides: Partial<FantasyData> = {},
+): FantasyData => ({
   leagues: [],
   loading: false,
   error: false,
@@ -167,7 +169,7 @@ export const AppDataTestProvider = ({
   schedule,
   stats,
   polymarket,
-  sleeper,
+  fantasy,
 }: AppDataTestProviderProps) => (
   <appDataContext.Provider value={value}>
     <scoresContext.Provider value={createScoresData(scores)}>
@@ -177,7 +179,7 @@ export const AppDataTestProvider = ({
             <polymarketDataContext.Provider
               value={createPolymarketData(polymarket)}
             >
-              <sleeperDataContext.Provider value={createSleeperData(sleeper)}>
+              <fantasyDataContext.Provider value={createFantasyData(fantasy)}>
                 <scoreNotificationContext.Provider
                   value={{
                     current: undefined,
@@ -195,7 +197,7 @@ export const AppDataTestProvider = ({
                 >
                   {children}
                 </scoreNotificationContext.Provider>
-              </sleeperDataContext.Provider>
+              </fantasyDataContext.Provider>
             </polymarketDataContext.Provider>
           </statsContext.Provider>
         </scheduleContext.Provider>

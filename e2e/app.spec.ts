@@ -3,8 +3,10 @@ import { expect, test } from "@playwright/test";
 import { copy } from "../src/copy";
 import eplScoreboard from "./fixtures/epl-scoreboard.json" with { type: "json" };
 import {
+  ESPN_FANTASY_TEAM_LINK,
   mockApis,
   mockCollegeStandings,
+  mockEspnFantasy,
   mockNflStandings,
   mockSleeper,
   mockSoccer,
@@ -215,6 +217,33 @@ test.describe("Sleeper fantasy players", () => {
 
     expect(players).toBeGreaterThan(await top("#game-last-play-1001"));
     expect(players).toBeLessThan(await top("#game-leaders-1001"));
+  });
+});
+
+test.describe("ESPN fantasy players", () => {
+  // Saves a team link on the NFL tab and opens the live game's details.
+  test.beforeEach(async ({ page }) => {
+    await mockEspnFantasy(page);
+    await page.goto("./");
+    await page.locator("#league-tab-nfl").click();
+    await page.getByRole("button", { name: copy.fantasy.espnAccount }).click();
+    await page.locator("#espn-fantasy-team-input").fill(ESPN_FANTASY_TEAM_LINK);
+    await page.locator("#espn-fantasy-team-save").click();
+    await page.locator("#game-details-1001-button").click();
+  });
+
+  test("shows your ESPN players in the details of their NFL game", async ({
+    page,
+  }) => {
+    await expect(
+      page.locator("#fantasy-player-1001-espn-4242-201"),
+    ).toContainText("Sam Seaver");
+  });
+
+  test("names the ESPN league above its players", async ({ page }) => {
+    await expect(page.locator("#fantasy-league-1001-espn-4242")).toContainText(
+      "Sunday Scaries",
+    );
   });
 });
 

@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 
-import { type FantasySource, SleeperDataProvider } from "@/features/fantasy";
+import {
+  type EspnFantasySource,
+  FantasyDataProvider,
+  type FantasySource,
+} from "@/features/fantasy";
 import {
   type ChaosAudio,
   ScoreNotificationProvider,
@@ -17,6 +21,7 @@ type GameDataProvidersProps = {
   oddsSource?: OddsSource;
   oddsHistorySource?: OddsHistorySource;
   fantasySource?: FantasySource;
+  espnFantasySource?: EspnFantasySource;
   audioFactory?: () => ChaosAudio;
 };
 
@@ -28,6 +33,7 @@ export const GameDataProviders = ({
   oddsSource,
   oddsHistorySource,
   fantasySource,
+  espnFantasySource,
   audioFactory,
 }: GameDataProvidersProps) => {
   const { games, updatedAt, error, weeks, currentWeekId } = useScoresData();
@@ -44,13 +50,14 @@ export const GameDataProviders = ({
         error={error}
         audioFactory={audioFactory}
       >
-        <SleeperDataProvider
+        <FantasyDataProvider
           weeks={weeks}
           currentWeekId={currentWeekId}
           source={fantasySource}
+          espnSource={espnFantasySource}
         >
           {children}
-        </SleeperDataProvider>
+        </FantasyDataProvider>
       </ScoreNotificationProvider>
     </PolymarketDataProvider>
   );

@@ -389,3 +389,77 @@ export const saveSleeperUsername = async (page: Page): Promise<void> => {
     );
   });
 };
+
+const espnFantasyEntry = (
+  id: number,
+  fullName: string,
+  proTeamId: number,
+  defaultPositionId: number,
+  lineupSlotId: number,
+  points: number,
+) => ({
+  lineupSlotId,
+  playerPoolEntry: {
+    player: {
+      id,
+      fullName,
+      proTeamId,
+      defaultPositionId,
+      stats: [
+        {
+          scoringPeriodId: 11,
+          statSourceId: 0,
+          statSplitTypeId: 1,
+          appliedTotal: points,
+        },
+      ],
+    },
+  },
+});
+
+export const ESPN_FANTASY_TEAM_LINK =
+  "https://fantasy.espn.com/football/team?leagueId=4242&teamId=7&seasonId=2026";
+
+// Serve one ESPN fantasy league whose team has players in the live game.
+// ESPN fantasy knows only real NFL teams, so the live game's teams become
+// Seattle (away) and San Francisco (home). Call after mockApis.
+export const mockEspnFantasy = async (page: Page): Promise<void> => {
+  const renamed = structuredClone(scoreboard);
+  const live = renamed.events.find((event) => event.id === "1001");
+  for (const team of live?.competitions[0].competitors ?? []) {
+    team.team.abbreviation = team.homeAway === "home" ? "SF" : "SEA";
+  }
+  await page.route("https://site.api.espn.com/**/scoreboard*", (route) =>
+    json(route, renamed),
+  );
+  await page.route(
+    "https://lm-api-reads.fantasy.espn.com/**/leagues/4242*",
+    (route) =>
+      json(route, {
+        id: 4242,
+        settings: { name: "Sunday Scaries" },
+        teams: [
+          {
+            id: 7,
+            roster: {
+              entries: [
+                espnFantasyEntry(201, "Sam Seaver", 26, 1, 0, 22.36),
+                espnFantasyEntry(202, "Niner Nate", 25, 3, 4, 9.8),
+                espnFantasyEntry(203, "Pine Rider", 26, 2, 20, 3.1),
+              ],
+            },
+          },
+        ],
+      }),
+  );
+};
+
+// Start the app on the NFL scoreboard with a saved ESPN fantasy team.
+export const saveEspnFantasyTeam = async (page: Page): Promise<void> => {
+  await page.addInitScript((link) => {
+    localStorage.setItem(
+      "ballvision:app-data:v1",
+      JSON.stringify({ version: 1, division: "nfl", espnFantasyTeam: link }),
+    );
+  }, ESPN_FANTASY_TEAM_LINK);
+};

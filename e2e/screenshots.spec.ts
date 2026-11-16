@@ -6,12 +6,14 @@ import scoreboard from "./fixtures/scoreboard.json" with { type: "json" };
 import summaries from "./fixtures/summaries.json" with { type: "json" };
 import {
   mockApis,
+  mockEspnFantasy,
   mockNflStandings,
   mockRankings,
   mockSecStandings,
   mockSleeper,
   mockSoccer,
   mockTeamSchedule,
+  saveEspnFantasyTeam,
   saveSleeperUsername,
 } from "./support/mockApis";
 
@@ -887,5 +889,44 @@ test.describe("@screenshots fantasy players", () => {
       "1",
     );
     await dialog.screenshot({ path: "screenshots/sleeper-account-dialog.png" });
+  });
+});
+
+test.describe("@screenshots ESPN fantasy players", () => {
+  test("player list", async ({ page }) => {
+    await page.setViewportSize(viewports.mobile);
+    await saveEspnFantasyTeam(page);
+    await mockApis(page);
+    await mockEspnFantasy(page);
+    await page.clock.setFixedTime(new Date("2026-11-07T21:00:00Z"));
+    await page.goto("./");
+    await page.locator("#game-details-1001-button").click();
+    await expect(page.locator(".MuiDialog-container")).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    const players = page.locator("#fantasy-players-1001");
+    await expect(players).toContainText("Sam Seaver");
+    await players.screenshot({
+      path: "screenshots/fantasy-players-espn-dark.png",
+    });
+  });
+
+  test("ESPN team dialog", async ({ page }) => {
+    await page.setViewportSize(viewports.mobile);
+    await saveEspnFantasyTeam(page);
+    await mockApis(page);
+    await mockEspnFantasy(page);
+    await page.goto("./");
+    await page.locator("#masthead-menu-button").click();
+    await page.getByRole("button", { name: copy.fantasy.espnAccount }).click();
+    const dialog = page.getByRole("dialog", { name: copy.fantasy.espnAccount });
+    await expect(dialog).toBeVisible();
+    // Let the fade-in finish so the page doesn't show through the dialog.
+    await expect(page.locator(".MuiDialog-container").last()).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await dialog.screenshot({ path: "screenshots/espn-fantasy-dialog.png" });
   });
 });

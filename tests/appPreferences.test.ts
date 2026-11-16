@@ -9,6 +9,9 @@ import {
 } from "@/shared/appData/appPreferences";
 import { useAppDataState } from "@/shared/appData/useAppDataState";
 
+const ESPN_TEAM_LINK =
+  "https://fantasy.espn.com/football/team?leagueId=899513&teamId=4";
+
 const week = {
   id: "2026-2-10",
   label: "Week 10",
@@ -37,6 +40,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     first.result.current.setNflStandingsView("conference");
     first.result.current.setStandingsConferenceId("acc");
     first.result.current.setSleeperUsername("AaronY");
+    first.result.current.setEspnFantasyTeam(ESPN_TEAM_LINK);
   });
   expect(JSON.parse(localStorage.getItem(APP_PREFERENCES_KEY)!)).toEqual({
     version: 1,
@@ -49,6 +53,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     nflStandingsView: "conference",
     standingsConferenceId: "acc",
     sleeperUsername: "AaronY",
+    espnFantasyTeam: ESPN_TEAM_LINK,
   });
   first.unmount();
   const next = renderHook(() => useAppDataState());
@@ -62,6 +67,7 @@ it("restores all app controls after unmounting and mounting again", () => {
     nflStandingsView: "conference",
     standingsConferenceId: "acc",
     sleeperUsername: "AaronY",
+    espnFantasyTeam: ESPN_TEAM_LINK,
   });
 });
 it("validates restored fields independently, including malformed weeks", () => {
@@ -148,6 +154,15 @@ it("returns to college football when the saved league is unknown", () => {
     getItem: () => JSON.stringify({ version: 1, division: "mls" }),
   };
   expect(loadAppPreferences(storage).division).toBe("fbs");
+});
+
+it("falls back to no ESPN team link when the stored one is not text", () => {
+  const storage = {
+    getItem: vi
+      .fn()
+      .mockReturnValue(JSON.stringify({ version: 1, espnFantasyTeam: 42 })),
+  };
+  expect(loadAppPreferences(storage).espnFantasyTeam).toBe("");
 });
 
 it("falls back to no Sleeper username when the stored one is not text", () => {

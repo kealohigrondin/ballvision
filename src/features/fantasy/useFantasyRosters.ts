@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
-import type { FantasyLeague, FantasySource } from "./types";
+import type { FantasyLeague } from "./types";
 
-// Sleeper's servers cache matchup points for a minute.
+// Sleeper's and ESPN's servers cache fantasy points for about a minute.
 const REFRESH_MS = 60_000;
 
 type FantasyState = {
@@ -12,16 +12,17 @@ type FantasyState = {
   error: boolean;
 };
 
-/** Polls a user's fantasy rosters and points; an empty username loads nothing. */
+/**
+ * Polls a user's fantasy rosters and points. `key` names what `load` fetches
+ * and changes whenever it does; an empty key loads nothing. `load` must keep
+ * its identity while the key stays the same.
+ */
 export const useFantasyRosters = (
-  source: FantasySource,
-  username: string,
-  season: number,
-  week: number,
+  load: (signal: AbortSignal) => Promise<FantasyLeague[]>,
+  key: string,
   paused: boolean,
 ) => {
-  const enabled = Boolean(username) && week > 0;
-  const key = enabled ? `${username}:${season}:${week}` : "";
+  const enabled = key !== "";
   const [revision, setRevision] = useState(0);
 
   const refresh = useCallback(() => setRevision((value) => value + 1), []);
@@ -54,10 +55,7 @@ export const useFantasyRosters = (
       }));
 
       try {
-        const leagues = await source.load(
-          { username, season, week },
-          controller.signal,
-        );
+        const leagues = await load(controller.signal);
         if (!disposed) {
           setState({ key, leagues, loading: false, error: false });
         }
@@ -90,7 +88,7 @@ export const useFantasyRosters = (
       request?.abort();
       document.removeEventListener("visibilitychange", visibility);
     };
-  }, [source, enabled, key, username, season, week, paused, revision]);
+  }, [load, enabled, key, paused, revision]);
 
   const current =
     enabled && state.key === key

@@ -35,6 +35,9 @@ export const useAppDataState = () => {
   const [sleeperUsername, setSleeperUsername] = useState(
     initial.sleeperUsername,
   );
+  const [espnFantasyTeam, setEspnFantasyTeam] = useState(
+    initial.espnFantasyTeam,
+  );
   const [selectedPanelView, setPanelView] = useState<PanelView>("standings");
   const [selectedTeam, setSelectedTeam] = useState<TeamRef>();
   const favorites = useFavorites();
@@ -50,6 +53,7 @@ export const useAppDataState = () => {
       nflStandingsView,
       standingsConferenceId,
       sleeperUsername,
+      espnFantasyTeam,
     });
   }, [
     panelOpen,
@@ -61,6 +65,7 @@ export const useAppDataState = () => {
     nflStandingsView,
     standingsConferenceId,
     sleeperUsername,
+    espnFantasyTeam,
   ]);
 
   // Only college football has polls; other leagues fall back to standings.
@@ -123,6 +128,8 @@ export const useAppDataState = () => {
     setStandingsConferenceId,
     sleeperUsername,
     setSleeperUsername,
+    espnFantasyTeam,
+    setEspnFantasyTeam,
     selectedTeam,
     selectTeam,
     favoriteIds: favorites.ids,

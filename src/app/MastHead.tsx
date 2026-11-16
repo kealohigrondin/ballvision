@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import { Radio, Settings } from "lucide-react";
 
 import { copy } from "@/copy";
-import { SleeperAccountControl } from "@/features/fantasy";
+import { EspnFantasyControl, SleeperAccountControl } from "@/features/fantasy";
 import { ScoreNotificationControls } from "@/features/notifications";
 import { useAppData } from "@/shared/appData/appDataContext";
 import { MenuDrawer } from "@/shared/components/MenuDrawer";
@@ -38,6 +38,7 @@ const MastHead = ({}: MastHeadProps) => {
       <SyncControls showLabels />
       <ScoreNotificationControls showLabels />
       <SleeperAccountControl showLabels />
+      <EspnFantasyControl showLabels />
       <ThemeToggle showLabels />
     </MenuDrawer>
   ) : (
@@ -45,6 +46,7 @@ const MastHead = ({}: MastHeadProps) => {
       <SyncControls />
       <ScoreNotificationControls />
       <SleeperAccountControl />
+      <EspnFantasyControl />
       <ThemeToggle />
     </Stack>
   );
